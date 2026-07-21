@@ -1,1 +1,524 @@
-<h1>¡Hola Mundo!</h1>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Alkance — Estrategia, Branding y Diseño de Innovación</title>
+    <meta
+      name="description"
+      content="Consultora de estrategia, branding y diseño de innovación. Acompañamos a emprendedores y empresas a construir marcas sólidas, coherentes y rentables en el tiempo."
+    />
+    <link rel="canonical" href="https://alkance.cl/" />
+    <meta name="theme-color" content="#0A0A0A" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://alkance.cl/" />
+    <meta property="og:title" content="Alkance — Transformamos ideas en marcas que crecen" />
+    <meta
+      property="og:description"
+      content="Estrategia, branding y diseño de innovación para emprendedores y empresas."
+    />
+    <meta property="og:image" content="https://dummyimage.com/1200x630/0a0a0a/ffffff&text=Alkance" />
+    <meta property="og:locale" content="es_CL" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="stylesheet" href="src/styles/tokens.css" />
+    <link rel="stylesheet" href="src/styles/base.css" />
+    <link rel="stylesheet" href="src/styles/layout.css" />
+    <link rel="stylesheet" href="src/styles/components.css" />
+
+    <script src="src/js/main.js" defer></script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "Alkance",
+        "description": "Consultora de estrategia, branding y diseño de innovación.",
+        "url": "https://alkance.cl",
+        "email": "hola@alkance.cl",
+        "telephone": "+56912345678",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Rancagua",
+          "addressCountry": "CL"
+        },
+        "areaServed": "CL",
+        "knowsAbout": [
+          "Branding",
+          "Diseño estratégico",
+          "Product Discovery",
+          "UX/UI",
+          "Design Systems",
+          "Digital Growth"
+        ]
+      }
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+
+    <header class="header" data-header>
+      <div class="container header__inner">
+        <a class="header__brand" href="/" aria-label="Alkance, inicio">
+          <img class="header__logo" src="src/img/logos/logo.svg" alt="Alkance" width="638" height="138" />
+        </a>
+        <nav class="header__nav" aria-label="Principal">
+          <a class="link" href="#servicios">Servicios</a>
+          <a class="link" href="#innovacion">Innovación</a>
+          <a class="btn btn--primary" href="#contacto">Agendar reunión</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ============ 1. HERO ============ -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__content">
+          <p class="eyebrow reveal">Estrategia, branding &amp; diseño de innovación</p>
+
+          <!-- 3xl y no 5xl: el display grande es para hero a ancho completo. En
+               media columna, 96px parte "Transformamos" fuera de la caja. -->
+          <h1 class="display reveal" id="hero-title" style="font-size: var(--ak-font-size-3xl)">
+            Transformamos ideas en <span class="accent">marcas</span> que crecen.
+          </h1>
+
+          <p class="lead reveal" style="max-width: 42ch">
+            Acompañamos a emprendedores y empresas a construir marcas sólidas,
+            coherentes y rentables en el tiempo.
+          </p>
+
+          <!-- Sin btn--lg: en media columna los dos botones grandes suman más que
+               el ancho disponible y el segundo cae a otra línea. -->
+          <div class="cluster reveal">
+            <a class="btn btn--primary" href="#contacto">Agendar reunión</a>
+            <a class="btn btn--ghost" href="#servicios">Ver servicios</a>
+          </div>
+        </div>
+
+        <!-- width/height reales (1024x572): reservan el espacio antes de que la
+             imagen cargue y evitan que el hero salte.
+             fetchpriority=high y sin lazy: es el LCP de la página. -->
+        <div class="hero__media reveal">
+          <img
+            src="src/img/herobanner.jpg"
+            alt="Presentación de marca Alkance en un laptop, junto a una planta y una taza sobre un escritorio"
+            width="1024"
+            height="572"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
+      </section>
+
+      <!-- Pie del hero: banda negra a ancho completo, pegada al hero (sin
+           .container ni .section, que meterían márgenes y romperían el corte). -->
+      <section class="support" aria-label="Áreas de servicio">
+        <div class="support__item">
+          <i data-lucide="lightbulb" class="icon icon--xl support__icon" aria-hidden="true"></i>
+          <h2 class="support__title">Estrategia</h2>
+          <p class="support__text">
+            Definimos el propósito, posicionamiento y plan de crecimiento.
+          </p>
+        </div>
+        <div class="support__item">
+          <i data-lucide="pen-tool" class="icon icon--xl support__icon" aria-hidden="true"></i>
+          <h2 class="support__title">Branding</h2>
+          <p class="support__text">
+            Construimos identidades memorables y coherentes con tu negocio.
+          </p>
+        </div>
+        <div class="support__item">
+          <i data-lucide="monitor" class="icon icon--xl support__icon" aria-hidden="true"></i>
+          <h2 class="support__title">Diseño digital</h2>
+          <p class="support__text">
+            Diseñamos experiencias digitales que conectan y convierten.
+          </p>
+        </div>
+        <div class="support__item">
+          <i data-lucide="bar-chart-3" class="icon icon--xl support__icon" aria-hidden="true"></i>
+          <h2 class="support__title">Acompañamiento</h2>
+          <p class="support__text">
+            Te acompañamos en el tiempo para que tu marca siga creciendo.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ 2. SEGMENTACIÓN ============ -->
+      <section class="section section--subtle" id="clientes" aria-labelledby="clientes-title">
+        <div class="container stack stack--loose">
+          <div class="stack stack--tight">
+            <p class="eyebrow reveal">Trabajamos con</p>
+            <h2 class="reveal" id="clientes-title">
+              Emprendedores y <span class="accent">empresas</span>.
+            </h2>
+          </div>
+
+          <div class="grid-auto reveal-stagger">
+            <article class="card" style="--i: 0">
+              <div class="card__media">
+                <img
+                  src="src/img/emprende.jpg"
+                  alt="Emprendedora diseñando la identidad de su marca sobre un cuaderno y un portátil"
+                  width="1024"
+                  height="574"
+                  loading="lazy"
+                />
+              </div>
+              <div class="card__body">
+                <h3>Para emprendedores</h3>
+                <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
+                  Soluciones accesibles y estratégicas para lanzar y profesionalizar tu
+                  marca.
+                </p>
+              </div>
+              <div class="card__foot">
+                <a class="link-arrow" href="#servicios">Ver servicios</a>
+              </div>
+            </article>
+
+            <article class="card" style="--i: 1">
+              <div class="card__media">
+                <img
+                  src="src/img/empresa.jpg"
+                  alt="Equipo de una empresa en sesión de estrategia de crecimiento"
+                  width="680"
+                  height="420"
+                  loading="lazy"
+                />
+              </div>
+              <div class="card__body">
+                <h3>Para empresas</h3>
+                <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
+                  Estrategia y acompañamiento para empresas que quieren crecer en serio.
+                </p>
+              </div>
+              <div class="card__foot">
+                <a class="link-arrow" href="#contacto">Ver requisitos</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MARQUEE DE CONCEPTOS ============ -->
+      <!-- El segundo grupo es una copia exacta para cerrar el bucle: va con
+           aria-hidden para que un lector de pantalla no lea todo dos veces. -->
+      <section class="marquee" aria-label="Áreas de trabajo">
+        <div class="marquee__track">
+          <div class="marquee__group">
+            <span class="marquee__item">User Interface Design</span>
+            <span class="marquee__dot" aria-hidden="true"></span>
+            <span class="marquee__item">Branding</span>
+            <span class="marquee__dot" aria-hidden="true"></span>
+            <span class="marquee__item">Product Discovery Sprint</span>
+            <span class="marquee__dot" aria-hidden="true"></span>
+            <span class="marquee__item">Diseño Estratégico</span>
+            <span class="marquee__dot" aria-hidden="true"></span>
+          </div>
+          <div class="marquee__group" aria-hidden="true">
+            <span class="marquee__item">User Interface Design</span>
+            <span class="marquee__dot"></span>
+            <span class="marquee__item">Branding</span>
+            <span class="marquee__dot"></span>
+            <span class="marquee__item">Product Discovery Sprint</span>
+            <span class="marquee__dot"></span>
+            <span class="marquee__item">Diseño Estratégico</span>
+            <span class="marquee__dot"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 3. CAPACIDADES / SERVICIOS ============ -->
+      <section class="section" id="servicios" aria-labelledby="servicios-title">
+        <div class="container stack stack--loose">
+          <div class="stack stack--tight">
+            <p class="eyebrow reveal">Capacidades</p>
+            <h2 class="reveal" id="servicios-title">
+              Nuestros <span class="accent">servicios</span>
+            </h2>
+            <p class="lead reveal" style="max-width: 52ch">
+              Soluciones estratégicas diseñadas para darte claridad y escalabilidad en
+              cada etapa del ciclo de innovación.
+            </p>
+          </div>
+
+          <div class="grid-services reveal-stagger">
+            <article class="service-card service-card--featured" style="--i: 0">
+              <span class="badge service-card__badge">El más elegido</span>
+              <div class="stack stack--tight">
+                <span class="icon-badge"><i data-lucide="rocket" class="icon" aria-hidden="true"></i></span>
+                <h3 class="service-card__name">Product Discovery Sprint</h3>
+                <p class="service-card__text">
+                  Para emprendedores que quieren crear desde cero. Validamos tu idea en
+                  tiempo récord antes de escribir una sola línea de código.
+                </p>
+              </div>
+              <ul class="service-card__list">
+                <li>Producto definido y validado (no supuestos).</li>
+                <li>Propuesta de valor clara y validada.</li>
+                <li>Prototipo navegable de alta fidelidad.</li>
+                <li>Roadmap estratégico para el desarrollo MVP.</li>
+              </ul>
+            </article>
+
+            <article class="service-card" style="--i: 1">
+              <div class="stack stack--tight">
+                <span class="icon-badge"><i data-lucide="layers" class="icon" aria-hidden="true"></i></span>
+                <h3 class="service-card__name">UX/UI &amp; Design Systems</h3>
+                <p class="service-card__text">
+                  Cuando el problema no es construir más, sino ordenar lo que ya existe.
+                  Rediseñamos para mejorar adopción, retención y escalabilidad.
+                </p>
+              </div>
+              <ul class="service-card__list">
+                <li>Auditoría y rediseño UX profundo.</li>
+                <li>Diseño de interfaz UX moderno y funcional.</li>
+                <li>Prototipos interactivos para testeo.</li>
+                <li>Sistemas de diseño escalables.</li>
+              </ul>
+            </article>
+
+            <article class="service-card" style="--i: 2">
+              <div class="stack stack--tight">
+                <span class="icon-badge"><i data-lucide="sparkles" class="icon" aria-hidden="true"></i></span>
+                <h3 class="service-card__name">Digital Branding</h3>
+                <p class="service-card__text">
+                  Las marcas digitales no se comportan como las tradicionales. Creamos
+                  identidades visuales pensadas nativamente para pantallas y apps.
+                </p>
+              </div>
+              <ul class="service-card__list">
+                <li>Identidad visual digital.</li>
+                <li>Guías de estilo UI.</li>
+                <li>Aplicación en producto.</li>
+              </ul>
+            </article>
+
+            <article class="service-card" style="--i: 3">
+              <div class="stack stack--tight">
+                <span class="icon-badge"><i data-lucide="trending-up" class="icon" aria-hidden="true"></i></span>
+                <h3 class="service-card__name">Digital Growth Strategy</h3>
+                <p class="service-card__text">
+                  Para productos digitales que ya están en el mercado y necesitan crecer
+                  de forma estructurada, predecible y basada en datos.
+                </p>
+              </div>
+              <ul class="service-card__list">
+                <li>Estrategia digital integral.</li>
+                <li>Diseño de embudos de conversión.</li>
+                <li>Plan de contenidos.</li>
+                <li>Configuración analítica.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 4. INNOVACIÓN ============ -->
+      <!-- Única sección con fondo en movimiento. El clip es gris oscuro con un
+           halo central, así que la sección pasa a negro y el video hace de
+           textura: sobre fondo claro quedaría lodoso. -->
+      <section class="section section--inverse inno" id="innovacion" aria-labelledby="innovacion-title">
+        <video
+          class="inno__video"
+          src="src/img/Video_Gen_Claro.mp4"
+          poster="src/img/video-poster.jpg"
+          autoplay muted loop playsinline
+          preload="metadata"
+          aria-hidden="true"
+          tabindex="-1"></video>
+        <!-- Baja el contraste del clip para que el texto se lea encima. -->
+        <span class="inno__scrim" aria-hidden="true"></span>
+
+        <div class="container inno__inner">
+          <div class="inno__intro">
+            <p class="eyebrow eyebrow--inverse reveal">Consultoría de innovación &amp; diseño</p>
+            <p class="inno__display reveal" aria-hidden="true">Innovación</p>
+            <h2 class="inno__title reveal" id="innovacion-title">
+              Tu socio estratégico en <span class="accent">innovación</span>.
+            </h2>
+            <p class="lead reveal">
+              Nos especializamos en crear nuevos negocios, evaluar y mejorar servicios
+              existentes y desarrollar productos digitales de alta calidad. A través de
+              diseño estratégico, aplicando metodologías ágiles y diseño centrado en el
+              usuario para asegurar el encaje mercado-producto.
+            </p>
+          </div>
+
+          <figure class="inno__figure reveal">
+            <div class="inno__frame">
+              <img
+                class="inno__photo"
+                src="src/img/innova.png"
+                alt="Diseñadora mostrando dos wireframes dibujados a mano frente a un muro de bocetos de interfaz."
+                width="1496"
+                height="992"
+                loading="lazy"
+              />
+            </div>
+            <figcaption class="inno__caption">
+              <span class="inno__caption-index">01</span>
+              Del brief al prototipo validado.
+            </figcaption>
+          </figure>
+
+          <!-- Antes era una tarjeta rosa; sobre el negro pasa a cita editorial:
+               el filo rojo y el tamaño hacen el trabajo que hacía la caja. -->
+          <blockquote class="inno__quote reveal">
+            <p class="inno__quote-text">
+              No necesitas más desarrollo.<br />
+              Necesitas <span class="accent">claridad</span>.
+            </p>
+            <p class="inno__quote-note">
+              El mayor riesgo en etapas tempranas no es técnico, es estratégico. Ideas
+              mal enfocadas, problemas mal definidos y decisiones apresuradas.
+              Trabajamos contigo para entender qué construir, por qué y para quién.
+              Porque antes de escalar, hay que validar.
+            </p>
+            <a class="link-arrow inno__quote-link" href="#contacto">Escríbenos</a>
+          </blockquote>
+        </div>
+      </section>
+
+      <!-- ============ 6. METODOLOGÍA ============ -->
+      <section class="section section--subtle" id="metodologia" aria-labelledby="metodologia-title">
+        <div class="container stack stack--loose">
+          <div class="stack stack--tight">
+            <p class="eyebrow reveal">Hasta el detalle</p>
+            <h2 class="reveal" id="metodologia-title">
+              Un proceso claro. <span class="accent">Resultados reales.</span>
+            </h2>
+          </div>
+
+          <!-- Rejilla propia y no .grid-auto: con minmax(280px) los cuatro pasos
+               no caben en el contenedor (1152px útiles) y el 04 caía solo a una
+               segunda fila. -->
+          <div class="steps reveal-stagger">
+            <div class="step" style="--i: 0">
+              <span class="step__num">01</span>
+              <h3 class="step__name">
+                <i data-lucide="ear" class="icon icon--sm icon--accent" aria-hidden="true"></i>
+                Entender
+              </h3>
+              <p class="step__text">Profundizamos en tu negocio y objetivos.</p>
+            </div>
+            <div class="step" style="--i: 1">
+              <span class="step__num">02</span>
+              <h3 class="step__name">
+                <i data-lucide="users" class="icon icon--sm icon--accent" aria-hidden="true"></i>
+                Co-crear
+              </h3>
+              <p class="step__text">Ideamos y prototipamos soluciones en conjunto.</p>
+            </div>
+            <div class="step" style="--i: 2">
+              <span class="step__num">03</span>
+              <h3 class="step__name">
+                <i data-lucide="map" class="icon icon--sm icon--accent" aria-hidden="true"></i>
+                Definir
+              </h3>
+              <p class="step__text">Establecemos la hoja de ruta y especificaciones.</p>
+            </div>
+            <div class="step" style="--i: 3">
+              <span class="step__num">04</span>
+              <h3 class="step__name">
+                <i data-lucide="handshake" class="icon icon--sm icon--accent" aria-hidden="true"></i>
+                Acompañar
+              </h3>
+              <p class="step__text">Apoyamos la implementación y mejora continua.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 7. PRUEBA SOCIAL ============ -->
+      <section class="section" id="clientes-logos" aria-labelledby="confianza-title">
+        <div class="container clientes-logos__head">
+          <p class="eyebrow reveal">Prueba social</p>
+          <h2 class="clientes-logos__title reveal" id="confianza-title">
+            Confían en <span class="accent">nosotros</span>.
+          </h2>
+        </div>
+
+        <!-- Cinta de logos: reutiliza .marquee (scroll CSS puro + pausa al hover).
+             Cada grupo repite el set dos veces para que sea más ancho que la
+             pantalla; si no, al saltar el bucle se vería un hueco.
+             El segundo grupo es una copia exacta y va con aria-hidden, igual que
+             el marquee de conceptos: el lector de pantalla solo lee el set real.
+             FALTA talls.svg en src/img/logos-clientes/ — al añadirlo, copiar el
+             bloque de un logo en los dos grupos. -->
+        <div class="marquee marquee--logos reveal" role="group" aria-label="Clientes que confían en nosotros">
+          <div class="marquee__track">
+            <div class="marquee__group">
+              <img class="logos__item" src="src/img/logos-clientes/foodware.svg" alt="Foodware" width="653" height="100" />
+              <img class="logos__item" src="src/img/logos-clientes/aulatec.svg" alt="Aulatec" width="598" height="133" />
+              <img class="logos__item" src="src/img/logos-clientes/h2v.svg" alt="H2V+" width="411" height="105" />
+              <img class="logos__item" src="src/img/logos-clientes/chrysalis.png" alt="Chrysalis" width="583" height="151" />
+              <img class="logos__item" src="src/img/logos-clientes/foodware.svg" alt="" aria-hidden="true" width="653" height="100" />
+              <img class="logos__item" src="src/img/logos-clientes/aulatec.svg" alt="" aria-hidden="true" width="598" height="133" />
+              <img class="logos__item" src="src/img/logos-clientes/h2v.svg" alt="" aria-hidden="true" width="411" height="105" />
+              <img class="logos__item" src="src/img/logos-clientes/chrysalis.png" alt="" aria-hidden="true" width="583" height="151" />
+            </div>
+            <div class="marquee__group" aria-hidden="true">
+              <img class="logos__item" src="src/img/logos-clientes/foodware.svg" alt="" width="653" height="100" />
+              <img class="logos__item" src="src/img/logos-clientes/aulatec.svg" alt="" width="598" height="133" />
+              <img class="logos__item" src="src/img/logos-clientes/h2v.svg" alt="" width="411" height="105" />
+              <img class="logos__item" src="src/img/logos-clientes/chrysalis.png" alt="" width="583" height="151" />
+              <img class="logos__item" src="src/img/logos-clientes/foodware.svg" alt="" width="653" height="100" />
+              <img class="logos__item" src="src/img/logos-clientes/aulatec.svg" alt="" width="598" height="133" />
+              <img class="logos__item" src="src/img/logos-clientes/h2v.svg" alt="" width="411" height="105" />
+              <img class="logos__item" src="src/img/logos-clientes/chrysalis.png" alt="" width="583" height="151" />
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============ 8. FOOTER DE CONVERSIÓN ============ -->
+    <!-- Con .section el pie usaba el padding de una sección completa (hasta 160px
+         arriba y abajo) y apilaba titular, botón y datos: mucho alto para tres
+         líneas de contacto. Ahora los datos van al costado del llamado. -->
+    <footer class="section--inverse footer" id="contacto">
+      <div class="container">
+        <div class="footer__top">
+          <div class="footer__cta">
+            <h2 class="footer__title reveal">
+              Hablemos de tu proyecto y construyamos juntos el futuro de tu
+              <span class="accent">marca</span>.
+            </h2>
+            <a class="btn btn--inverse btn--lg reveal" href="mailto:hola@alkance.cl">Contacto</a>
+          </div>
+
+          <div class="footer__meta reveal">
+            <div>
+              <p class="support__title">Teléfono</p>
+              <a class="link" href="tel:+56912345678">+56 9 1234 5678</a>
+            </div>
+            <div>
+              <p class="support__title">Email</p>
+              <a class="link" href="mailto:hola@alkance.cl">hola@alkance.cl</a>
+            </div>
+            <div>
+              <p class="support__title">Web</p>
+              <a class="link" href="https://alkance.cl">alkance.cl</a>
+            </div>
+          </div>
+        </div>
+
+        <p class="footer__legal">
+          &copy; <span data-year>2026</span> Alkance · Rancagua, Chile ·
+          <a class="link" href="designsystem.html">Design System</a>
+        </p>
+      </div>
+    </footer>
+    <!-- Lucide: iconos SVG por CDN. Sustituye cada <i data-lucide> por un <svg>
+         inline, por eso se puede estilar con CSS. En producción conviene un
+         sprite local — ver design/ICONS.md. -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

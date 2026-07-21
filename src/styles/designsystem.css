@@ -1,0 +1,501 @@
+/* Estilos exclusivos de designsystem.html. NO se carga en index.html.
+ * Aun siendo documentación, obedece la misma regla: cero literales, solo tokens. */
+
+.ds-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .ds-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Navegación lateral ---------- */
+
+.ds-nav {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: var(--ak-space-6);
+  border-inline-end: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-2);
+}
+
+@media (max-width: 1024px) {
+  .ds-nav {
+    position: static;
+    height: auto;
+    border-inline-end: none;
+    border-bottom: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.ds-nav__brand {
+  font-size: var(--ak-font-size-lg);
+  font-weight: var(--ak-font-weight-semibold);
+  letter-spacing: var(--ak-font-tracking-tight);
+  margin-bottom: var(--ak-space-4);
+}
+
+.ds-nav a {
+  font-size: var(--ak-font-size-sm);
+  color: var(--ak-semantic-fg-muted);
+  padding-block: var(--ak-space-1);
+  transition: color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+
+.ds-nav a:hover {
+  color: var(--ak-semantic-fg-accent);
+}
+
+/* ---------- Contenido ---------- */
+
+.ds-main {
+  padding: var(--ak-space-8) var(--ak-space-gutter);
+  max-width: var(--ak-size-container);
+  min-width: 0; /* deja que los hijos con overflow encojan dentro del grid */
+}
+
+.ds-section {
+  padding-block: var(--ak-space-8);
+  border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+}
+
+.ds-section:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.ds-section > h2 {
+  margin-bottom: var(--ak-space-3);
+}
+
+.ds-section > .lead {
+  margin-bottom: var(--ak-space-7);
+  max-width: var(--ak-size-container-narrow);
+}
+
+.ds-sub {
+  font-size: var(--ak-font-size-xs);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-widest);
+  text-transform: uppercase;
+  color: var(--ak-semantic-fg-muted);
+  margin-block: var(--ak-space-7) var(--ak-space-4);
+}
+
+/* ---------- Paleta ---------- */
+
+.ds-ramp {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(96px, 100%), 1fr));
+  gap: var(--ak-space-1);
+  margin-bottom: var(--ak-space-6);
+}
+
+.ds-chip {
+  padding: var(--ak-space-5) var(--ak-space-3) var(--ak-space-3);
+  border-radius: var(--ak-radius-md);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-1);
+  min-height: var(--ak-space-10);
+  justify-content: flex-end;
+  transition: transform var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+
+.ds-chip:hover {
+  transform: translateY(calc(var(--ak-space-1) * -1));
+}
+
+.ds-chip__step {
+  font-size: var(--ak-font-size-sm);
+  font-weight: var(--ak-font-weight-medium);
+}
+
+.ds-chip__hex {
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  opacity: 0.7;
+}
+
+.ds-chip__ratio {
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  opacity: 0.7;
+}
+
+/* ---------- Roles semánticos ---------- */
+
+.ds-roles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: var(--ak-space-4);
+}
+
+.ds-role {
+  display: flex;
+  gap: var(--ak-space-4);
+  align-items: flex-start;
+  padding: var(--ak-space-4);
+  border-radius: var(--ak-radius-md);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-subtle);
+}
+
+.ds-role__swatch {
+  width: var(--ak-space-8);
+  height: var(--ak-space-8);
+  border-radius: var(--ak-radius-sm);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-default);
+  flex: none;
+}
+
+.ds-role__name {
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  font-weight: var(--ak-font-weight-medium);
+}
+
+.ds-role__alias {
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  color: var(--ak-semantic-fg-accent);
+  margin-top: var(--ak-space-1);
+}
+
+.ds-role__desc {
+  font-size: var(--ak-font-size-xs);
+  color: var(--ak-semantic-fg-muted);
+  margin-top: var(--ak-space-2);
+  line-height: var(--ak-font-leading-normal);
+}
+
+/* ---------- Escala tipográfica ---------- */
+
+.ds-type {
+  border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+  padding-block: var(--ak-space-5);
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: var(--ak-space-5);
+  align-items: baseline;
+}
+
+@media (max-width: 768px) {
+  .ds-type {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ds-type__meta {
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  color: var(--ak-semantic-fg-muted);
+  line-height: var(--ak-font-leading-relaxed);
+}
+
+.ds-type__sample {
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-tighter);
+  line-height: var(--ak-font-leading-tight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Espaciado ---------- */
+
+.ds-space {
+  display: flex;
+  align-items: center;
+  gap: var(--ak-space-4);
+  padding-block: var(--ak-space-2);
+}
+
+.ds-space__bar {
+  height: var(--ak-space-4);
+  background: var(--ak-semantic-bg-accent);
+  border-radius: var(--ak-radius-sm);
+  flex: none;
+}
+
+.ds-space__label {
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  color: var(--ak-semantic-fg-muted);
+}
+
+/* ---------- Specimen: render + código ---------- */
+
+.ds-spec {
+  border-radius: var(--ak-radius-lg);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-subtle);
+  overflow: hidden;
+  margin-bottom: var(--ak-space-6);
+}
+
+.ds-spec__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ak-space-4);
+  flex-wrap: wrap;
+  padding: var(--ak-space-4) var(--ak-space-5);
+  border-bottom: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+}
+
+.ds-spec__name {
+  font-size: var(--ak-font-size-sm);
+  font-weight: var(--ak-font-weight-medium);
+}
+
+.ds-spec__render {
+  padding: var(--ak-space-7) var(--ak-space-5);
+  background: var(--ak-semantic-bg-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ak-space-4);
+  align-items: center;
+}
+
+/* Algunas piezas solo existen sobre negro. */
+.ds-spec__render--inverse {
+  background: var(--ak-semantic-bg-inverse);
+  color: var(--ak-semantic-fg-inverse);
+}
+
+.ds-spec__render--block {
+  display: block;
+}
+
+/* ---------- Pestañas de código ---------- */
+
+.ds-spec__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ak-space-3);
+  flex-wrap: wrap;
+}
+
+.ds-tabs {
+  display: flex;
+  gap: var(--ak-space-1);
+}
+
+.ds-tab {
+  padding: var(--ak-space-2) var(--ak-space-4);
+  border-radius: var(--ak-radius-pill);
+  font-size: var(--ak-font-size-xs);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ak-semantic-fg-muted);
+  transition: background var(--ak-motion-duration-fast) var(--ak-motion-ease-standard),
+    color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+
+.ds-tab:hover {
+  color: var(--ak-semantic-fg-default);
+}
+
+.ds-tab[aria-selected="true"] {
+  background: var(--ak-semantic-bg-inverse);
+  color: var(--ak-semantic-fg-inverse);
+}
+
+.ds-code {
+  margin: 0;
+  padding: var(--ak-space-5);
+  background: var(--ak-semantic-bg-inverse);
+  color: var(--ak-semantic-fg-inverse);
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  line-height: var(--ak-font-leading-relaxed);
+  overflow-x: auto;
+  max-height: var(--ak-space-11);
+  overflow-y: auto;
+  tab-size: 2;
+}
+
+.ds-code[hidden] {
+  display: none;
+}
+
+/* Resalta las custom properties dentro del código. */
+.ds-code .tok {
+  color: var(--ak-color-accent-400);
+}
+
+.ds-code .cmt {
+  color: var(--ak-semantic-fg-subtle);
+}
+
+.ds-copy {
+  font-size: var(--ak-font-size-xs);
+  color: var(--ak-semantic-fg-muted);
+  padding: var(--ak-space-2) var(--ak-space-3);
+  border-radius: var(--ak-radius-pill);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-default);
+  transition: color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+
+.ds-copy:hover {
+  color: var(--ak-semantic-fg-default);
+}
+
+/* ---------- Catálogo de iconos ---------- */
+
+.ds-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr));
+  gap: var(--ak-space-2);
+  margin-bottom: var(--ak-space-6);
+}
+
+.ds-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ak-space-2);
+  padding: var(--ak-space-5) var(--ak-space-3);
+  border-radius: var(--ak-radius-md);
+  text-align: center;
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-subtle);
+  transition: color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard),
+    transform var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+
+/* El icono hereda currentColor: basta con teñir la celda. */
+.ds-icon:hover {
+  color: var(--ak-semantic-fg-accent);
+  transform: translateY(calc(var(--ak-space-1) * -1));
+}
+
+.ds-icon__name {
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  color: inherit;
+}
+
+.ds-icon__concept {
+  font-size: var(--ak-font-size-xs);
+  color: var(--ak-semantic-fg-subtle);
+  line-height: var(--ak-font-leading-normal);
+}
+
+/* ---------- Tabla de tokens ---------- */
+
+.ds-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--ak-radius-lg);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-subtle);
+}
+
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ak-font-size-xs);
+}
+
+.ds-table th {
+  text-align: start;
+  padding: var(--ak-space-3) var(--ak-space-4);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ak-semantic-fg-muted);
+  border-bottom: var(--ak-border-hairline) solid var(--ak-semantic-border-default);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  background: var(--ak-semantic-bg-canvas);
+}
+
+.ds-table td {
+  padding: var(--ak-space-3) var(--ak-space-4);
+  border-bottom: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+  vertical-align: top;
+}
+
+.ds-table tbody tr:hover {
+  background: var(--ak-semantic-bg-subtle);
+}
+
+.ds-table code {
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  white-space: nowrap;
+}
+
+.ds-table__desc {
+  color: var(--ak-semantic-fg-muted);
+  min-width: 280px;
+  line-height: var(--ak-font-leading-normal);
+}
+
+.ds-dot {
+  display: inline-block;
+  width: var(--ak-space-4);
+  height: var(--ak-space-4);
+  border-radius: var(--ak-radius-sm);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-default);
+  vertical-align: middle;
+  margin-inline-end: var(--ak-space-2);
+}
+
+.ds-layer {
+  display: inline-block;
+  padding: 0 var(--ak-space-2);
+  border-radius: var(--ak-radius-pill);
+  font-size: var(--ak-font-size-xs);
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) currentColor;
+}
+
+.ds-layer--primitivo {
+  color: var(--ak-semantic-fg-subtle);
+}
+.ds-layer--semantico {
+  color: var(--ak-semantic-fg-accent);
+}
+.ds-layer--componente {
+  color: var(--ak-semantic-fg-default);
+}
+
+/* ---------- Filtros de la tabla ---------- */
+
+.ds-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ak-space-2);
+  margin-bottom: var(--ak-space-4);
+  align-items: center;
+}
+
+.ds-search {
+  flex: 1;
+  min-width: 200px;
+  padding: var(--ak-space-3) var(--ak-space-4);
+  border-radius: var(--ak-radius-pill);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-default);
+  font-size: var(--ak-font-size-sm);
+}
+
+.ds-search::placeholder {
+  color: var(--ak-semantic-fg-subtle);
+}
+
+.ds-count {
+  font-family: var(--ak-font-family-mono);
+  font-size: var(--ak-font-size-xs);
+  color: var(--ak-semantic-fg-muted);
+}

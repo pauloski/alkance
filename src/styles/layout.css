@@ -1,0 +1,93 @@
+/* Contenedores, ritmo vertical y utilidades de grilla. */
+
+.container {
+  width: 100%;
+  max-width: var(--ak-size-container);
+  margin-inline: auto;
+  padding-inline: var(--ak-space-gutter);
+}
+
+.container--narrow {
+  max-width: var(--ak-size-container-narrow);
+}
+
+.container--wide {
+  max-width: var(--ak-size-container-wide);
+}
+
+/* Sección: el ritmo vertical del sitio sale de un solo token. */
+.section {
+  padding-block: var(--ak-space-section);
+}
+
+.section--inverse {
+  background: var(--ak-semantic-bg-inverse);
+  color: var(--ak-semantic-fg-inverse);
+}
+
+.section--subtle {
+  background: var(--ak-semantic-bg-subtle);
+}
+
+/* Stack: espaciado vertical uniforme entre hijos. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-5);
+}
+
+.stack--tight {
+  gap: var(--ak-space-3);
+}
+.stack--loose {
+  gap: var(--ak-space-7);
+}
+
+/* Cluster: fila que envuelve (nav, tags, botones). */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ak-space-4);
+}
+
+/* Grilla de 12 columnas para composiciones editoriales. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--ak-space-5);
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Grilla 2x2 de servicios. Dos columnas anchas, no auto-fit: cada tarjeta lleva
+   una lista de entregables que necesita ancho para no partir cada línea. */
+.grid-services {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--ak-space-6);
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .grid-services {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Grilla auto-fit para tarjetas de servicios/casos. */
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: var(--ak-space-5);
+}
+
+.divider {
+  height: var(--ak-border-hairline);
+  background: var(--ak-semantic-border-subtle);
+  border: none;
+}

@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Design System — Alkance</title>
+    <meta name="description" content="Sistema de diseño de Alkance: tokens, paleta, tipografía y componentes." />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <link rel="stylesheet" href="src/styles/tokens.css" />
+    <link rel="stylesheet" href="src/styles/base.css" />
+    <link rel="stylesheet" href="src/styles/layout.css" />
+    <link rel="stylesheet" href="src/styles/components.css" />
+    <link rel="stylesheet" href="src/styles/designsystem.css" />
+  </head>
+
+  <body>
+    <div class="ds-layout">
+      <nav class="ds-nav" aria-label="Secciones del sistema">
+        <div class="ds-nav__brand">Alkance<span class="accent">.</span> DS</div>
+        <a href="#arquitectura">Arquitectura</a>
+        <a href="#color">Color</a>
+        <a href="#roles">Roles semánticos</a>
+        <a href="#tipografia">Tipografía</a>
+        <a href="#espaciado">Espaciado</a>
+        <a href="#componentes">Componentes</a>
+        <a href="#iconos">Iconos</a>
+        <a href="#tabla">Tabla de tokens</a>
+        <a href="index.html">← Ver la landing</a>
+      </nav>
+
+      <main class="ds-main">
+        <header class="ds-section">
+          <p class="eyebrow">Sistema de diseño · v2</p>
+          <h1 style="font-size: var(--ak-font-size-3xl)">
+            Un sistema, una fuente<span class="accent">.</span>
+          </h1>
+          <p class="lead">
+            Todo lo que ves en esta página se genera desde
+            <code>design/tokens.json</code> y <code>src/styles/components.css</code>.
+            Ningún valor está escrito a mano aquí, así que esta documentación no
+            puede quedar desactualizada respecto del código que se despliega.
+          </p>
+        </header>
+
+        <!-- ---------- Arquitectura ---------- -->
+        <section class="ds-section" id="arquitectura">
+          <h2 style="font-size: var(--ak-font-size-xl)">Arquitectura de tokens</h2>
+          <p class="lead">
+            Tres capas. Cada una solo puede referenciar a la anterior. La regla que
+            sostiene el sistema: <strong>los componentes nunca consumen primitivos</strong>.
+          </p>
+
+          <div class="ds-roles">
+            <div class="ds-role">
+              <span class="ds-role__swatch" style="background: var(--ak-color-ink-300)"></span>
+              <div>
+                <div class="ds-role__name">1 · Primitivo</div>
+                <p class="ds-role__desc">
+                  La paleta cruda: <code>color.ink.900</code>, <code>space.5</code>.
+                  Sin significado asignado. No se usa en UI.
+                </p>
+              </div>
+            </div>
+            <div class="ds-role">
+              <span class="ds-role__swatch" style="background: var(--ak-color-accent-500)"></span>
+              <div>
+                <div class="ds-role__name">2 · Semántico</div>
+                <p class="ds-role__desc">
+                  El rol: <code>semantic.fg.default</code>. Describe la función, no el
+                  color. <strong>Esta es la capa que se usa.</strong>
+                </p>
+              </div>
+            </div>
+            <div class="ds-role">
+              <span class="ds-role__swatch" style="background: var(--ak-color-ink-900)"></span>
+              <div>
+                <div class="ds-role__name">3 · Componente</div>
+                <p class="ds-role__desc">
+                  Decisiones de una pieza concreta:
+                  <code>component.button.primary-bg</code>. Solo cuando el valor define
+                  el contrato visual del componente.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p class="ds-sub">Por qué importa</p>
+          <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
+            El build emite los alias como <code>var()</code>, no como el valor plano. Es
+            decir, <code>--ak-semantic-bg-canvas: var(--ak-color-ink-0)</code>. Cambiar un
+            primitivo reencamina toda la cascada en runtime, sin recompilar.
+          </p>
+        </section>
+
+        <!-- ---------- Color ---------- -->
+        <section class="ds-section" id="color">
+          <h2 style="font-size: var(--ak-font-size-xl)">Color</h2>
+          <p class="lead">
+            Blanco domina. El negro es acción. El rojo es puntuación: si ocupa más del
+            ~5% de una pantalla, sobra. Cada muestra indica su contraste sobre blanco.
+          </p>
+          <div data-ramps></div>
+        </section>
+
+        <!-- ---------- Roles ---------- -->
+        <section class="ds-section" id="roles">
+          <h2 style="font-size: var(--ak-font-size-xl)">Roles semánticos</h2>
+          <p class="lead">
+            La flecha indica a qué primitivo apunta cada rol. Esta indirección es el
+            motivo por el que la marca puede cambiar de color sin tocar un componente.
+          </p>
+          <div data-roles></div>
+        </section>
+
+        <!-- ---------- Tipografía ---------- -->
+        <section class="ds-section" id="tipografia">
+          <h2 style="font-size: var(--ak-font-size-xl)">Tipografía</h2>
+          <p class="lead">
+            Escala fluida con <code>clamp()</code>: no hay una sola media query de
+            tipografía en el sitio. Redimensiona la ventana y observa. El valor que se
+            muestra es la referencia desktop, que es la que importa Figma.
+          </p>
+          <div data-type></div>
+
+          <p class="ds-sub">Reglas</p>
+          <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
+            A mayor tamaño, menor peso y tracking más negativo. Los titulares van en
+            <code>weight.medium</code> (500), nunca en bold. El
+            <code>leading.tight</code> es 0.95: bajo 1, para que las líneas del h1 se
+            traben entre sí.
+          </p>
+        </section>
+
+        <!-- ---------- Espaciado ---------- -->
+        <section class="ds-section" id="espaciado">
+          <h2 style="font-size: var(--ak-font-size-xl)">Espaciado</h2>
+          <p class="lead">
+            Escala base 4px. En un sitio minimalista el espaciado <em>es</em> el diseño:
+            nunca inventes un valor fuera de esta escala.
+          </p>
+          <div data-space></div>
+
+          <p class="ds-sub">Los dos tokens fluidos</p>
+          <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
+            <code>space.section</code> gobierna el ritmo vertical de toda sección y
+            <code>space.gutter</code> el margen lateral de todo contenedor. Dos tokens
+            gobiernan la respiración del sitio entero.
+          </p>
+        </section>
+
+        <!-- ---------- Componentes ---------- -->
+        <section class="ds-section" id="componentes">
+          <h2 style="font-size: var(--ak-font-size-xl)">Componentes</h2>
+          <p class="lead">
+            Render en vivo, más el HTML y el CSS <strong>real</strong> de cada pieza —
+            extraído de <code>components.css</code> durante el build, no copiado a mano.
+            La pestaña «Tokens» lista lo que consume cada componente.
+          </p>
+
+          <template data-spec="Botón">
+            <button class="btn btn--primary" type="button">Agendar reunión</button>
+            <button class="btn btn--ghost" type="button">Ver servicios</button>
+            <button class="btn btn--primary btn--lg" type="button">Contacto</button>
+          </template>
+
+          <template data-spec="Enlace">
+            <a class="link" href="#componentes">Enlace con subrayado</a>
+            <a class="link-arrow" href="#componentes">Escríbenos</a>
+          </template>
+
+          <template data-spec="Eyebrow">
+            <p class="eyebrow">Estrategia, branding &amp; diseño</p>
+          </template>
+
+          <template data-spec="Badge">
+            <span class="badge">El más elegido</span>
+          </template>
+
+          <template data-spec="Tarjeta" data-render="block">
+            <article class="card" style="max-width: 340px">
+              <div class="card__media">
+                <img
+                  src="https://dummyimage.com/680x380/0a0a0a/ffffff&text=Alkance"
+                  alt=""
+                  width="680"
+                  height="380"
+                  loading="lazy"
+                />
+              </div>
+              <div class="card__body">
+                <h3 style="font-size: var(--ak-font-size-xl)">Para emprendedores</h3>
+                <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
+                  Soluciones accesibles y estratégicas para lanzar tu marca.
+                </p>
+              </div>
+              <div class="card__foot">
+                <a class="link-arrow" href="#componentes">Ver servicios</a>
+              </div>
+            </article>
+          </template>
+
+          <template data-spec="Tarjeta de servicio" data-render="block">
+            <div class="grid-services">
+              <article class="service-card service-card--featured">
+                <span class="badge service-card__badge">El más elegido</span>
+                <div class="stack stack--tight">
+                  <h3 class="service-card__name">Product Discovery Sprint</h3>
+                  <p class="service-card__text">
+                    Validamos tu idea en tiempo récord antes de escribir una sola línea
+                    de código.
+                  </p>
+                </div>
+                <ul class="service-card__list">
+                  <li>Producto definido y validado (no supuestos).</li>
+                  <li>Prototipo navegable de alta fidelidad.</li>
+                </ul>
+              </article>
+              <article class="service-card">
+                <div class="stack stack--tight">
+                  <h3 class="service-card__name">Digital Branding</h3>
+                  <p class="service-card__text">
+                    Identidades visuales pensadas nativamente para pantallas y apps.
+                  </p>
+                </div>
+                <ul class="service-card__list">
+                  <li>Identidad visual digital.</li>
+                  <li>Guías de estilo UI.</li>
+                </ul>
+              </article>
+            </div>
+          </template>
+
+          <template data-spec="Marquee" data-render="block">
+            <section class="marquee" aria-label="Áreas de trabajo">
+              <div class="marquee__track">
+                <div class="marquee__group">
+                  <span class="marquee__item">User Interface Design</span>
+                  <span class="marquee__dot" aria-hidden="true"></span>
+                  <span class="marquee__item">Branding</span>
+                  <span class="marquee__dot" aria-hidden="true"></span>
+                  <span class="marquee__item">Product Discovery Sprint</span>
+                  <span class="marquee__dot" aria-hidden="true"></span>
+                  <span class="marquee__item">Diseño Estratégico</span>
+                  <span class="marquee__dot" aria-hidden="true"></span>
+                </div>
+                <div class="marquee__group" aria-hidden="true">
+                  <span class="marquee__item">User Interface Design</span>
+                  <span class="marquee__dot"></span>
+                  <span class="marquee__item">Branding</span>
+                  <span class="marquee__dot"></span>
+                  <span class="marquee__item">Product Discovery Sprint</span>
+                  <span class="marquee__dot"></span>
+                  <span class="marquee__item">Diseño Estratégico</span>
+                  <span class="marquee__dot"></span>
+                </div>
+              </div>
+            </section>
+          </template>
+
+          <template data-spec="Hero" data-render="block">
+            <section class="hero" style="min-height: 320px">
+              <div class="hero__content" style="padding: var(--ak-space-6)">
+                <p class="eyebrow">Estrategia, branding &amp; diseño</p>
+                <h3 class="display" style="font-size: var(--ak-font-size-xl)">
+                  Transformamos ideas en marcas que <span class="accent">crecen</span>.
+                </h3>
+                <div class="cluster">
+                  <a class="btn btn--primary" href="#componentes">Agendar reunión</a>
+                  <a class="btn btn--ghost" href="#componentes">Ver servicios</a>
+                </div>
+              </div>
+              <div class="hero__media">
+                <img src="src/img/herobanner.jpg" alt="" width="1024" height="572" loading="lazy" />
+              </div>
+            </section>
+          </template>
+
+          <template data-spec="Banner de soporte" data-render="block">
+            <div class="support">
+              <div class="support__item">
+                <p class="support__title">Estrategia</p>
+                <p class="support__text">Modelos de negocio y sprints de descubrimiento.</p>
+              </div>
+              <div class="support__item">
+                <p class="support__title">Diseño de innovación</p>
+                <p class="support__text">Diseño centrado en el usuario e IA estratégica.</p>
+              </div>
+              <div class="support__item">
+                <p class="support__title">Crecimiento</p>
+                <p class="support__text">Rentabilidad estructurada de tu marca.</p>
+              </div>
+            </div>
+          </template>
+
+          <template data-spec="Caja de destaque" data-render="block">
+            <div class="highlight">
+              <p class="highlight__title">No necesitas más desarrollo. Necesitas claridad.</p>
+              <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
+                El mayor riesgo en etapas tempranas no es técnico, es estratégico.
+              </p>
+            </div>
+          </template>
+
+          <template data-spec="Paso de metodología" data-render="block">
+            <div class="grid-auto">
+              <div class="step">
+                <span class="step__num">01</span>
+                <h3 class="step__name">Entender</h3>
+                <p class="step__text">Profundizamos en tu negocio y objetivos.</p>
+              </div>
+              <div class="step">
+                <span class="step__num">02</span>
+                <h3 class="step__name">Co-crear</h3>
+                <p class="step__text">Ideamos y prototipamos soluciones en conjunto.</p>
+              </div>
+            </div>
+          </template>
+
+          <template data-spec="Pestañas" data-render="inverse">
+            <div class="tabs" role="tablist">
+              <button class="tab" type="button" role="tab" aria-selected="true">Entrenar</button>
+              <button class="tab" type="button" role="tab" aria-selected="false">Desarrollar</button>
+              <button class="tab" type="button" role="tab" aria-selected="false">Iterar</button>
+            </div>
+          </template>
+
+          <template data-spec="Flujo numerado" data-render="inverse">
+            <ol class="flow" style="width: 100%">
+              <li class="flow__item">
+                <div>
+                  <p class="flow__name">Entrar o proponer</p>
+                  <p class="flow__text">Definición del reto o propuesta inicial.</p>
+                </div>
+              </li>
+              <li class="flow__item">
+                <div>
+                  <p class="flow__name">Ideación y conceptualización</p>
+                  <p class="flow__text">Generación de alternativas estratégicas.</p>
+                </div>
+              </li>
+            </ol>
+          </template>
+
+          <template data-spec="Muro de logos" data-render="block">
+            <div class="logos">
+              <img class="logos__item" src="https://dummyimage.com/200x60/ffffff/0a0a0a&text=TALLS" alt="TALLS" width="200" height="60" loading="lazy" />
+              <img class="logos__item" src="https://dummyimage.com/200x60/ffffff/0a0a0a&text=Foodware" alt="Foodware" width="200" height="60" loading="lazy" />
+              <img class="logos__item" src="https://dummyimage.com/200x60/ffffff/0a0a0a&text=Aulatec" alt="Aulatec" width="200" height="60" loading="lazy" />
+            </div>
+          </template>
+        </section>
+
+        <!-- ---------- Iconos ---------- -->
+        <section class="ds-section" id="iconos">
+          <h2 style="font-size: var(--ak-font-size-xl)">Iconografía</h2>
+          <p class="lead">
+            <a class="link" href="https://lucide.dev/icons/" target="_blank" rel="noopener">Lucide</a> —
+            ~1600 iconos SVG de trazo, licencia ISC. El trazo va en 1.5 y no en el 2
+            por defecto: acompaña la tipografía de peso medium del sistema. Cada icono
+            hereda <code>currentColor</code>, así que nunca se le pinta un color a mano.
+            Haz clic en un nombre para copiar su markup. Ver <code>design/ICONS.md</code>.
+          </p>
+          <div data-icons></div>
+        </section>
+
+        <!-- ---------- Tabla ---------- -->
+        <section class="ds-section" id="tabla">
+          <h2 style="font-size: var(--ak-font-size-xl)">Tabla de tokens</h2>
+          <p class="lead">
+            El mapa completo: nombre del token, variable CSS, valor resuelto y su lugar
+            en la arquitectura. Generada desde <code>tokens.json</code> en cada build.
+          </p>
+
+          <div class="ds-filters">
+            <input
+              class="ds-search"
+              type="search"
+              placeholder="Filtrar por nombre, valor o descripción…"
+              aria-label="Filtrar tokens"
+              data-search
+            />
+            <span class="ds-count" data-count></span>
+          </div>
+
+          <div class="ds-table-wrap">
+            <table class="ds-table">
+              <thead>
+                <tr>
+                  <th scope="col">Token</th>
+                  <th scope="col">Variable CSS</th>
+                  <th scope="col">Valor</th>
+                  <th scope="col">Capa</th>
+                  <th scope="col">Descripción / uso recomendado</th>
+                </tr>
+              </thead>
+              <tbody data-table></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Lucide por CDN. En producción conviene un sprite local: ver design/ICONS.md. -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="src/js/icons-dict.js"></script>
+    <script src="src/js/tokens-manifest.js"></script>
+    <script src="src/js/css-source.js"></script>
+    <script src="src/js/designsystem.js"></script>
+    <script>
+      // Debe correr DESPUÉS de designsystem.js: sustituye los <i data-lucide>
+      // que este acaba de inyectar en el catálogo.
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1150 @@
+/* Componentes. Negro = acción, rojo = acento de marca.
+ *
+ * Los marcadores de bloque que siguen (arroba + "component" + nombre, dentro de
+ * un comentario) los parsea scripts/build-tokens.mjs para alimentar
+ * designsystem.html con el CSS real de cada pieza. No renombrarlos. */
+
+/* @component Botón */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ak-space-2);
+  min-height: var(--ak-size-tap);
+  padding: var(--ak-space-3) var(--ak-space-5);
+  border-radius: var(--ak-radius-pill);
+  font-size: var(--ak-font-size-sm);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background var(--ak-motion-duration-fast) var(--ak-motion-ease-standard),
+    color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard),
+    box-shadow var(--ak-motion-duration-fast) var(--ak-motion-ease-standard),
+    transform var(--ak-motion-duration-instant) var(--ak-motion-ease-spring);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--primary {
+  background: var(--ak-component-button-primary-bg);
+  color: var(--ak-component-button-primary-fg);
+}
+
+/* El único punto del sistema donde negro y rojo se tocan. */
+.btn--primary:hover {
+  background: var(--ak-component-button-primary-bg-hover);
+  box-shadow: var(--ak-shadow-accent);
+}
+
+.btn--ghost {
+  color: var(--ak-component-button-ghost-fg);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-component-button-ghost-border);
+}
+
+.btn--ghost:hover {
+  box-shadow: inset 0 0 0 var(--ak-border-thick) var(--ak-semantic-border-strong);
+}
+
+/* Sobre fondo negro se invierte: blanco es la acción. */
+.btn--inverse {
+  background: var(--ak-semantic-bg-canvas);
+  color: var(--ak-semantic-fg-default);
+}
+
+.btn--inverse:hover {
+  background: var(--ak-semantic-bg-accent);
+  color: var(--ak-semantic-fg-on-accent);
+}
+
+.btn--lg {
+  padding: var(--ak-space-5) var(--ak-space-7);
+  font-size: var(--ak-font-size-base);
+}
+
+/* @component Enlace */
+.link {
+  position: relative;
+  font-weight: var(--ak-font-weight-medium);
+}
+
+.link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.15em;
+  height: var(--ak-border-thick);
+  background: var(--ak-semantic-bg-accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--ak-motion-duration-base) var(--ak-motion-ease-entrance);
+}
+
+.link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Enlace con flecha que se desplaza al hover. */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ak-space-3);
+  font-size: var(--ak-font-size-lg);
+  font-weight: var(--ak-font-weight-medium);
+  color: var(--ak-semantic-fg-accent);
+}
+
+.link-arrow::after {
+  content: "→";
+  transition: transform var(--ak-motion-duration-base) var(--ak-motion-ease-entrance);
+}
+
+.link-arrow:hover::after {
+  transform: translateX(var(--ak-space-2));
+}
+
+/* @component Eyebrow */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ak-space-2);
+  font-size: var(--ak-font-size-xs);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-widest);
+  text-transform: uppercase;
+  color: var(--ak-semantic-fg-muted);
+}
+
+.eyebrow::before {
+  content: "";
+  width: var(--ak-space-2);
+  height: var(--ak-space-2);
+  border-radius: var(--ak-radius-pill);
+  background: var(--ak-semantic-bg-accent);
+  flex: none;
+}
+
+.eyebrow--inverse {
+  color: var(--ak-semantic-fg-inverse-muted);
+}
+
+/* @component Tarjeta */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-4);
+  padding: var(--ak-space-6);
+  border-radius: var(--ak-radius-lg);
+  background: var(--ak-component-card-bg);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-component-card-border);
+  transition: box-shadow var(--ak-motion-duration-base) var(--ak-motion-ease-standard),
+    transform var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
+}
+
+.card:hover {
+  transform: translateY(calc(var(--ak-space-1) * -1));
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-component-card-border-hover),
+    var(--ak-shadow-md);
+}
+
+.card__media {
+  margin: calc(var(--ak-space-6) * -1) calc(var(--ak-space-6) * -1) 0;
+  border-radius: var(--ak-radius-lg) var(--ak-radius-lg) 0 0;
+  overflow: hidden;
+}
+
+.card__media img {
+  width: 100%;
+  transition: transform var(--ak-motion-duration-slow) var(--ak-motion-ease-standard);
+}
+
+.card:hover .card__media img {
+  transform: scale(1.04);
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-3);
+  flex: 1;
+}
+
+.card__foot {
+  margin-top: auto;
+  padding-top: var(--ak-space-4);
+}
+
+/* @component Badge */
+.badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: var(--ak-space-1) var(--ak-space-3);
+  border-radius: var(--ak-radius-pill);
+  background: var(--ak-semantic-bg-accent);
+  color: var(--ak-semantic-fg-on-accent);
+  font-size: var(--ak-font-size-xs);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-wide);
+  text-transform: uppercase;
+}
+
+/* @component Acento tipográfico */
+.accent {
+  color: var(--ak-semantic-fg-accent);
+}
+
+.display {
+  font-size: var(--ak-font-size-5xl);
+  font-weight: var(--ak-font-weight-medium);
+  line-height: var(--ak-font-leading-tight);
+  letter-spacing: var(--ak-font-tracking-tighter);
+  text-wrap: balance;
+}
+
+.lead {
+  font-size: var(--ak-font-size-lg);
+  color: var(--ak-semantic-fg-muted);
+  line-height: var(--ak-font-leading-normal);
+}
+
+.section--inverse .lead {
+  color: var(--ak-semantic-fg-inverse-muted);
+}
+
+/* @component Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--ak-layer-sticky);
+  background: color-mix(in srgb, var(--ak-semantic-bg-canvas) 80%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: var(--ak-border-hairline) solid transparent;
+  transition: border-color var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
+}
+
+/* .is-scrolled lo aplica src/js/main.js */
+.header.is-scrolled {
+  border-bottom-color: var(--ak-component-header-border-scrolled);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ak-space-5);
+  min-height: var(--ak-space-8);
+  padding-block: var(--ak-space-3);
+}
+
+.header__brand {
+  font-size: var(--ak-font-size-lg);
+  font-weight: var(--ak-font-weight-semibold);
+  letter-spacing: var(--ak-font-tracking-tight);
+}
+
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--ak-space-6);
+}
+
+@media (max-width: 768px) {
+  .header__nav .link {
+    display: none;
+  }
+}
+
+/* @component Hero */
+/* Layout partido: texto a la izquierda, imagen a la derecha.
+   La foto es un mockup 16:9 sobre fondo de estudio plano (#F7F7F7). El hero usa
+   ESE MISMO color, así que las dos mitades son una sola superficie continua y la
+   imagen se funde sin costura: no necesita marco, ni sombra, ni recorte.
+   Por eso NO se usa object-fit:cover — la columna es casi cuadrada y un cover
+   sobre una foto 16:9 se comería la taza y parte del laptop. */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  min-height: 62vh;
+  background: var(--ak-component-hero-bg);
+}
+
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-6);
+  padding: var(--ak-space-7) var(--ak-space-gutter);
+  /* Alinea el texto con el .container del resto del sitio en vez de pegarlo al
+     borde: la columna mide media pantalla, pero el margen sigue el mismo eje. */
+  margin-inline-start: auto;
+  max-width: calc(var(--ak-size-container) / 2);
+  width: 100%;
+}
+
+.hero__media {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: center;
+  height: 100%;
+  padding-block: var(--ak-space-6);
+}
+
+/* Sin recorte: la foto se muestra entera y su fondo continúa en el del hero.
+   El contenido de la imagen está descentrado —vive entre el 29% y el 88% de su
+   ancho, con el centro óptico en el 59%—, así que centrada dejaría un vacío
+   entre el texto y el laptop. El -8% corrige ese descentrado y el 110% la
+   agranda; el contenido llega hasta el 89% del ancho de la columna, o sea que
+   nada se corta. Como el fondo se funde, el desplazamiento es invisible.
+   Tope en 1024px: es el ancho nativo del JPG y ampliarlo más lo vuelve borroso. */
+.hero__media img {
+  width: 110%;
+  max-width: 1024px;
+  height: auto;
+  max-height: 100%;
+  margin-inline-start: -8%;
+  object-fit: contain;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  /* En móvil la imagen va primero: entrega el impacto visual antes del scroll. */
+  .hero__media {
+    order: -1;
+    padding-block: 0;
+  }
+
+  /* Anula el 110%/-8% del layout de dos columnas. Aquí la columna ocupa todo el
+     viewport, así que la imagen sobresaldría y el overflow-x:hidden del body la
+     recortaría por la derecha, comiéndose la taza. */
+  .hero__media img {
+    width: 100%;
+    margin-inline-start: 0;
+  }
+
+  .hero__content {
+    max-width: none;
+    padding-block: var(--ak-space-7);
+  }
+}
+
+/* @component Banner de soporte */
+/* Pie del hero: banda negra a ancho completo, pegada al hero sin separación.
+   Es la primera transición de la página —claro a negro— y el corte debe ser
+   seco: cualquier margen entre medio rompe el efecto.
+   Color: el título va en BLANCO y el acento se traslada al icono. El rojo de
+   marca (accent.500) sobre negro da 4.34:1 y no pasa AA para texto; por eso el
+   icono usa fg.accent-inverse (accent.400, 5.43:1). Ver design/DESIGN.md. */
+.support {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--ak-semantic-bg-inverse);
+  color: var(--ak-semantic-fg-inverse);
+}
+
+@media (max-width: 900px) {
+  .support {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .support {
+    grid-template-columns: 1fr;
+  }
+}
+
+.support__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ak-space-3);
+  padding: var(--ak-space-7) var(--ak-space-5);
+  text-align: center;
+  /* Separador solo entre columnas: no toca los bordes de la banda. */
+  border-inline-start: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
+  transition: background var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
+}
+
+.support__item:first-child {
+  border-inline-start: none;
+}
+
+@media (max-width: 900px) {
+  /* Al pasar a 2 columnas, el separador izquierdo cae en la 1ª de cada fila. */
+  .support__item:nth-child(odd) {
+    border-inline-start: none;
+  }
+  .support__item:nth-child(n + 3) {
+    border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
+  }
+}
+
+@media (max-width: 520px) {
+  .support__item {
+    border-inline-start: none;
+  }
+  .support__item + .support__item {
+    border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
+  }
+}
+
+.support__item:hover {
+  background: var(--ak-semantic-bg-inverse-raised);
+}
+
+/* El único punto de color de la banda. Sobre negro, accent.400 y no accent.500. */
+.support__icon {
+  color: var(--ak-semantic-fg-accent-inverse);
+  margin-bottom: var(--ak-space-2);
+}
+
+.support__title {
+  font-size: var(--ak-font-size-sm);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ak-semantic-fg-inverse);
+}
+
+.support__text {
+  font-size: var(--ak-font-size-sm);
+  color: var(--ak-semantic-fg-inverse-muted);
+  line-height: var(--ak-font-leading-relaxed);
+  max-width: 28ch;
+}
+
+/* @component Caja de destaque */
+.highlight {
+  padding: var(--ak-space-7);
+  border-radius: var(--ak-radius-lg);
+  background: var(--ak-semantic-bg-accent-subtle);
+  border-inline-start: var(--ak-border-heavy) solid var(--ak-semantic-border-accent);
+}
+
+.highlight__title {
+  font-size: var(--ak-font-size-xl);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-tight);
+  margin-bottom: var(--ak-space-4);
+}
+
+/* @component Tarjeta de servicio */
+/* Grilla de servicios. Una sola tarjeta lleva --featured: es el ancla comercial,
+   y el resto queda en gris para que el ojo caiga primero en ella. */
+.service-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-5);
+  padding: var(--ak-space-7);
+  border-radius: var(--ak-radius-xl);
+  background: var(--ak-component-service-card-bg);
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-component-service-card-border);
+  transition: transform var(--ak-motion-duration-base) var(--ak-motion-ease-standard),
+    box-shadow var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
+}
+
+.service-card:hover {
+  transform: translateY(calc(var(--ak-space-2) * -1));
+  box-shadow: inset 0 0 0 var(--ak-border-hairline) var(--ak-semantic-border-default),
+    var(--ak-shadow-md);
+}
+
+.service-card--featured {
+  background: var(--ak-component-service-card-bg-featured);
+  box-shadow: inset 0 0 0 var(--ak-border-thick) var(--ak-component-service-card-border-featured);
+}
+
+.service-card--featured:hover {
+  box-shadow: inset 0 0 0 var(--ak-border-thick) var(--ak-component-service-card-border-featured),
+    var(--ak-shadow-accent);
+}
+
+/* Cabalga sobre el borde superior, como una pestaña cosida a la tarjeta. */
+.service-card__badge {
+  position: absolute;
+  top: 0;
+  inset-inline-end: var(--ak-space-6);
+  transform: translateY(-50%);
+}
+
+.service-card__name {
+  font-size: var(--ak-font-size-xl);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-tight);
+}
+
+.service-card__text {
+  font-size: var(--ak-font-size-sm);
+  color: var(--ak-semantic-fg-muted);
+  line-height: var(--ak-font-leading-relaxed);
+  max-width: none;
+}
+
+.service-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-4);
+  margin-top: auto;
+  padding-top: var(--ak-space-5);
+  border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+}
+
+.service-card__list li {
+  display: flex;
+  gap: var(--ak-space-3);
+  align-items: baseline;
+  font-size: var(--ak-font-size-sm);
+}
+
+.service-card__list li::before {
+  content: "→";
+  color: var(--ak-semantic-fg-accent);
+  flex: none;
+  transition: transform var(--ak-motion-duration-fast) var(--ak-motion-ease-entrance);
+}
+
+.service-card__list li:hover::before {
+  transform: translateX(var(--ak-space-1));
+}
+
+@media (max-width: 768px) {
+  .service-card {
+    padding: var(--ak-space-6);
+  }
+}
+
+/* @component Marquee */
+/* Cinta infinita, sin JS. El track contiene DOS grupos idénticos (el segundo con
+   aria-hidden) y se desplaza exactamente el ancho de un grupo más un gap: en ese
+   punto el grupo 2 ocupa la posición donde arrancó el grupo 1 y el reinicio es
+   invisible.
+   La cuenta: ancho total = 2·grupo + gap, luego 50% = grupo + gap/2. Falta gap/2
+   para completar un grupo entero, de ahí el `- gap/2` extra en la traslación.
+   Sin ese ajuste el bucle da un salto visible en cada vuelta. */
+.marquee {
+  --marquee-gap: var(--ak-space-7);
+  overflow: hidden;
+  padding-block: var(--ak-space-6);
+  border-block: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+  /* Desvanece los extremos para que las palabras no se corten de golpe. */
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  align-items: center;
+  gap: var(--marquee-gap);
+  width: max-content;
+  animation: marquee-scroll var(--ak-component-marquee-duration) linear infinite;
+}
+
+.marquee__group {
+  display: flex;
+  align-items: center;
+  gap: var(--marquee-gap);
+  flex: none;
+}
+
+/* Pausa al pasar el cursor: si algo te interesó, puedes leerlo. */
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+.marquee__item {
+  font-size: var(--ak-font-size-2xl);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-tight);
+  white-space: nowrap;
+}
+
+.marquee__dot {
+  width: var(--ak-space-2);
+  height: var(--ak-space-2);
+  border-radius: var(--ak-radius-pill);
+  background: var(--ak-component-marquee-separator);
+  flex: none;
+}
+
+@keyframes marquee-scroll {
+  to {
+    transform: translateX(calc(-50% - var(--marquee-gap) / 2));
+  }
+}
+
+/* Detenida muestra el primer grupo como una fila estática legible. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+}
+
+/* @component Flujo numerado */
+.flow {
+  counter-reset: flow;
+}
+
+.flow__item {
+  counter-increment: flow;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--ak-space-5);
+  padding-block: var(--ak-space-5);
+  border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
+  transition: padding-inline-start var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
+}
+
+.flow__item:hover {
+  padding-inline-start: var(--ak-space-4);
+}
+
+.flow__item::before {
+  content: counter(flow, decimal-leading-zero);
+  font-size: var(--ak-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--ak-semantic-fg-accent);
+}
+
+.flow__name {
+  font-size: var(--ak-font-size-lg);
+  font-weight: var(--ak-font-weight-medium);
+}
+
+.flow__text {
+  font-size: var(--ak-font-size-sm);
+  color: var(--ak-semantic-fg-inverse-muted);
+  margin-top: var(--ak-space-2);
+}
+
+/* @component Pestañas */
+.tabs {
+  display: flex;
+  gap: var(--ak-space-2);
+  padding: var(--ak-space-1);
+  border-radius: var(--ak-radius-pill);
+  background: var(--ak-semantic-bg-inverse-raised);
+  align-self: flex-start;
+}
+
+.tab {
+  padding: var(--ak-space-3) var(--ak-space-5);
+  border-radius: var(--ak-radius-pill);
+  font-size: var(--ak-font-size-sm);
+  color: var(--ak-semantic-fg-inverse-muted);
+  transition: background var(--ak-motion-duration-fast) var(--ak-motion-ease-standard),
+    color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+
+.tab:hover {
+  color: var(--ak-semantic-fg-inverse);
+}
+
+.tab[aria-selected="true"] {
+  background: var(--ak-semantic-bg-accent);
+  color: var(--ak-semantic-fg-on-accent);
+}
+
+/* @component Paso de metodología */
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-3);
+  padding-top: var(--ak-space-5);
+  border-top: var(--ak-border-thick) solid var(--ak-semantic-border-strong);
+}
+
+.step__num {
+  font-size: var(--ak-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--ak-semantic-fg-accent);
+}
+
+.step__name {
+  display: flex;
+  align-items: center;
+  gap: var(--ak-space-3);
+  font-size: var(--ak-font-size-xl);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-tight);
+}
+
+.step__text {
+  font-size: var(--ak-font-size-sm);
+  color: var(--ak-semantic-fg-muted);
+}
+
+/* @component Muro de logos */
+/* Los logos van en gris y recuperan su color al hover: cinco marcas a todo color
+   competirían con el acento rojo y romperían la jerarquía de la página.
+   Preparado para SVG: la altura manda y el ancho se acomoda, así que logos de
+   proporciones distintas quedan ópticamente parejos sin ajustes individuales. */
+.logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ak-space-6) var(--ak-space-8);
+}
+
+.logos__item {
+  height: var(--ak-space-7);
+  width: auto;
+  max-width: var(--ak-space-10);
+  object-fit: contain;
+  /* 0.55 y no menos: por debajo, un logo gris sobre blanco deja de leerse. */
+  opacity: 0.55;
+  filter: grayscale(1);
+  transition: opacity var(--ak-motion-duration-base) var(--ak-motion-ease-standard),
+    filter var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
+}
+
+.logos__item:hover {
+  opacity: 1;
+  filter: grayscale(0);
+}
+
+/* Los logos dentro de la cinta: más grandes y menos apagados que en la rejilla
+   estática, porque pasan de largo y solo se ven un momento. El max-width de
+   .logos no aplica aquí — con la cinta manda la altura y el ancho se acomoda,
+   si no, un wordmark alargado como Foodware quedaría aplastado. */
+.marquee--logos {
+  --marquee-gap: var(--ak-space-8);
+  padding-block: var(--ak-space-6);
+}
+
+.marquee--logos .logos__item {
+  height: var(--ak-space-7);
+  max-width: none;
+  opacity: 0.72;
+  flex: none;
+}
+
+.marquee--logos .logos__item:hover {
+  opacity: 1;
+}
+
+/* @component Icono */
+/* Iconografía Lucide (https://lucide.dev) — SVG de trazo, ISC, ~1600 iconos.
+   El SVG usa stroke="currentColor", así que el icono toma el color de su
+   contenedor: nunca se le pinta un color a mano.
+   Ver design/ICONS.md para el diccionario concepto -> icono. */
+.icon {
+  width: var(--ak-component-icon-size);
+  height: var(--ak-component-icon-size);
+  stroke-width: var(--ak-component-icon-stroke);
+  flex: none;
+  vertical-align: middle;
+}
+
+.icon--sm {
+  width: var(--ak-component-icon-size-sm);
+  height: var(--ak-component-icon-size-sm);
+}
+
+.icon--lg {
+  width: var(--ak-component-icon-size-lg);
+  height: var(--ak-component-icon-size-lg);
+}
+
+.icon--xl {
+  width: var(--ak-component-icon-size-xl);
+  height: var(--ak-component-icon-size-xl);
+}
+
+.icon--accent {
+  color: var(--ak-semantic-fg-accent);
+}
+
+/* Icono dentro de un círculo, para encabezados de tarjeta. */
+.icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ak-space-8);
+  height: var(--ak-space-8);
+  border-radius: var(--ak-radius-pill);
+  background: var(--ak-semantic-bg-accent-subtle);
+  color: var(--ak-semantic-fg-accent);
+  flex: none;
+}
+
+/* Reserva el hueco mientras Lucide sustituye el <i> por el <svg>, para que no
+   salte el layout.
+   OJO con el selector: tiene que ser `i[data-lucide]`, no `[data-lucide]`.
+   Lucide conserva el atributo data-lucide en el <svg> que genera, así que un
+   `[data-lucide]` suelto también alcanza al icono ya renderizado y, al tener la
+   misma especificidad que .icon--sm/--lg/--xl pero ir después, les gana y deja
+   todos los iconos clavados en 24px. Con `i[...]` la regla muere en cuanto el
+   <i> desaparece, que es justo lo que se busca. */
+i[data-lucide] {
+  display: inline-block;
+  width: var(--ak-component-icon-size);
+  height: var(--ak-component-icon-size);
+}
+
+/* @component Media */
+.media {
+  border-radius: var(--ak-radius-lg);
+  overflow: hidden;
+}
+
+.media img {
+  width: 100%;
+}
+
+/* @component Reveal */
+/* .reveal parte oculto; main.js añade .is-visible vía IntersectionObserver. */
+.reveal {
+  opacity: 0;
+  transform: translateY(var(--ak-space-5));
+  transition: opacity var(--ak-motion-duration-reveal) var(--ak-motion-ease-entrance),
+    transform var(--ak-motion-duration-reveal) var(--ak-motion-ease-entrance);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Escalona hijos: cada uno entra --ak-motion-duration-instant después del anterior. */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(var(--ak-space-5));
+  transition: opacity var(--ak-motion-duration-reveal) var(--ak-motion-ease-entrance),
+    transform var(--ak-motion-duration-reveal) var(--ak-motion-ease-entrance);
+  transition-delay: calc(var(--ak-motion-duration-instant) * var(--i, 0));
+}
+
+.reveal-stagger.is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Sin JS o con motion reducido, el contenido debe verse igual. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-stagger > * {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================
+   INNOVACIÓN — sección con fondo en video
+   ============================================================ */
+
+.inno {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* El clip (1280x720) cubre la sección completa. object-fit lo recorta según
+   la proporción; no hay foco que preservar porque es una textura abstracta. */
+.inno__video {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* El halo central del clip llega a #fafafa: sin este velo el titular blanco
+   desaparecería justo encima. Más denso a la izquierda, que es donde va el texto. */
+.inno__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(100deg,
+      rgba(10, 10, 10, 0.94) 0%,
+      rgba(10, 10, 10, 0.86) 42%,
+      rgba(10, 10, 10, 0.62) 70%,
+      rgba(10, 10, 10, 0.72) 100%);
+}
+
+/* Rejilla asimétrica: texto a la izquierda, foto alta a la derecha ocupando
+   las dos filas, y la cita cerrando bajo el texto. */
+.inno__inner {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--ak-space-8) var(--ak-space-6);
+  align-items: start;
+}
+
+.inno__intro {
+  grid-column: 1 / span 6;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-4);
+}
+
+.inno__display {
+  font-size: var(--ak-font-size-4xl);
+  font-weight: var(--ak-font-weight-medium);
+  line-height: 0.88;
+  letter-spacing: var(--ak-font-tracking-tighter);
+  /* Rótulo de fondo: marca el territorio sin competir con el titular. */
+  color: transparent;
+  -webkit-text-stroke: 1px var(--ak-color-ink-500);
+}
+
+.inno__title {
+  font-size: var(--ak-font-size-2xl);
+  letter-spacing: var(--ak-font-tracking-tight);
+  color: var(--ak-semantic-fg-inverse);
+  text-wrap: balance;
+  margin-top: var(--ak-space-2);
+}
+
+.inno .lead {
+  color: var(--ak-semantic-fg-inverse-muted);
+  max-width: 46ch;
+}
+
+/* La foto arranca más arriba que el texto y se sale de la caja: rompe la
+   simetría de la rejilla, que es lo que hace el layout menos plano. */
+.inno__figure {
+  grid-column: 8 / span 5;
+  grid-row: 1 / span 2;
+  margin: 0;
+  align-self: center;
+}
+
+.inno__frame {
+  position: relative;
+  isolation: isolate;
+}
+
+.inno__frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--ak-radius-lg);
+  background: var(--ak-semantic-bg-accent);
+  transform: translate(var(--ak-space-3), var(--ak-space-3));
+  transition: transform var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
+}
+
+.inno__figure:hover .inno__frame::before {
+  transform: translate(var(--ak-space-5), var(--ak-space-5));
+}
+
+.inno__photo {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  /* El encuadre original es apaisado: al recortarlo a vertical hay que
+     sostener a la diseñadora y el wireframe, que están a la izquierda. */
+  object-position: 34% center;
+  border-radius: var(--ak-radius-lg);
+}
+
+.inno__caption {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ak-space-3);
+  margin-top: var(--ak-space-4);
+  font-size: var(--ak-font-size-sm);
+  color: var(--ak-semantic-fg-inverse-muted);
+}
+
+.inno__caption-index {
+  font-weight: var(--ak-font-weight-medium);
+  color: var(--ak-semantic-fg-accent-inverse);
+  letter-spacing: var(--ak-font-tracking-wide);
+}
+
+/* Cita, no tarjeta: sin caja ni relleno, solo el filo rojo. */
+.inno__quote {
+  grid-column: 1 / span 6;
+  margin: 0;
+  padding-inline-start: var(--ak-space-5);
+  border-inline-start: var(--ak-border-heavy) solid var(--ak-semantic-border-accent);
+}
+
+.inno__quote-text {
+  font-size: var(--ak-font-size-xl);
+  font-weight: var(--ak-font-weight-medium);
+  line-height: var(--ak-font-leading-tight);
+  letter-spacing: var(--ak-font-tracking-tight);
+  color: var(--ak-semantic-fg-inverse);
+  text-wrap: balance;
+}
+
+.inno__quote-note {
+  margin-top: var(--ak-space-4);
+  font-size: var(--ak-font-size-sm);
+  color: var(--ak-semantic-fg-inverse-muted);
+  max-width: 54ch;
+}
+
+.inno__quote-link {
+  margin-top: var(--ak-space-5);
+  color: var(--ak-semantic-fg-accent-inverse);
+}
+
+@media (max-width: 900px) {
+  .inno__inner {
+    grid-template-columns: 1fr;
+    gap: var(--ak-space-6);
+  }
+
+  .inno__intro,
+  .inno__quote {
+    grid-column: 1;
+  }
+
+  /* En una columna la foto va entre el texto y la cita, no arriba: mantiene
+     el orden de lectura del argumento. */
+  .inno__figure {
+    grid-column: 1;
+    grid-row: auto;
+    max-width: 420px;
+  }
+
+  .inno__photo {
+    aspect-ratio: 4 / 3;
+  }
+
+  /* Sin columnas el degradado lateral no sirve: el texto ocupa todo el ancho. */
+  .inno__scrim {
+    background: rgba(10, 10, 10, 0.9);
+  }
+}
+
+/* Sin movimiento el video se congela; el póster queda de textura fija. */
+@media (prefers-reduced-motion: reduce) {
+  .inno__figure:hover .inno__frame::before {
+    transform: translate(var(--ak-space-3), var(--ak-space-3));
+  }
+}
+
+/* @component Logo del header */
+/* El SVG trae su color: negro + acento rojo. Manda la altura, como en los
+   logos de cliente, para que el ancho se acomode solo. */
+.header__logo {
+  height: var(--ak-space-6);
+  width: auto;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .header__logo {
+    height: var(--ak-space-5);
+  }
+}
+
+/* @component Pasos del proceso */
+/* Cuatro en una fila: es la lectura del proceso, y partirla deja el 04
+   huérfano. Bajo 1024px pasa a 2x2, que sigue leyéndose por parejas. */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--ak-space-6) var(--ak-space-5);
+}
+
+.steps .step {
+  transition: border-color var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
+}
+
+.steps .step:hover {
+  border-top-color: var(--ak-semantic-border-accent);
+}
+
+.steps .step__num {
+  font-size: var(--ak-font-size-lg);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-wide);
+}
+
+@media (max-width: 1023px) {
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* @component Cabecera de prueba social */
+.clientes-logos__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ak-space-3);
+  text-align: center;
+  margin-bottom: var(--ak-space-7);
+}
+
+.clientes-logos__title {
+  font-size: var(--ak-font-size-2xl);
+}
+
+/* @component Pie de conversión */
+.footer {
+  padding-block: clamp(var(--ak-space-8), 6vw, var(--ak-space-9)) var(--ak-space-6);
+}
+
+/* El llamado a la izquierda y los datos al costado: apilados hacían un pie
+   de tres pantallas para tres líneas de contacto. */
+.footer__top {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--ak-space-8);
+  align-items: start;
+}
+
+.footer__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ak-space-6);
+}
+
+.footer__title {
+  font-size: var(--ak-font-size-2xl);
+  max-width: 20ch;
+}
+
+.footer__meta {
+  display: grid;
+  gap: var(--ak-space-5);
+  align-content: start;
+}
+
+.footer__legal {
+  margin-top: var(--ak-space-7);
+  padding-top: var(--ak-space-5);
+  border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
+  font-size: var(--ak-font-size-xs);
+  color: var(--ak-semantic-fg-inverse-muted);
+  /* base.css limita los <p> a 68ch: sin esto el filete se corta a media caja. */
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .footer__top {
+    grid-template-columns: 1fr;
+    gap: var(--ak-space-7);
+  }
+
+  .footer__meta {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}

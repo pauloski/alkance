@@ -1,0 +1,168 @@
+/* GENERADO por scripts/build-tokens.mjs — NO EDITAR A MANO.
+ * Fuente: design/tokens.json · Regenerar: node scripts/build-tokens.mjs
+ */
+
+:root {
+  /* color — CAPA PRIMITIVA (global) */
+  --ak-color-ink-0: #FFFFFF;
+  --ak-color-ink-25: #F7F7F7;
+  --ak-color-ink-50: #F2F2F2;
+  --ak-color-ink-100: #E4E4E4;
+  --ak-color-ink-200: #C4C4C4;
+  --ak-color-ink-300: #949494;
+  --ak-color-ink-400: #6B6B6B;
+  --ak-color-ink-500: #454545;
+  --ak-color-ink-600: #2E2E2E;
+  --ak-color-ink-700: #1F1F1F;
+  --ak-color-ink-800: #141414;
+  --ak-color-ink-900: #0A0A0A;
+  --ak-color-ink-1000: #000000;
+  --ak-color-accent-50: #FEF3F1;
+  --ak-color-accent-100: #FDE0DD;
+  --ak-color-accent-300: #F98077;
+  --ak-color-accent-400: #F04A3F;
+  --ak-color-accent-500: #E5241A;
+  --ak-color-accent-600: #B8170D;
+  --ak-color-accent-700: #8E1109;
+  --ak-color-state-focus: var(--ak-color-accent-500);
+  --ak-color-state-success: #0F7B4F;
+  --ak-color-state-warning: #B26B00;
+  --ak-color-state-danger: #B8170D;
+
+  /* semantic — CAPA SEMÁNTICA */
+  --ak-semantic-bg-canvas: var(--ak-color-ink-0);
+  --ak-semantic-bg-subtle: var(--ak-color-ink-50);
+  --ak-semantic-bg-muted: var(--ak-color-ink-100);
+  --ak-semantic-bg-inverse: var(--ak-color-ink-900);
+  --ak-semantic-bg-inverse-raised: var(--ak-color-ink-700);
+  --ak-semantic-bg-accent: var(--ak-color-accent-500);
+  --ak-semantic-bg-accent-subtle: var(--ak-color-accent-50);
+  --ak-semantic-fg-default: var(--ak-color-ink-900);
+  --ak-semantic-fg-muted: var(--ak-color-ink-400);
+  --ak-semantic-fg-subtle: var(--ak-color-ink-300);
+  --ak-semantic-fg-inverse: var(--ak-color-ink-0);
+  --ak-semantic-fg-inverse-muted: var(--ak-color-ink-300);
+  --ak-semantic-fg-accent: var(--ak-color-accent-500);
+  --ak-semantic-fg-accent-inverse: var(--ak-color-accent-400);
+  --ak-semantic-fg-on-accent: var(--ak-color-ink-0);
+  --ak-semantic-border-subtle: var(--ak-color-ink-100);
+  --ak-semantic-border-default: var(--ak-color-ink-200);
+  --ak-semantic-border-strong: var(--ak-color-ink-900);
+  --ak-semantic-border-inverse: var(--ak-color-ink-700);
+  --ak-semantic-border-accent: var(--ak-color-accent-500);
+
+  /* component — CAPA DE COMPONENTE */
+  --ak-component-button-primary-bg: var(--ak-semantic-bg-inverse);
+  --ak-component-button-primary-bg-hover: var(--ak-semantic-bg-accent);
+  --ak-component-button-primary-fg: var(--ak-semantic-fg-inverse);
+  --ak-component-button-ghost-fg: var(--ak-semantic-fg-default);
+  --ak-component-button-ghost-border: var(--ak-semantic-border-default);
+  --ak-component-card-bg: var(--ak-semantic-bg-canvas);
+  --ak-component-card-border: var(--ak-semantic-border-subtle);
+  --ak-component-card-border-hover: var(--ak-semantic-border-default);
+  --ak-component-header-border-scrolled: var(--ak-semantic-border-subtle);
+  --ak-component-service-card-bg: var(--ak-semantic-bg-subtle);
+  --ak-component-service-card-bg-featured: var(--ak-semantic-bg-canvas);
+  --ak-component-service-card-border: var(--ak-semantic-border-subtle);
+  --ak-component-service-card-border-featured: var(--ak-semantic-border-accent);
+  --ak-component-hero-bg: var(--ak-color-ink-25);
+  --ak-component-icon-size: 24px;
+  --ak-component-icon-size-sm: 16px;
+  --ak-component-icon-size-lg: 32px;
+  --ak-component-icon-size-xl: 40px;
+  --ak-component-icon-stroke: 1.5;
+  --ak-component-marquee-duration: 40s;
+  --ak-component-marquee-separator: var(--ak-semantic-fg-accent);
+
+  /* font — CAPA PRIMITIVA */
+  --ak-font-family-sans: 'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ak-font-family-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  --ak-font-weight-regular: 400;
+  --ak-font-weight-medium: 500;
+  --ak-font-weight-semibold: 600;
+  --ak-font-weight-bold: 700;
+  --ak-font-size-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+  --ak-font-size-sm: clamp(0.875rem, 0.85rem + 0.15vw, 0.9375rem);
+  --ak-font-size-base: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --ak-font-size-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+  --ak-font-size-xl: clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem);
+  --ak-font-size-2xl: clamp(1.75rem, 1.4rem + 1.6vw, 2.75rem);
+  --ak-font-size-3xl: clamp(2.25rem, 1.6rem + 3vw, 4rem);
+  --ak-font-size-4xl: clamp(3rem, 1.8rem + 5.4vw, 6rem);
+  --ak-font-size-5xl: clamp(3.75rem, 1.5rem + 10vw, 9rem);
+  --ak-font-leading-tight: 0.95;
+  --ak-font-leading-snug: 1.1;
+  --ak-font-leading-normal: 1.5;
+  --ak-font-leading-relaxed: 1.7;
+  --ak-font-tracking-tighter: -0.04em;
+  --ak-font-tracking-tight: -0.02em;
+  --ak-font-tracking-normal: 0em;
+  --ak-font-tracking-wide: 0.04em;
+  --ak-font-tracking-widest: 0.16em;
+
+  /* space — CAPA PRIMITIVA */
+  --ak-space-0: 0;
+  --ak-space-1: 0.25rem;
+  --ak-space-2: 0.5rem;
+  --ak-space-3: 0.75rem;
+  --ak-space-4: 1rem;
+  --ak-space-5: 1.5rem;
+  --ak-space-6: 2rem;
+  --ak-space-7: 3rem;
+  --ak-space-8: 4rem;
+  --ak-space-9: 6rem;
+  --ak-space-10: 8rem;
+  --ak-space-11: 12rem;
+  --ak-space-section: clamp(4rem, 10vw, 10rem);
+  --ak-space-gutter: clamp(1.25rem, 5vw, 4rem);
+
+  /* size — CAPA SEMÁNTICA */
+  --ak-size-container: 80rem;
+  --ak-size-container-narrow: 47.5rem;
+  --ak-size-container-wide: 100rem;
+  --ak-size-tap: 2.75rem;
+
+  /* radius — CAPA PRIMITIVA */
+  --ak-radius-none: 0px;
+  --ak-radius-sm: 2px;
+  --ak-radius-md: 6px;
+  --ak-radius-lg: 12px;
+  --ak-radius-xl: 24px;
+  --ak-radius-pill: 999px;
+
+  /* border — CAPA PRIMITIVA */
+  --ak-border-hairline: 1px;
+  --ak-border-thick: 2px;
+  --ak-border-heavy: 4px;
+
+  /* shadow — CAPA PRIMITIVA */
+  --ak-shadow-sm: 0px 1px 2px 0px rgba(0, 0, 0, 0.059);
+  --ak-shadow-md: 0px 8px 24px -8px rgba(0, 0, 0, 0.122);
+  --ak-shadow-lg: 0px 24px 60px -16px rgba(0, 0, 0, 0.18);
+  --ak-shadow-accent: 0px 12px 40px -12px rgba(229, 36, 26, 0.451);
+
+  /* motion — CAPA PRIMITIVA */
+  --ak-motion-duration-instant: 80ms;
+  --ak-motion-duration-fast: 160ms;
+  --ak-motion-duration-base: 280ms;
+  --ak-motion-duration-slow: 520ms;
+  --ak-motion-duration-reveal: 900ms;
+  --ak-motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ak-motion-ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ak-motion-ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+  --ak-motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* layer — CAPA SEMÁNTICA */
+  --ak-layer-base: 0;
+  --ak-layer-raised: 10;
+  --ak-layer-sticky: 100;
+  --ak-layer-overlay: 500;
+  --ak-layer-modal: 1000;
+  --ak-layer-cursor: 9999;
+
+  /* breakpoint — CAPA PRIMITIVA */
+  --ak-breakpoint-sm: 480px;
+  --ak-breakpoint-md: 768px;
+  --ak-breakpoint-lg: 1024px;
+  --ak-breakpoint-xl: 1280px;
+}

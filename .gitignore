@@ -1,0 +1,35 @@
+# --- Instrucciones para agentes (locales, no van al repo) ---
+.claude/
+CLAUDE.md
+AGENTS.md
+.cursor/
+.windsurf/
+
+# --- Notas de trabajo ---
+scratch/
+notes/
+*.local.md
+TODO.local
+
+# --- Dependencias / build ---
+node_modules/
+.cache/
+dist/
+.wrangler/
+.dev.vars
+
+# --- Entorno ---
+.env
+.env.*
+!.env.example
+
+# --- SO / editor ---
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# NOTA: src/styles/tokens.css SÍ se versiona (generado, pero permite
+# desplegar en Cloudflare Pages sin paso de build). Regenerar con:
+#   node scripts/build-tokens.mjs

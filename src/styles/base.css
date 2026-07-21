@@ -1,0 +1,142 @@
+/* Reset mínimo + primitivas tipográficas.
+ * Solo consume tokens (var(--ak-*)). Ningún valor literal de color/tamaño. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--ak-semantic-bg-canvas);
+  color: var(--ak-semantic-fg-default);
+  font-family: var(--ak-font-family-sans);
+  font-size: var(--ak-font-size-base);
+  line-height: var(--ak-font-leading-normal);
+  font-weight: var(--ak-font-weight-regular);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* --- Tipografía: display grande, sans, tracking negativo --- */
+
+h1,
+h2,
+h3 {
+  font-weight: var(--ak-font-weight-medium);
+  line-height: var(--ak-font-leading-tight);
+  letter-spacing: var(--ak-font-tracking-tighter);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--ak-font-size-5xl);
+}
+h2 {
+  font-size: var(--ak-font-size-3xl);
+}
+h3 {
+  font-size: var(--ak-font-size-xl);
+  letter-spacing: var(--ak-font-tracking-tight);
+}
+
+p {
+  text-wrap: pretty;
+  max-width: 68ch;
+}
+
+/* --- Foco visible: obligatorio, nunca se elimina --- */
+
+:focus-visible {
+  outline: var(--ak-border-thick) solid var(--ak-color-state-focus);
+  outline-offset: var(--ak-space-1);
+  border-radius: var(--ak-radius-sm);
+}
+
+::selection {
+  background: var(--ak-semantic-bg-accent);
+  color: var(--ak-semantic-fg-on-accent);
+}
+
+/* --- Accesibilidad de movimiento: anula toda animación --- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Salta la navegación con teclado. Oculto hasta recibir foco. */
+.skip-link {
+  position: absolute;
+  top: var(--ak-space-2);
+  left: var(--ak-space-2);
+  z-index: var(--ak-layer-modal);
+  padding: var(--ak-space-3) var(--ak-space-4);
+  border-radius: var(--ak-radius-pill);
+  background: var(--ak-semantic-bg-inverse);
+  color: var(--ak-semantic-fg-inverse);
+  font-size: var(--ak-font-size-sm);
+  transform: translateY(-200%);
+  transition: transform var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
