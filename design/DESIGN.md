@@ -1,8 +1,10 @@
 # Sistema de diseño — Alkance
 
 Landing de consultora de branding y diseño estratégico.
-Blanco, minimalista, tipografía grande, alta interacción.
-**Negro es el color de acción. El rojo es el acento de marca**, heredado del logo.
+Registro editorial: lienzo crema, pareja tipográfica Garamond/Outfit, banners
+partidos a sangre y mucho vacío.
+**El rojo es el color de acción y el acento de marca**, heredado del logo; el
+negro es texto y secciones invertidas.
 
 ---
 
@@ -78,30 +80,60 @@ rol, ese componente queda huérfano.
 
 ### Color
 
-- **Blanco** (`bg-canvas`) domina. El espacio en blanco es el material principal.
-- **Negro** (`ink-900`, no `#000`) es acción: botones primarios, bordes fuertes,
-  secciones invertidas.
-- **Rojo** (`accent-500`) es puntuación, no superficie. Aparece en el punto del
-  logotipo, el eyebrow, el subrayado de enlaces, el foco, y en el **hover del
-  botón primario** — el único lugar donde negro y rojo se tocan.
+- **Crema** (`bg-canvas` = `cream-100`, `#F7F5F1`) domina. Es el lienzo, no un
+  fondo alterno: no existe una sección "blanca" a la que volver. Lo que se
+  levanta del lienzo sube medio escalón a `cream-50`, nunca a blanco puro.
+- **Negro** (`ink-900`, no `#000`) es texto y secciones invertidas. Ya **no** hay
+  botones negros.
+- **Rojo** (`accent-600`) es acción y puntuación a la vez: el CTA primario, el
+  eyebrow, y la palabra en cursiva del titular. Sube de `accent-500` a `600`
+  porque sobre crema el 500 baja de 4.5:1 y el eyebrow es texto pequeño.
 
 Regla práctica: si el rojo ocupa más del ~5% de una pantalla, es demasiado.
 
 ### Tipografía
 
-Sans moderna, pesos bajos en tamaños grandes, tracking negativo agresivo.
-`font-size-5xl` va de 60px a 144px según viewport — el display es el gesto.
+Pareja **serif / sans**. El contraste entre las dos es el gesto principal de la
+marca; usar una sola familia colapsa el diseño.
 
-- Titulares: `weight-medium` + `tracking-tighter` + `leading-tight`.
-- Cuerpo: `size-base`, `leading-normal`, `max-width: 68ch`.
-- Eyebrow: `size-xs` + `tracking-widest` + mayúsculas.
+- **Serif** (`family-serif`) titula, y solo titula: `h1`–`h3`, `.display`,
+  `.split__title`, `.prefooter__title`. Va en `weight-regular` y
+  `tracking-tight`, no en medium ni en `tracking-tighter`: una serif de estilo
+  antiguo ya trae su propio contraste de trazo, y apretarla le come las serifas.
+- **Cursiva + rojo** es el par que marca la palabra clave de cada titular
+  (`<em>` dentro de un encabezado, ya estilado en `base.css`). El color destaca;
+  la cursiva cambia el tono. Nunca uno sin el otro.
+- **Sans** (`family-sans`) es cuerpo, eyebrows y botones. Nunca titula.
+- Cuerpo editorial (`.prose`): `size-base` (18px) + `leading-normal`. El salto de
+  escala contra el titular lo da el titular, que ya es el doble de grande; no hay
+  que cobrárselo al párrafo achicándolo. Estuvo en `size-sm` y el resultado era
+  texto de 15px gris sobre crema, incómodo de leer.
+- Eyebrow: `size-xs` + `tracking-widest` + mayúsculas + `fg-accent`, sin adorno.
+  `size-xs` (13px) es para texto que se **reconoce**, no que se lee: eyebrows,
+  metadatos, el legal del pie. Una frase completa nunca va en `xs`.
 
 La escala usa `clamp()`: no hay media queries de tipografía.
 
-**Pendiente:** los tokens declaran `Inter Variable` con fallback al stack del
-sistema. Para fijar la identidad hay que auto-hospedar el `.woff2` en
-`src/fonts/` y declarar el `@font-face` con `font-display: swap`. No usar
-Google Fonts por CDN: es una dependencia externa y un tercero en el crítico.
+**Las familias:** **EB Garamond** titula y **Outfit** lee. Ambas van
+auto-hospedadas en `src/fonts/`, declaradas en `src/styles/fonts.css`. No se
+cargan por CDN: Google Fonts mete un tercero en el camino crítico y una petición
+a otro dominio antes de poder pintar texto.
+
+- De la Garamond se hospedan **romana y cursiva**, porque la cursiva roja del
+  `<em>` es parte del diseño, no un adorno que el navegador pueda inclinar solo.
+- La Outfit va como **fuente variable** en el rango 400–600: un archivo cubre los
+  tres pesos del sistema (31 KB contra los 94 KB de tres estáticas).
+- `unicode-range` separa `latin` de `latin-ext`, así que una página en español
+  solo descarga los tres archivos `latin` (~80 KB). Los `latin-ext` quedan en
+  disco sin pedirse nunca.
+- `font-display: swap` en todas: el texto se pinta de inmediato con la de
+  respaldo. Nunca hay texto invisible.
+- `index.html` precarga los dos archivos del primer render (Garamond romana y
+  Outfit); sin eso el navegador no los descubre hasta parsear `fonts.css`.
+
+**Ojo con la escala:** la Garamond tiene la altura de x muy baja y a igual
+`font-size` se ve bastante más pequeña que una sans. Si cambias la serif por otra
+de altura de x normal, los tamaños de titular quedarán grandes.
 
 ### Movimiento
 
@@ -123,8 +155,22 @@ Antes de escribir CSS nuevo, revisa qué ya existe.
 `--subtle`), `.stack` (`--tight`, `--loose`), `.cluster`, `.grid`, `.grid-auto`,
 `.divider`.
 
-**components.css** — `.btn` (`--primary`, `--ghost`), `.link`, `.eyebrow`,
-`.card`, `.accent`, `.header`, `.reveal`.
+**components.css** — `.btn` (`--primary`, `--line`, `--ghost`, `--inverse`),
+`.link`, `.link-arrow`, `.eyebrow`, `.prose`, `.card`, `.accent`, `.header`,
+`.reveal`, `.form` + `.field`.
+
+**Formularios** — los campos no llevan caja: solo el filete inferior, igual que
+el CTA `.btn--line`. En una página donde nada tiene borde de cuatro lados salvo
+las tarjetas, un input con marco se lee como pegado de otra web. El estado
+inválido usa `:user-invalid` y no `:invalid`, que pintaría de rojo los campos
+vacíos antes de que nadie escriba nada.
+
+**Estructura de página** — `.split` (`--reverse`, `--compact`) es el banner
+partido que gobierna la portada: media pantalla de texto contra media de foto a
+sangre. Cuatro secciones lo usan; alterna `--reverse` para dar ritmo al scroll.
+`.capabilities` es la fila de siete columnas con filetes, y `.prefooter` el
+cierre sobre crema profunda. Ninguno lleva `.section`: su padding es propio
+porque la columna de imagen tiene que llegar al filo del bloque.
 
 Ritmo vertical: todas las secciones usan `--ak-space-section`; el margen lateral,
 `--ak-space-gutter`. Ambos con `clamp()`, así que responden solos.
@@ -138,22 +184,32 @@ Ritmo vertical: todas las secciones usan `--ak-space-section`; el margen lateral
   que falta.
 - **JS solo maneja estado.** Añade y quita clases (`.is-visible`, `.is-scrolled`);
   la apariencia vive en CSS. Ganchos con `data-*`, no con clases de estilo.
-- **Degradación.** Sin JS el sitio debe leerse completo. `.reveal` es la única
-  pieza que depende de JS, y bajo `prefers-reduced-motion` se muestra igual.
-- **Contraste AA.** 4.5:1 texto normal, 3:1 para ≥24px. Ratios medidos sobre
-  blanco:
+- **Degradación.** Sin JS el sitio debe leerse **y funcionar** completo.
+  `.reveal` se muestra igual sin JS y bajo `prefers-reduced-motion`. El
+  formulario de contacto hace `POST` nativo y la Function responde con un `303`
+  a `/?envio=ok`; el JS solo evita la recarga. Nada del sitio queda inservible
+  con JavaScript desactivado.
+- **Contraste AA.** 4.5:1 texto normal, 3:1 para ≥24px. Ratios medidos sobre el
+  **lienzo crema** (`cream-100`), que es el fondo real del sitio — no sobre
+  blanco. Todo baja ~8% respecto de blanco, y eso mueve dos umbrales:
 
-  | Token | Ratio | Uso |
-  |---|---|---|
-  | `ink-900` | 19.80:1 | Texto por defecto |
-  | `accent-600` | 6.63:1 | Rojo sobre texto pequeño |
-  | `ink-400` | 5.33:1 | Texto secundario (`fg-muted`) |
-  | `accent-500` | 4.57:1 | Rojo de marca — pasa AA, con poco margen |
-  | `ink-300` | 3.03:1 | **Solo ≥24px o elementos no textuales** |
+  | Token | Sobre crema | Sobre blanco | Uso |
+  |---|---|---|---|
+  | `ink-900` | 18.18:1 | 19.80:1 | Texto por defecto |
+  | `accent-600` | 6.09:1 | 6.63:1 | Rojo de texto y CTA (`fg-accent`) |
+  | `ink-400` | 4.89:1 | 5.33:1 | Texto secundario (`fg-muted`) |
+  | `accent-500` | **4.19:1** | 4.57:1 | ✗ **No usar en texto** sobre crema |
+  | `ink-350` | 3.17:1 | 3.46:1 | Solo ≥24px (`fg-subtle`) |
+  | `ink-300` | **2.79:1** | 3.03:1 | ✗ Sobre crema, ni para texto grande |
 
-  `accent-500` sobre `ink-900` da 4.34:1: **no usar rojo sobre negro para texto
-  pequeño**; en secciones invertidas, el acento va en display o en fondos.
-  `fg-subtle` (`ink-300`) no sirve para cuerpo de texto.
+  Las dos trampas del lienzo crema: `accent-500` deja de pasar AA para texto
+  pequeño (por eso `fg-accent` apunta a `accent-600`) y `ink-300` deja de dar
+  3:1 (por eso existe `ink-350`). Sobre negro se invierte el problema:
+  `accent-500` da 4.34:1, así que en secciones invertidas el acento va en
+  `accent-400` (`fg-accent-inverse`).
+
+  El texto blanco del CTA primario da 6.63:1 sobre `accent-600` y 9.40:1 sobre
+  `accent-700` (hover): el botón mejora al interactuar, nunca empeora.
 
 ---
 

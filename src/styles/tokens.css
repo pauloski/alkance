@@ -10,6 +10,7 @@
   --ak-color-ink-100: #E4E4E4;
   --ak-color-ink-200: #C4C4C4;
   --ak-color-ink-300: #949494;
+  --ak-color-ink-350: #8A8A8A;
   --ak-color-ink-400: #6B6B6B;
   --ak-color-ink-500: #454545;
   --ak-color-ink-600: #2E2E2E;
@@ -17,6 +18,11 @@
   --ak-color-ink-800: #141414;
   --ak-color-ink-900: #0A0A0A;
   --ak-color-ink-1000: #000000;
+  --ak-color-cream-50: #FBF9F6;
+  --ak-color-cream-100: #F7F5F1;
+  --ak-color-cream-200: #EFEDE8;
+  --ak-color-cream-300: #E4E0D7;
+  --ak-color-cream-400: #CFC8BA;
   --ak-color-accent-50: #FEF3F1;
   --ak-color-accent-100: #FDE0DD;
   --ak-color-accent-300: #F98077;
@@ -30,42 +36,48 @@
   --ak-color-state-danger: #B8170D;
 
   /* semantic — CAPA SEMÁNTICA */
-  --ak-semantic-bg-canvas: var(--ak-color-ink-0);
-  --ak-semantic-bg-subtle: var(--ak-color-ink-50);
-  --ak-semantic-bg-muted: var(--ak-color-ink-100);
+  --ak-semantic-bg-canvas: var(--ak-color-cream-100);
+  --ak-semantic-bg-raised: var(--ak-color-cream-50);
+  --ak-semantic-bg-subtle: var(--ak-color-cream-200);
+  --ak-semantic-bg-muted: var(--ak-color-cream-300);
   --ak-semantic-bg-inverse: var(--ak-color-ink-900);
   --ak-semantic-bg-inverse-raised: var(--ak-color-ink-700);
   --ak-semantic-bg-accent: var(--ak-color-accent-500);
+  --ak-semantic-bg-accent-strong: var(--ak-color-accent-600);
+  --ak-semantic-bg-accent-pressed: var(--ak-color-accent-700);
   --ak-semantic-bg-accent-subtle: var(--ak-color-accent-50);
   --ak-semantic-fg-default: var(--ak-color-ink-900);
   --ak-semantic-fg-muted: var(--ak-color-ink-400);
-  --ak-semantic-fg-subtle: var(--ak-color-ink-300);
+  --ak-semantic-fg-subtle: var(--ak-color-ink-350);
   --ak-semantic-fg-inverse: var(--ak-color-ink-0);
   --ak-semantic-fg-inverse-muted: var(--ak-color-ink-300);
-  --ak-semantic-fg-accent: var(--ak-color-accent-500);
+  --ak-semantic-fg-accent: var(--ak-color-accent-600);
   --ak-semantic-fg-accent-inverse: var(--ak-color-accent-400);
   --ak-semantic-fg-on-accent: var(--ak-color-ink-0);
-  --ak-semantic-border-subtle: var(--ak-color-ink-100);
-  --ak-semantic-border-default: var(--ak-color-ink-200);
+  --ak-semantic-border-subtle: var(--ak-color-cream-300);
+  --ak-semantic-border-default: var(--ak-color-cream-400);
   --ak-semantic-border-strong: var(--ak-color-ink-900);
   --ak-semantic-border-inverse: var(--ak-color-ink-700);
   --ak-semantic-border-accent: var(--ak-color-accent-500);
 
   /* component — CAPA DE COMPONENTE */
-  --ak-component-button-primary-bg: var(--ak-semantic-bg-inverse);
-  --ak-component-button-primary-bg-hover: var(--ak-semantic-bg-accent);
+  --ak-component-button-primary-bg: var(--ak-semantic-bg-accent-strong);
+  --ak-component-button-primary-bg-hover: var(--ak-semantic-bg-accent-pressed);
   --ak-component-button-primary-fg: var(--ak-semantic-fg-inverse);
   --ak-component-button-ghost-fg: var(--ak-semantic-fg-default);
   --ak-component-button-ghost-border: var(--ak-semantic-border-default);
-  --ak-component-card-bg: var(--ak-semantic-bg-canvas);
+  --ak-component-button-radius: var(--ak-radius-none);
+  --ak-component-card-bg: var(--ak-semantic-bg-raised);
   --ak-component-card-border: var(--ak-semantic-border-subtle);
   --ak-component-card-border-hover: var(--ak-semantic-border-default);
   --ak-component-header-border-scrolled: var(--ak-semantic-border-subtle);
+  --ak-component-header-logo-height: 40px;
+  --ak-component-header-logo-height-sm: 30px;
   --ak-component-service-card-bg: var(--ak-semantic-bg-subtle);
-  --ak-component-service-card-bg-featured: var(--ak-semantic-bg-canvas);
+  --ak-component-service-card-bg-featured: var(--ak-semantic-bg-raised);
   --ak-component-service-card-border: var(--ak-semantic-border-subtle);
   --ak-component-service-card-border-featured: var(--ak-semantic-border-accent);
-  --ak-component-hero-bg: var(--ak-color-ink-25);
+  --ak-component-hero-bg: var(--ak-semantic-bg-canvas);
   --ak-component-icon-size: 24px;
   --ak-component-icon-size-sm: 16px;
   --ak-component-icon-size-lg: 32px;
@@ -75,7 +87,8 @@
   --ak-component-marquee-separator: var(--ak-semantic-fg-accent);
 
   /* font — CAPA PRIMITIVA */
-  --ak-font-family-sans: 'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ak-font-family-serif: 'EB Garamond', Garamond, 'Adobe Garamond Pro', Palatino, Georgia, serif;
+  --ak-font-family-sans: Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --ak-font-family-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
   --ak-font-weight-regular: 400;
   --ak-font-weight-medium: 500;

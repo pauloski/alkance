@@ -66,7 +66,18 @@ window.AK_TOKENS = [
     "group": "color",
     "aliasOf": null,
     "fluid": null,
-    "description": "Primitivo. Contraste 3.03:1 sobre blanco. Solo texto >=24px o elementos no textuales."
+    "description": "Primitivo. Contraste 3.03:1 sobre blanco, pero solo 2.79:1 sobre el lienzo crema. Sobre crema NO sirve ni para texto grande: usar ink.350. Se mantiene porque fg.inverse-muted lo usa sobre negro, donde da 6.5:1."
+  },
+  {
+    "name": "color.ink.350",
+    "cssVar": "--ak-color-ink-350",
+    "cssValue": "#8A8A8A",
+    "resolved": "#8A8A8A",
+    "type": "color",
+    "group": "color",
+    "aliasOf": null,
+    "fluid": null,
+    "description": "Primitivo. Existe por el cambio de lienzo a crema: es el gris más claro que todavía da 3:1 sobre cream.100 (3.17:1). El equivalente de ink.300 en el mundo crema."
   },
   {
     "name": "color.ink.400",
@@ -144,6 +155,61 @@ window.AK_TOKENS = [
     "aliasOf": null,
     "fluid": null,
     "description": "Primitivo. Negro absoluto. Reservado para bordes ópticos y sombras; evitar como fondo."
+  },
+  {
+    "name": "color.cream.50",
+    "cssVar": "--ak-color-cream-50",
+    "cssValue": "#FBF9F6",
+    "resolved": "#FBF9F6",
+    "type": "color",
+    "group": "color",
+    "aliasOf": null,
+    "fluid": null,
+    "description": "Primitivo. Crema casi blanco. Superficies elevadas sobre el lienzo (tarjetas)."
+  },
+  {
+    "name": "color.cream.100",
+    "cssVar": "--ak-color-cream-100",
+    "cssValue": "#F7F5F1",
+    "resolved": "#F7F5F1",
+    "type": "color",
+    "group": "color",
+    "aliasOf": null,
+    "fluid": null,
+    "description": "Primitivo. Crema de marca. EL fondo del sitio. Todo lo demás se define contra este color."
+  },
+  {
+    "name": "color.cream.200",
+    "cssVar": "--ak-color-cream-200",
+    "cssValue": "#EFEDE8",
+    "resolved": "#EFEDE8",
+    "type": "color",
+    "group": "color",
+    "aliasOf": null,
+    "fluid": null,
+    "description": "Primitivo. Crema un punto más profundo, para alternar secciones sin introducir un borde."
+  },
+  {
+    "name": "color.cream.300",
+    "cssVar": "--ak-color-cream-300",
+    "cssValue": "#E4E0D7",
+    "resolved": "#E4E0D7",
+    "type": "color",
+    "group": "color",
+    "aliasOf": null,
+    "fluid": null,
+    "description": "Primitivo. Crema de separadores y bordes sutiles."
+  },
+  {
+    "name": "color.cream.400",
+    "cssVar": "--ak-color-cream-400",
+    "cssValue": "#CFC8BA",
+    "resolved": "#CFC8BA",
+    "type": "color",
+    "group": "color",
+    "aliasOf": null,
+    "fluid": null,
+    "description": "Primitivo. Crema de bordes visibles."
   },
   {
     "name": "color.accent.50",
@@ -269,33 +335,44 @@ window.AK_TOKENS = [
   {
     "name": "semantic.bg.canvas",
     "cssVar": "--ak-semantic-bg-canvas",
-    "cssValue": "var(--ak-color-ink-0)",
-    "resolved": "#FFFFFF",
+    "cssValue": "var(--ak-color-cream-100)",
+    "resolved": "#F7F5F1",
     "type": "color",
     "group": "semantic",
-    "aliasOf": "color.ink.0",
+    "aliasOf": "color.cream.100",
     "fluid": null,
-    "description": "Semántico. Fondo por defecto del sitio. Blanco: el espacio vacío es el material principal."
+    "description": "Semántico. Fondo por defecto del sitio. Crema, no blanco: el lienzo cálido es la decisión de marca que gobierna todo lo demás."
+  },
+  {
+    "name": "semantic.bg.raised",
+    "cssVar": "--ak-semantic-bg-raised",
+    "cssValue": "var(--ak-color-cream-50)",
+    "resolved": "#FBF9F6",
+    "type": "color",
+    "group": "semantic",
+    "aliasOf": "color.cream.50",
+    "fluid": null,
+    "description": "Semántico. Superficie que se levanta del lienzo (tarjetas). Sobre crema, una tarjeta blanca cantaría: sube medio escalón, no uno entero."
   },
   {
     "name": "semantic.bg.subtle",
     "cssVar": "--ak-semantic-bg-subtle",
-    "cssValue": "var(--ak-color-ink-50)",
-    "resolved": "#F2F2F2",
+    "cssValue": "var(--ak-color-cream-200)",
+    "resolved": "#EFEDE8",
     "type": "color",
     "group": "semantic",
-    "aliasOf": "color.ink.50",
+    "aliasOf": "color.cream.200",
     "fluid": null,
     "description": "Semántico. Fondo de sección alterna, para dar ritmo sin introducir un borde."
   },
   {
     "name": "semantic.bg.muted",
     "cssVar": "--ak-semantic-bg-muted",
-    "cssValue": "var(--ak-color-ink-100)",
-    "resolved": "#E4E4E4",
+    "cssValue": "var(--ak-color-cream-300)",
+    "resolved": "#E4E0D7",
     "type": "color",
     "group": "semantic",
-    "aliasOf": "color.ink.100",
+    "aliasOf": "color.cream.300",
     "fluid": null,
     "description": "Semántico. Fondo de elementos deshabilitados o placeholders."
   },
@@ -330,7 +407,29 @@ window.AK_TOKENS = [
     "group": "semantic",
     "aliasOf": "color.accent.500",
     "fluid": null,
-    "description": "Semántico. Fondo rojo de marca. Solo en superficies pequeñas: puntos, badges, hover del CTA primario."
+    "description": "Semántico. Fondo rojo de marca. Solo en superficies pequeñas: puntos, badges."
+  },
+  {
+    "name": "semantic.bg.accent-strong",
+    "cssVar": "--ak-semantic-bg-accent-strong",
+    "cssValue": "var(--ak-color-accent-600)",
+    "resolved": "#B8170D",
+    "type": "color",
+    "group": "semantic",
+    "aliasOf": "color.accent.600",
+    "fluid": null,
+    "description": "Semántico. Rojo profundo del CTA primario. Sobre crema, accent.500 pierde peso y el botón se lee anaranjado; accent.600 mantiene el registro editorial de la maqueta."
+  },
+  {
+    "name": "semantic.bg.accent-pressed",
+    "cssVar": "--ak-semantic-bg-accent-pressed",
+    "cssValue": "var(--ak-color-accent-700)",
+    "resolved": "#8E1109",
+    "type": "color",
+    "group": "semantic",
+    "aliasOf": "color.accent.700",
+    "fluid": null,
+    "description": "Semántico. Rojo del CTA primario al hover/activo."
   },
   {
     "name": "semantic.bg.accent-subtle",
@@ -363,18 +462,18 @@ window.AK_TOKENS = [
     "group": "semantic",
     "aliasOf": "color.ink.400",
     "fluid": null,
-    "description": "Semántico. Texto secundario sobre fondo claro. 5.33:1, apto para cuerpo."
+    "description": "Semántico. Texto secundario sobre el lienzo crema. 4.89:1: pasa AA para cuerpo, con menos margen que sobre blanco (5.33:1). No bajar de aquí en texto corrido."
   },
   {
     "name": "semantic.fg.subtle",
     "cssVar": "--ak-semantic-fg-subtle",
-    "cssValue": "var(--ak-color-ink-300)",
-    "resolved": "#949494",
+    "cssValue": "var(--ak-color-ink-350)",
+    "resolved": "#8A8A8A",
     "type": "color",
     "group": "semantic",
-    "aliasOf": "color.ink.300",
+    "aliasOf": "color.ink.350",
     "fluid": null,
-    "description": "Semántico. Texto terciario. 3.03:1: SOLO >=24px. No usar en cuerpo de texto."
+    "description": "Semántico. Texto terciario. 3.17:1 sobre crema: SOLO >=24px o elementos no textuales. No usar en cuerpo de texto."
   },
   {
     "name": "semantic.fg.inverse",
@@ -401,13 +500,13 @@ window.AK_TOKENS = [
   {
     "name": "semantic.fg.accent",
     "cssVar": "--ak-semantic-fg-accent",
-    "cssValue": "var(--ak-color-accent-500)",
-    "resolved": "#E5241A",
+    "cssValue": "var(--ak-color-accent-600)",
+    "resolved": "#B8170D",
     "type": "color",
     "group": "semantic",
-    "aliasOf": "color.accent.500",
+    "aliasOf": "color.accent.600",
     "fluid": null,
-    "description": "Semántico. Texto rojo de marca sobre fondo CLARO. 4.57:1 sobre blanco. Reservado a display grande y palabras sueltas."
+    "description": "Semántico. Texto rojo de marca sobre fondo CLARO. accent.600 y no 500: sobre crema el 500 baja de 4.5:1 y los eyebrows rojos del diseño son texto pequeño. 6.09:1 sobre crema.100."
   },
   {
     "name": "semantic.fg.accent-inverse",
@@ -434,22 +533,22 @@ window.AK_TOKENS = [
   {
     "name": "semantic.border.subtle",
     "cssVar": "--ak-semantic-border-subtle",
-    "cssValue": "var(--ak-color-ink-100)",
-    "resolved": "#E4E4E4",
+    "cssValue": "var(--ak-color-cream-300)",
+    "resolved": "#E4E0D7",
     "type": "color",
     "group": "semantic",
-    "aliasOf": "color.ink.100",
+    "aliasOf": "color.cream.300",
     "fluid": null,
-    "description": "Semántico. Separador apenas visible. El borde por defecto del minimalismo."
+    "description": "Semántico. Separador apenas visible. El borde por defecto del minimalismo. Crema y no gris: un gris neutro sobre lienzo cálido se ve sucio."
   },
   {
     "name": "semantic.border.default",
     "cssVar": "--ak-semantic-border-default",
-    "cssValue": "var(--ak-color-ink-200)",
-    "resolved": "#C4C4C4",
+    "cssValue": "var(--ak-color-cream-400)",
+    "resolved": "#CFC8BA",
     "type": "color",
     "group": "semantic",
-    "aliasOf": "color.ink.200",
+    "aliasOf": "color.cream.400",
     "fluid": null,
     "description": "Semántico. Borde de contenedor visible."
   },
@@ -489,24 +588,24 @@ window.AK_TOKENS = [
   {
     "name": "component.button.primary-bg",
     "cssVar": "--ak-component-button-primary-bg",
-    "cssValue": "var(--ak-semantic-bg-inverse)",
-    "resolved": "#0A0A0A",
+    "cssValue": "var(--ak-semantic-bg-accent-strong)",
+    "resolved": "#B8170D",
     "type": "color",
     "group": "component",
-    "aliasOf": "semantic.bg.inverse",
+    "aliasOf": "semantic.bg.accent-strong",
     "fluid": null,
-    "description": "Componente. Fondo del CTA primario. Negro = acción."
+    "description": "Componente. Fondo del CTA primario. Rojo = acción."
   },
   {
     "name": "component.button.primary-bg-hover",
     "cssVar": "--ak-component-button-primary-bg-hover",
-    "cssValue": "var(--ak-semantic-bg-accent)",
-    "resolved": "#E5241A",
+    "cssValue": "var(--ak-semantic-bg-accent-pressed)",
+    "resolved": "#8E1109",
     "type": "color",
     "group": "component",
-    "aliasOf": "semantic.bg.accent",
+    "aliasOf": "semantic.bg.accent-pressed",
     "fluid": null,
-    "description": "Componente. Hover del CTA primario: negro -> rojo. Gesto de marca deliberado."
+    "description": "Componente. Hover del CTA primario: el rojo se hunde un escalón."
   },
   {
     "name": "component.button.primary-fg",
@@ -534,7 +633,7 @@ window.AK_TOKENS = [
     "name": "component.button.ghost-border",
     "cssVar": "--ak-component-button-ghost-border",
     "cssValue": "var(--ak-semantic-border-default)",
-    "resolved": "#C4C4C4",
+    "resolved": "#CFC8BA",
     "type": "color",
     "group": "component",
     "aliasOf": "semantic.border.default",
@@ -542,21 +641,32 @@ window.AK_TOKENS = [
     "description": "Componente. Borde en reposo del CTA secundario."
   },
   {
+    "name": "component.button.radius",
+    "cssVar": "--ak-component-button-radius",
+    "cssValue": "var(--ak-radius-none)",
+    "resolved": "0px",
+    "type": "dimension",
+    "group": "component",
+    "aliasOf": "radius.none",
+    "fluid": null,
+    "description": "Componente. Los botones van a escuadra, no en píldora: el rectángulo es lo que hace que el CTA se lea editorial y no de producto SaaS. Cambiar esto altera el carácter de toda la página."
+  },
+  {
     "name": "component.card.bg",
     "cssVar": "--ak-component-card-bg",
-    "cssValue": "var(--ak-semantic-bg-canvas)",
-    "resolved": "#FFFFFF",
+    "cssValue": "var(--ak-semantic-bg-raised)",
+    "resolved": "#FBF9F6",
     "type": "color",
     "group": "component",
-    "aliasOf": "semantic.bg.canvas",
+    "aliasOf": "semantic.bg.raised",
     "fluid": null,
-    "description": "Componente. Fondo de tarjeta."
+    "description": "Componente. Fondo de tarjeta. Medio escalón sobre el lienzo crema."
   },
   {
     "name": "component.card.border",
     "cssVar": "--ak-component-card-border",
     "cssValue": "var(--ak-semantic-border-subtle)",
-    "resolved": "#E4E4E4",
+    "resolved": "#E4E0D7",
     "type": "color",
     "group": "component",
     "aliasOf": "semantic.border.subtle",
@@ -567,7 +677,7 @@ window.AK_TOKENS = [
     "name": "component.card.border-hover",
     "cssVar": "--ak-component-card-border-hover",
     "cssValue": "var(--ak-semantic-border-default)",
-    "resolved": "#C4C4C4",
+    "resolved": "#CFC8BA",
     "type": "color",
     "group": "component",
     "aliasOf": "semantic.border.default",
@@ -578,7 +688,7 @@ window.AK_TOKENS = [
     "name": "component.header.border-scrolled",
     "cssVar": "--ak-component-header-border-scrolled",
     "cssValue": "var(--ak-semantic-border-subtle)",
-    "resolved": "#E4E4E4",
+    "resolved": "#E4E0D7",
     "type": "color",
     "group": "component",
     "aliasOf": "semantic.border.subtle",
@@ -586,10 +696,32 @@ window.AK_TOKENS = [
     "description": "Componente. Borde que aparece con .is-scrolled."
   },
   {
+    "name": "component.header.logo-height",
+    "cssVar": "--ak-component-header-logo-height",
+    "cssValue": "40px",
+    "resolved": "40px",
+    "type": "dimension",
+    "group": "component",
+    "aliasOf": null,
+    "fluid": null,
+    "description": "Componente. Altura del logotipo. 40px es el techo real de la barra: mide 64px (space.8) con 12px de padding arriba y abajo, así que el logo llena justo el hueco. Subirlo más engorda el header entero."
+  },
+  {
+    "name": "component.header.logo-height-sm",
+    "cssVar": "--ak-component-header-logo-height-sm",
+    "cssValue": "30px",
+    "resolved": "30px",
+    "type": "dimension",
+    "group": "component",
+    "aliasOf": null,
+    "fluid": null,
+    "description": "Componente. Altura del logotipo bajo 768px. El logotipo lleva bajada ('Estrategia · Branding · Diseño') en cuerpo diminuto: por debajo de 30px esa línea deja de leerse."
+  },
+  {
     "name": "component.service-card.bg",
     "cssVar": "--ak-component-service-card-bg",
     "cssValue": "var(--ak-semantic-bg-subtle)",
-    "resolved": "#F2F2F2",
+    "resolved": "#EFEDE8",
     "type": "color",
     "group": "component",
     "aliasOf": "semantic.bg.subtle",
@@ -599,19 +731,19 @@ window.AK_TOKENS = [
   {
     "name": "component.service-card.bg-featured",
     "cssVar": "--ak-component-service-card-bg-featured",
-    "cssValue": "var(--ak-semantic-bg-canvas)",
-    "resolved": "#FFFFFF",
+    "cssValue": "var(--ak-semantic-bg-raised)",
+    "resolved": "#FBF9F6",
     "type": "color",
     "group": "component",
-    "aliasOf": "semantic.bg.canvas",
+    "aliasOf": "semantic.bg.raised",
     "fluid": null,
-    "description": "Componente. Fondo de la tarjeta destacada: blanca, avanza sobre las demás."
+    "description": "Componente. Fondo de la tarjeta destacada: más clara que el lienzo, avanza sobre las demás."
   },
   {
     "name": "component.service-card.border",
     "cssVar": "--ak-component-service-card-border",
     "cssValue": "var(--ak-semantic-border-subtle)",
-    "resolved": "#E4E4E4",
+    "resolved": "#E4E0D7",
     "type": "color",
     "group": "component",
     "aliasOf": "semantic.border.subtle",
@@ -632,13 +764,13 @@ window.AK_TOKENS = [
   {
     "name": "component.hero.bg",
     "cssVar": "--ak-component-hero-bg",
-    "cssValue": "var(--ak-color-ink-25)",
-    "resolved": "#F7F7F7",
+    "cssValue": "var(--ak-semantic-bg-canvas)",
+    "resolved": "#F7F5F1",
     "type": "color",
     "group": "component",
-    "aliasOf": "color.ink.25",
+    "aliasOf": "semantic.bg.canvas",
     "fluid": null,
-    "description": "Componente. Fondo de las dos columnas del hero. Igual al fondo de la foto: la imagen se funde sin costura visible."
+    "description": "Componente. Fondo de la columna de texto del hero. Igual al lienzo: el corte lo hace la foto, no un cambio de color."
   },
   {
     "name": "component.icon.size",
@@ -710,7 +842,7 @@ window.AK_TOKENS = [
     "name": "component.marquee.separator",
     "cssVar": "--ak-component-marquee-separator",
     "cssValue": "var(--ak-semantic-fg-accent)",
-    "resolved": "#E5241A",
+    "resolved": "#B8170D",
     "type": "color",
     "group": "component",
     "aliasOf": "semantic.fg.accent",
@@ -718,15 +850,26 @@ window.AK_TOKENS = [
     "description": "Componente. Punto rojo entre conceptos. El acento como ritmo."
   },
   {
-    "name": "font.family.sans",
-    "cssVar": "--ak-font-family-sans",
-    "cssValue": "'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
-    "resolved": "'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
+    "name": "font.family.serif",
+    "cssVar": "--ak-font-family-serif",
+    "cssValue": "'EB Garamond', Garamond, 'Adobe Garamond Pro', Palatino, Georgia, serif",
+    "resolved": "'EB Garamond', Garamond, 'Adobe Garamond Pro', Palatino, Georgia, serif",
     "type": "fontFamily",
     "group": "font",
     "aliasOf": null,
     "fluid": null,
-    "description": "Primitivo. Familia única del sitio. PENDIENTE: auto-hospedar Inter .woff2 en src/fonts/ con font-display:swap. No usar Google Fonts por CDN (tercero en el camino crítico)."
+    "description": "Primitivo. Familia de titulares y display: GARAMOND. Auto-hospedada en src/fonts/ (declarada en src/styles/fonts.css), romana y CURSIVA — el par redonda/cursiva es la firma tipográfica del diseño, así que la cursiva no es opcional. Ojo con la escala: la Garamond tiene la altura de x muy baja y a igual font-size se ve bastante más pequeña que una sans."
+  },
+  {
+    "name": "font.family.sans",
+    "cssVar": "--ak-font-family-sans",
+    "cssValue": "Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
+    "resolved": "Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
+    "type": "fontFamily",
+    "group": "font",
+    "aliasOf": null,
+    "fluid": null,
+    "description": "Primitivo. Familia de cuerpo, eyebrows y botones: OUTFIT. Nunca titula. Auto-hospedada como fuente VARIABLE en el rango 400-600, que cubre en un archivo los tres pesos del sistema. Geométrica y de altura de x alta: ese contraste contra la Garamond es lo que sostiene la pareja tipográfica."
   },
   {
     "name": "font.family.mono",
@@ -1536,7 +1679,7 @@ window.AK_GROUPS = {
   "color": "CAPA PRIMITIVA (global). Paleta cruda sin significado asignado. NO usar directamente en componentes: usar la capa semántica. En Figma: colección 'Primitives', modo único, oculta a diseñadores de producto.",
   "semantic": "CAPA SEMÁNTICA. Roles de color: describen la función, no el color. ESTA ES LA CAPA QUE CONSUMEN LOS COMPONENTES. Referencia primitivos por alias, nunca repite hex. En Figma: colección 'Semantic', expuesta a diseñadores, con modos claro/oscuro a futuro.",
   "component": "CAPA DE COMPONENTE. Decisiones que pertenecen a UNA pieza concreta y no deben contaminar la capa semántica. Referencian semánticos. Crear un token aquí solo cuando el valor se repite dentro del componente o define su contrato visual. En Figma: colección 'Components', normalmente oculta.",
-  "font": "CAPA PRIMITIVA. Tipografía: sans moderna, pesos bajos en tamaños grandes, tracking negativo agresivo. El display es el gesto principal de la marca.",
+  "font": "CAPA PRIMITIVA. Tipografía de pareja: SERIF para todo lo que titula, SANS para todo lo que se lee de corrido. El contraste entre ambas es el gesto principal de la marca; usar una sola familia colapsa el diseño.",
   "space": "CAPA PRIMITIVA. Escala de espaciado base 4px. Único origen de padding, gap y margin. En un sitio minimalista el espaciado ES el diseño: nunca inventar un valor fuera de esta escala.",
   "size": "CAPA SEMÁNTICA. Anchos de contenedor y objetivos táctiles.",
   "radius": "CAPA PRIMITIVA. Radios de esquina. El sistema es mayormente recto: los radios son la excepción, no la regla.",

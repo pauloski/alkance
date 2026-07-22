@@ -15,6 +15,15 @@
   max-width: var(--ak-size-container-wide);
 }
 
+/* Sin tope: ocupa la pantalla entera y solo conserva el margen lateral. Para
+   composiciones que se leen de un vistazo y necesitan el ancho —la fila de
+   capacidades—, donde el tope de 1280px deja una tira estrecha en medio de dos
+   vacíos en cuanto el monitor es ancho. No usarlo con texto corrido: sin tope,
+   las líneas superan el largo legible. */
+.container--full {
+  max-width: none;
+}
+
 /* Sección: el ritmo vertical del sitio sale de un solo token. */
 .section {
   padding-block: var(--ak-space-section);

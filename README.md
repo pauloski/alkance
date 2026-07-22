@@ -12,6 +12,7 @@ scripts/build-tokens.mjs → los convierte en CSS
 src/styles/tokens.css    → GENERADO. Nunca editar a mano.
 index.html               → la landing
 designsystem.html        → el sistema de diseño, vivo
+functions/api/contacto.js→ endpoint del formulario (Cloudflare Pages Function)
 ```
 
 ---
@@ -59,8 +60,8 @@ node scripts/build-tokens.mjs
 Salida esperada:
 
 ```
-✓ 131 tokens (34 alias) en 12 grupos
-✓ 17 componentes extraídos de components.css
+✓ 150 tokens (40 alias) en 12 grupos
+✓ 24 componentes extraídos de components.css
   → src/styles/tokens.css
   → src/js/tokens-manifest.js
   → src/js/css-source.js
@@ -115,7 +116,9 @@ python3 -m http.server 8000
 `designsystem.html` no es documentación escrita a mano: se genera desde los
 mismos archivos que se despliegan, así que no puede quedar desactualizada.
 
-- Paleta completa con el **contraste real** de cada color sobre blanco.
+- Paleta completa con el **contraste real** de cada color sobre blanco. Ojo: el
+  lienzo del sitio es crema, no blanco, y ahí todo baja ~8% — los ratios que
+  mandan están en la tabla de `design/DESIGN.md`.
 - Roles semánticos y a qué primitivo apunta cada uno.
 - Escala tipográfica y de espaciado, en vivo.
 - Componentes con **render + HTML + el CSS real** extraído de `components.css`.
@@ -151,8 +154,10 @@ design/
 scripts/
   build-tokens.mjs     JSON → CSS. Sin dependencias.
 src/
+  fonts/               EB Garamond y Outfit auto-hospedadas (.woff2)
   styles/
     tokens.css         GENERADO
+    fonts.css          @font-face de las fuentes locales
     base.css           Reset y tipografía
     layout.css         Contenedores y grillas
     components.css     Componentes
@@ -163,9 +168,70 @@ src/
     tokens-manifest.js GENERADO
     css-source.js      GENERADO
   img/logos/           Logos de clientes (ver su README)
+functions/
+  api/contacto.js      Endpoint POST del formulario. Pages lo publica solo.
 index.html
 designsystem.html
 ```
+
+---
+
+## Formulario de contacto
+
+El `<form>` de la sección `#contacto` hace `POST /api/contacto`, que resuelve
+**`functions/api/contacto.js`**, una Cloudflare Pages Function. Basta con que el
+archivo exista: Pages detecta la carpeta `functions/` y la publica. Tú sigues sin
+correr ningún build.
+
+El correo se envía con **[Resend](https://resend.com)** desde la Function.
+
+### Variables de entorno
+
+En *Pages → Settings → Variables and Secrets*:
+
+| Variable | Tipo | Valor |
+|---|---|---|
+| `RESEND_API_KEY` | **Secret** | Token de <https://resend.com/api-keys> |
+| `CONTACT_TO` | Variable | Correo que recibe los mensajes |
+| `CONTACT_FROM` | Variable *(opcional)* | Remitente. Por defecto `onboarding@resend.dev` |
+
+### Mientras no haya dominio propio
+
+Resend, sin un dominio verificado, **solo permite enviar desde
+`onboarding@resend.dev` y solo hacia la dirección con la que se creó la cuenta.**
+Para un formulario de contacto eso alcanza, porque el destino es siempre el mismo
+buzón — pero `CONTACT_TO` **tiene que ser exactamente ese correo**, o Resend
+rechaza el envío.
+
+Dos consecuencias mientras dure:
+
+- Los mensajes pueden caer en **spam**, porque el remitente es un dominio
+  compartido. Conviene crear un filtro en Gmail para `onboarding@resend.dev`.
+- Responder funciona igual: la Function manda `reply_to` con el correo del
+  visitante, así que responder desde Gmail le llega a él.
+
+**Cuando `alkance.cl` esté con DNS en Cloudflare:** verifica el dominio en Resend
+(añade los registros DKIM/SPF que te dé), y luego pon
+`CONTACT_FROM = "Alkance <web@alkance.cl>"`. Ahí desaparece la restricción de
+destinatario y mejora mucho la entregabilidad. No hay que tocar código.
+
+### Probar en local
+
+```bash
+printf 'RESEND_API_KEY=re_xxx\nCONTACT_TO=tu@gmail.com\n' > .dev.vars
+npx wrangler pages dev .
+```
+
+`.dev.vars` está en `.gitignore`. Un servidor estático (`python3 -m http.server`)
+**no** ejecuta las Functions: el formulario dará 405.
+
+### Anti-spam
+
+Hoy hay un *honeypot* (un campo oculto que solo rellenan los bots) más
+validación de largo y formato en el servidor. Es suficiente para el spam
+automático básico. Si empieza a llegar basura, el siguiente paso es
+[Turnstile](https://developers.cloudflare.com/turnstile/), que es gratis y de
+Cloudflare — necesita el dominio configurado.
 
 ---
 
@@ -187,8 +253,10 @@ Cloudflare, pon `node scripts/build-tokens.mjs` como build command y agrega
 
 ## Pendientes
 
-- **Fuente**: los tokens declaran Inter con fallback al stack del sistema. Falta
-  auto-hospedar el `.woff2` en `src/fonts/`. No usar Google Fonts por CDN.
 - **Logos**: la sección «Confían en nosotros» usa placeholders de dummyimage.
   Ver `src/img/logos/README.md` para reemplazarlos por los SVG definitivos.
-- **Imágenes**: todas las de contenido son placeholders de dummyimage.
+- **Imágenes**: las fotos de los banners «Nuestra forma de trabajar», «Nuestra
+  filosofía» y del prefooter son placeholders de dummyimage, a la espera de las
+  definitivas del cliente. La del hero (`src/img/herobanner.jpg`) es real, pero
+  su fondo es casi blanco (#F7F7F7) y se recorta contra el lienzo crema: al
+  reemplazarla, pedir una foto de fondo cálido.

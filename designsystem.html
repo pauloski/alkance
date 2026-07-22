@@ -7,6 +7,7 @@
     <meta name="description" content="Sistema de diseño de Alkance: tokens, paleta, tipografía y componentes." />
     <meta name="robots" content="noindex, nofollow" />
 
+    <link rel="stylesheet" href="src/styles/fonts.css" />
     <link rel="stylesheet" href="src/styles/tokens.css" />
     <link rel="stylesheet" href="src/styles/base.css" />
     <link rel="stylesheet" href="src/styles/layout.css" />
@@ -88,7 +89,7 @@
           <p class="ds-sub">Por qué importa</p>
           <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
             El build emite los alias como <code>var()</code>, no como el valor plano. Es
-            decir, <code>--ak-semantic-bg-canvas: var(--ak-color-ink-0)</code>. Cambiar un
+            decir, <code>--ak-semantic-bg-canvas: var(--ak-color-cream-100)</code>. Cambiar un
             primitivo reencamina toda la cascada en runtime, sin recompilar.
           </p>
         </section>
@@ -97,8 +98,10 @@
         <section class="ds-section" id="color">
           <h2 style="font-size: var(--ak-font-size-xl)">Color</h2>
           <p class="lead">
-            Blanco domina. El negro es acción. El rojo es puntuación: si ocupa más del
-            ~5% de una pantalla, sobra. Cada muestra indica su contraste sobre blanco.
+            La crema domina: es el lienzo, no un fondo alterno. El negro es texto y el
+            rojo es acción y puntuación a la vez —el CTA y la palabra acentuada del
+            titular—, pero si ocupa más del ~5% de una pantalla, sobra. Cada muestra
+            indica su contraste sobre blanco.
           </p>
           <div data-ramps></div>
         </section>
@@ -125,10 +128,13 @@
 
           <p class="ds-sub">Reglas</p>
           <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
-            A mayor tamaño, menor peso y tracking más negativo. Los titulares van en
-            <code>weight.medium</code> (500), nunca en bold. El
-            <code>leading.tight</code> es 0.95: bajo 1, para que las líneas del h1 se
-            traben entre sí.
+            Pareja serif/sans: la <strong>serif titula</strong> y solo titula; la sans
+            es cuerpo, eyebrows y botones. Los titulares van en
+            <code>weight.regular</code> (400) y <code>tracking.tight</code>, no en
+            medium ni en <code>tracking.tighter</code>: una serif de estilo antiguo ya
+            trae su propio contraste de trazo, y apretarla le come las serifas. La
+            palabra acentuada del titular va en <strong>cursiva y en rojo</strong>
+            (<code>&lt;em&gt;</code>): nunca una sin la otra.
           </p>
         </section>
 
@@ -258,39 +264,92 @@
             </section>
           </template>
 
-          <template data-spec="Hero" data-render="block">
-            <section class="hero" style="min-height: 320px">
-              <div class="hero__content" style="padding: var(--ak-space-6)">
-                <p class="eyebrow">Estrategia, branding &amp; diseño</p>
-                <h3 class="display" style="font-size: var(--ak-font-size-xl)">
-                  Transformamos ideas en marcas que <span class="accent">crecen</span>.
+          <template data-spec="Banner partido" data-render="block">
+            <section class="split">
+              <div class="split__body">
+                <p class="eyebrow">Nuestra forma de trabajar</p>
+                <h3 class="split__title" style="font-size: var(--ak-font-size-xl)">
+                  Construimos marcas desde el <em>propósito.</em>
                 </h3>
-                <div class="cluster">
-                  <a class="btn btn--primary" href="#componentes">Agendar reunión</a>
-                  <a class="btn btn--ghost" href="#componentes">Ver servicios</a>
+                <div class="prose">
+                  <p>Ayudamos a emprendedores y empresas a descubrir aquello que las hace únicas.</p>
+                </div>
+                <div class="split__actions">
+                  <a class="btn btn--primary" href="#componentes">
+                    Agendar sesión <span class="btn__arrow" aria-hidden="true">→</span>
+                  </a>
+                  <a class="btn btn--line" href="#componentes">
+                    Cómo trabajamos <span class="btn__arrow" aria-hidden="true">→</span>
+                  </a>
                 </div>
               </div>
-              <div class="hero__media">
+              <div class="split__media">
                 <img src="src/img/herobanner.jpg" alt="" width="1024" height="572" loading="lazy" />
               </div>
             </section>
           </template>
 
-          <template data-spec="Banner de soporte" data-render="block">
-            <div class="support">
-              <div class="support__item">
-                <p class="support__title">Estrategia</p>
-                <p class="support__text">Modelos de negocio y sprints de descubrimiento.</p>
+          <template data-spec="Fila de capacidades" data-render="block">
+            <div class="capabilities">
+              <div class="capabilities__item">
+                <i data-lucide="compass" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+                <p class="capabilities__text">Definimos el propósito y posicionamiento de tu marca.</p>
               </div>
-              <div class="support__item">
-                <p class="support__title">Diseño de innovación</p>
-                <p class="support__text">Diseño centrado en el usuario e IA estratégica.</p>
+              <div class="capabilities__item">
+                <i data-lucide="search" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+                <p class="capabilities__text">Analizamos tu negocio y propuesta de valor.</p>
               </div>
-              <div class="support__item">
-                <p class="support__title">Crecimiento</p>
-                <p class="support__text">Rentabilidad estructurada de tu marca.</p>
+              <div class="capabilities__item">
+                <i data-lucide="pencil" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+                <p class="capabilities__text">Diseñamos una identidad visual coherente con tu estrategia.</p>
               </div>
             </div>
+          </template>
+
+          <template data-spec="Formulario de contacto" data-render="block">
+            <form class="form" action="/api/contacto" method="post">
+              <div class="form__row">
+                <label class="field">
+                  <span class="field__label">Nombre</span>
+                  <input class="field__input" type="text" name="nombre" required />
+                </label>
+                <label class="field">
+                  <span class="field__label">Correo</span>
+                  <input class="field__input" type="email" name="email" required />
+                </label>
+              </div>
+              <label class="field">
+                <span class="field__label">Mensaje</span>
+                <textarea class="field__input field__input--area" name="mensaje" rows="3"></textarea>
+              </label>
+              <div class="form__pie">
+                <button class="btn btn--primary" type="submit">
+                  Enviar mensaje <span class="btn__arrow" aria-hidden="true">→</span>
+                </button>
+              </div>
+            </form>
+          </template>
+
+          <template data-spec="Prefooter de cierre" data-render="block">
+            <section class="prefooter">
+              <div class="prefooter__inner">
+                <h3 class="prefooter__title" style="font-size: var(--ak-font-size-xl)">
+                  Las grandes marcas no aparecen de un día para otro.
+                  <em>Se construyen paso a paso.</em>
+                </h3>
+                <div class="prefooter__body">
+                  <div class="prose">
+                    <p>En ALKANCE creemos en el trabajo colaborativo y en las relaciones de largo plazo.</p>
+                  </div>
+                  <div class="prefooter__cta">
+                    <p class="prefooter__question">¿Comenzamos a construir la tuya?</p>
+                    <a class="btn btn--primary" href="#componentes">
+                      Agendar sesión <span class="btn__arrow" aria-hidden="true">→</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </section>
           </template>
 
           <template data-spec="Caja de destaque" data-render="block">
@@ -299,21 +358,6 @@
               <p style="font-size: var(--ak-font-size-sm); color: var(--ak-semantic-fg-muted)">
                 El mayor riesgo en etapas tempranas no es técnico, es estratégico.
               </p>
-            </div>
-          </template>
-
-          <template data-spec="Paso de metodología" data-render="block">
-            <div class="grid-auto">
-              <div class="step">
-                <span class="step__num">01</span>
-                <h3 class="step__name">Entender</h3>
-                <p class="step__text">Profundizamos en tu negocio y objetivos.</p>
-              </div>
-              <div class="step">
-                <span class="step__num">02</span>
-                <h3 class="step__name">Co-crear</h3>
-                <p class="step__text">Ideamos y prototipamos soluciones en conjunto.</p>
-              </div>
             </div>
           </template>
 

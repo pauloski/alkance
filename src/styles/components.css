@@ -11,11 +11,12 @@
   justify-content: center;
   gap: var(--ak-space-2);
   min-height: var(--ak-size-tap);
-  padding: var(--ak-space-3) var(--ak-space-5);
-  border-radius: var(--ak-radius-pill);
-  font-size: var(--ak-font-size-sm);
+  padding: var(--ak-space-4) var(--ak-space-6);
+  border-radius: var(--ak-component-button-radius);
+  font-family: var(--ak-font-family-sans);
+  font-size: var(--ak-font-size-xs);
   font-weight: var(--ak-font-weight-medium);
-  letter-spacing: var(--ak-font-tracking-wide);
+  letter-spacing: var(--ak-font-tracking-widest);
   text-transform: uppercase;
   white-space: nowrap;
   transition: background var(--ak-motion-duration-fast) var(--ak-motion-ease-standard),
@@ -28,15 +29,67 @@
   transform: scale(0.97);
 }
 
+/* En móvil el nowrap es insostenible: "Agendar una sesión estratégica" en
+   versalitas con tracking widest mide ~390px y desborda el viewport entero (y
+   el overflow-x:hidden del body lo esconde en vez de avisar). Aquí la etiqueta
+   se parte en dos líneas y el botón pasa a ocupar el ancho de la columna. */
+@media (max-width: 520px) {
+  .btn {
+    white-space: normal;
+    text-align: center;
+    padding-inline: var(--ak-space-5);
+  }
+
+  .btn--line {
+    min-width: 0;
+    text-align: start;
+  }
+}
+
 .btn--primary {
   background: var(--ak-component-button-primary-bg);
   color: var(--ak-component-button-primary-fg);
 }
 
-/* El único punto del sistema donde negro y rojo se tocan. */
 .btn--primary:hover {
   background: var(--ak-component-button-primary-bg-hover);
   box-shadow: var(--ak-shadow-accent);
+}
+
+/* CTA secundario: no es un botón con caja, es una línea. La regla inferior
+   ocupa todo el ancho y la flecha se separa del texto con margin-inline-start
+   auto, así el gesto es "seguir leyendo hacia allá", no "pulsar aquí". */
+.btn--line {
+  justify-content: flex-start;
+  gap: var(--ak-space-4);
+  /* Suelto ocupa un ancho fijo para que la regla no se encoja hasta el texto;
+     dentro de .split__actions, el flex de ahí lo estira al resto de la fila. */
+  min-width: 240px;
+  padding-inline: 0;
+  padding-block: var(--ak-space-3);
+  color: var(--ak-semantic-fg-default);
+  border-bottom: var(--ak-border-hairline) solid var(--ak-semantic-border-default);
+  transition: border-color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard),
+    color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+
+.btn--line .btn__arrow {
+  margin-inline-start: auto;
+}
+
+.btn--line:hover {
+  border-bottom-color: var(--ak-semantic-border-accent);
+  color: var(--ak-semantic-fg-accent);
+}
+
+/* La flecha del CTA avanza al hover. Es la misma microinteracción de
+   .link-arrow, reutilizada aquí para que todo lo accionable se comporte igual. */
+.btn__arrow {
+  transition: transform var(--ak-motion-duration-base) var(--ak-motion-ease-entrance);
+}
+
+.btn:hover .btn__arrow {
+  transform: translateX(var(--ak-space-2));
 }
 
 .btn--ghost {
@@ -107,28 +160,24 @@
 }
 
 /* @component Eyebrow */
+/* Rótulo de sección: rojo, en versalitas muy espaciadas y sin ningún adorno.
+   Antes llevaba un punto rojo delante; se quitó porque ahora el rojo está en la
+   propia palabra y el punto sumaba un segundo acento a dos centímetros del
+   primero. En este diseño el eyebrow es el ÚNICO texto rojo pequeño. */
 .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: var(--ak-space-2);
+  font-family: var(--ak-font-family-sans);
   font-size: var(--ak-font-size-xs);
-  font-weight: var(--ak-font-weight-medium);
+  font-weight: var(--ak-font-weight-semibold);
   letter-spacing: var(--ak-font-tracking-widest);
   text-transform: uppercase;
-  color: var(--ak-semantic-fg-muted);
-}
-
-.eyebrow::before {
-  content: "";
-  width: var(--ak-space-2);
-  height: var(--ak-space-2);
-  border-radius: var(--ak-radius-pill);
-  background: var(--ak-semantic-bg-accent);
-  flex: none;
+  color: var(--ak-semantic-fg-accent);
 }
 
 .eyebrow--inverse {
-  color: var(--ak-semantic-fg-inverse-muted);
+  color: var(--ak-semantic-fg-accent-inverse);
 }
 
 /* @component Tarjeta */
@@ -196,11 +245,20 @@
   color: var(--ak-semantic-fg-accent);
 }
 
+/* Sobre fondo oscuro hay que subir un escalón de la rampa. fg-accent es
+   accent-600, calibrado contra el lienzo crema: sobre negro da 2.99:1 y no pasa
+   ni el umbral de texto grande. accent-400 (fg-accent-inverse) da 5.43:1.
+   Sin esta regla, el "marca" rojo del titular del pie es ilegible. */
+.section--inverse .accent {
+  color: var(--ak-semantic-fg-accent-inverse);
+}
+
 .display {
+  font-family: var(--ak-font-family-serif);
   font-size: var(--ak-font-size-5xl);
-  font-weight: var(--ak-font-weight-medium);
-  line-height: var(--ak-font-leading-tight);
-  letter-spacing: var(--ak-font-tracking-tighter);
+  font-weight: var(--ak-font-weight-regular);
+  line-height: var(--ak-font-leading-snug);
+  letter-spacing: var(--ak-font-tracking-tight);
   text-wrap: balance;
 }
 
@@ -208,6 +266,37 @@
   font-size: var(--ak-font-size-lg);
   color: var(--ak-semantic-fg-muted);
   line-height: var(--ak-font-leading-normal);
+}
+
+/* Cuerpo de las secciones editoriales.
+   Va en size-base (18px), que es EL token de cuerpo del sistema: nació con la
+   nota "18px, no 16px, porque el minimalismo exige que lo poco que hay se lea
+   cómodo". Estuvo un tiempo en size-sm buscando el contraste de escala contra el
+   titular serif, y el resultado fue texto de 15px gris sobre crema: el salto lo
+   da igual el titular, que es el doble de grande, sin cobrarle la legibilidad al
+   párrafo.
+   El interlineado baja de relaxed (1.7) a normal (1.5) al subir el tamaño: son
+   la misma altura de línea en píxeles, y a 18px el 1.7 desarma el párrafo en
+   líneas sueltas.
+   La medida de 54ch se mantiene: a 18px son ~600px, dentro del rango cómodo de
+   45-75 caracteres. */
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-5);
+  font-size: var(--ak-font-size-base);
+  line-height: var(--ak-font-leading-normal);
+  color: var(--ak-semantic-fg-muted);
+  max-width: 54ch;
+}
+
+.prose p {
+  max-width: none;
+}
+
+.prose strong {
+  font-weight: var(--ak-font-weight-semibold);
+  color: var(--ak-semantic-fg-default);
 }
 
 .section--inverse .lead {
@@ -257,168 +346,121 @@
   }
 }
 
-/* @component Hero */
-/* Layout partido: texto a la izquierda, imagen a la derecha.
-   La foto es un mockup 16:9 sobre fondo de estudio plano (#F7F7F7). El hero usa
-   ESE MISMO color, así que las dos mitades son una sola superficie continua y la
-   imagen se funde sin costura: no necesita marco, ni sombra, ni recorte.
-   Por eso NO se usa object-fit:cover — la columna es casi cuadrada y un cover
-   sobre una foto 16:9 se comería la taza y parte del laptop. */
-.hero {
+/* @component Banner partido */
+/* La estructura que gobierna la página: media pantalla de texto contra media
+   pantalla de foto, a sangre y sin contenedor. Es lo que hace que el sitio se
+   lea como una revista y no como una landing de producto.
+   Reglas del componente:
+   · la foto SIEMPRE llega a sangre al borde exterior — cover, sin marco ni
+     sombra ni radio; el corte lo hace ella, no una línea;
+   · el texto NO se pega al borde: se alinea con el eje del .container del resto
+     del sitio, aunque su columna mida media pantalla;
+   · .split--reverse alterna el lado de la foto para que el scroll tenga ritmo.
+   No lleva .section a propósito: el padding vertical vive en .split__body,
+   porque la columna de imagen tiene que llegar hasta el filo del bloque. */
+.split {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  min-height: 62vh;
   background: var(--ak-component-hero-bg);
 }
 
-.hero__content {
+/* Invierte el lado de la foto cambiando el orden VISUAL, no el del DOM: así el
+   texto sigue leyéndose primero con lector de pantalla y al colapsar a una
+   columna no hay que reordenar nada. */
+.split--reverse .split__media {
+  order: -1;
+}
+
+.split__body {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--ak-space-6);
-  padding: var(--ak-space-7) var(--ak-space-gutter);
-  /* Alinea el texto con el .container del resto del sitio en vez de pegarlo al
-     borde: la columna mide media pantalla, pero el margen sigue el mismo eje. */
-  margin-inline-start: auto;
-  max-width: calc(var(--ak-size-container) / 2);
   width: 100%;
+  max-width: calc(var(--ak-size-container) / 2);
+  padding: var(--ak-space-9) var(--ak-space-gutter);
 }
 
-.hero__media {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  align-self: center;
+/* Con la foto a la derecha, el texto se empuja hacia el centro para caer sobre
+   el eje del contenedor. Con la foto a la izquierda ya nace ahí y no hace falta. */
+.split:not(.split--reverse) .split__body {
+  margin-inline-start: auto;
+}
+
+.split__media {
+  align-self: stretch;
+  overflow: hidden;
+}
+
+/* min-height y no aspect-ratio: la altura del bloque la fija el texto, y la
+   foto se estira para acompañarlo. El mínimo evita que un texto corto deje una
+   franja de imagen demasiado baja para leerse. */
+.split__media img {
+  width: 100%;
   height: 100%;
-  padding-block: var(--ak-space-6);
+  min-height: 440px;
+  object-fit: cover;
 }
 
-/* Sin recorte: la foto se muestra entera y su fondo continúa en el del hero.
-   El contenido de la imagen está descentrado —vive entre el 29% y el 88% de su
-   ancho, con el centro óptico en el 59%—, así que centrada dejaría un vacío
-   entre el texto y el laptop. El -8% corrige ese descentrado y el 110% la
-   agranda; el contenido llega hasta el 89% del ancho de la columna, o sea que
-   nada se corta. Como el fondo se funde, el desplazamiento es invisible.
-   Tope en 1024px: es el ancho nativo del JPG y ampliarlo más lo vuelve borroso. */
-.hero__media img {
-  width: 110%;
-  max-width: 1024px;
-  height: auto;
-  max-height: 100%;
-  margin-inline-start: -8%;
-  object-fit: contain;
+.split__title {
+  font-size: var(--ak-font-size-3xl);
+  max-width: 13ch;
 }
 
-@media (max-width: 900px) {
-  .hero {
-    grid-template-columns: 1fr;
-    min-height: 0;
-  }
-
-  /* En móvil la imagen va primero: entrega el impacto visual antes del scroll. */
-  .hero__media {
-    order: -1;
-    padding-block: 0;
-  }
-
-  /* Anula el 110%/-8% del layout de dos columnas. Aquí la columna ocupa todo el
-     viewport, así que la imagen sobresaldría y el overflow-x:hidden del body la
-     recortaría por la derecha, comiéndose la taza. */
-  .hero__media img {
-    width: 100%;
-    margin-inline-start: 0;
-  }
-
-  .hero__content {
-    max-width: none;
-    padding-block: var(--ak-space-7);
-  }
+/* Los banners que no son el hero titulan un escalón más abajo: a igual tamaño
+   competirían con el h1 y la página perdería su punto de entrada. */
+.split--compact .split__title {
+  font-size: var(--ak-font-size-2xl);
+  max-width: 24ch;
 }
 
-/* @component Banner de soporte */
-/* Pie del hero: banda negra a ancho completo, pegada al hero sin separación.
-   Es la primera transición de la página —claro a negro— y el corte debe ser
-   seco: cualquier margen entre medio rompe el efecto.
-   Color: el título va en BLANCO y el acento se traslada al icono. El rojo de
-   marca (accent.500) sobre negro da 4.34:1 y no pasa AA para texto; por eso el
-   icono usa fg.accent-inverse (accent.400, 5.43:1). Ver design/DESIGN.md. */
-.support {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  background: var(--ak-semantic-bg-inverse);
-  color: var(--ak-semantic-fg-inverse);
-}
-
-@media (max-width: 900px) {
-  .support {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 520px) {
-  .support {
-    grid-template-columns: 1fr;
-  }
-}
-
-.support__item {
+/* Los dos CTA comparten fila cuando caben y se apilan cuando no.
+   Cuándo NO caben: juntos piden ~660px y media columna con el margen del
+   contenedor deja 512px a 1440px de ancho. La maqueta los pone en línea porque
+   su tipografía de botón es ~11px; la nuestra es de 13px (font-size-xs, el piso
+   de la escala) y bajar de ahí rompería el eyebrow, el badge y el pie, que
+   comparten ese token. Se prefiere apilar antes que introducir un tamaño fuera
+   de la escala: apilados, el rectángulo rojo y la regla larga siguen leyéndose
+   como el par primario/secundario del diseño. */
+.split__actions {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--ak-space-3);
-  padding: var(--ak-space-7) var(--ak-space-5);
-  text-align: center;
-  /* Separador solo entre columnas: no toca los bordes de la banda. */
-  border-inline-start: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
-  transition: background var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
+  gap: var(--ak-space-5);
+  width: 100%;
+  margin-top: var(--ak-space-2);
 }
 
-.support__item:first-child {
-  border-inline-start: none;
+/* El CTA de línea se come el resto de la fila —o la fila entera si bajó— para
+   que su regla inferior llegue hasta el filo de la columna, como en la maqueta. */
+.split__actions .btn--line {
+  flex: 1 1 240px;
+  min-width: 0;
 }
 
 @media (max-width: 900px) {
-  /* Al pasar a 2 columnas, el separador izquierdo cae en la 1ª de cada fila. */
-  .support__item:nth-child(odd) {
-    border-inline-start: none;
+  .split {
+    grid-template-columns: 1fr;
   }
-  .support__item:nth-child(n + 3) {
-    border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
+
+  /* En una columna la foto va primero en los dos sentidos: entrega el impacto
+     visual antes de pedir lectura. */
+  .split__media,
+  .split--reverse .split__media {
+    order: -1;
   }
-}
 
-@media (max-width: 520px) {
-  .support__item {
-    border-inline-start: none;
+  .split__media img {
+    min-height: 0;
+    aspect-ratio: 4 / 3;
   }
-  .support__item + .support__item {
-    border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
+
+  .split__body {
+    max-width: none;
+    margin-inline-start: 0;
+    padding-block: var(--ak-space-8);
   }
-}
-
-.support__item:hover {
-  background: var(--ak-semantic-bg-inverse-raised);
-}
-
-/* El único punto de color de la banda. Sobre negro, accent.400 y no accent.500. */
-.support__icon {
-  color: var(--ak-semantic-fg-accent-inverse);
-  margin-bottom: var(--ak-space-2);
-}
-
-.support__title {
-  font-size: var(--ak-font-size-sm);
-  font-weight: var(--ak-font-weight-medium);
-  letter-spacing: var(--ak-font-tracking-wide);
-  text-transform: uppercase;
-  color: var(--ak-semantic-fg-inverse);
-}
-
-.support__text {
-  font-size: var(--ak-font-size-sm);
-  color: var(--ak-semantic-fg-inverse-muted);
-  line-height: var(--ak-font-leading-relaxed);
-  max-width: 28ch;
 }
 
 /* @component Caja de destaque */
@@ -652,35 +694,6 @@
   color: var(--ak-semantic-fg-on-accent);
 }
 
-/* @component Paso de metodología */
-.step {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ak-space-3);
-  padding-top: var(--ak-space-5);
-  border-top: var(--ak-border-thick) solid var(--ak-semantic-border-strong);
-}
-
-.step__num {
-  font-size: var(--ak-font-size-sm);
-  font-variant-numeric: tabular-nums;
-  color: var(--ak-semantic-fg-accent);
-}
-
-.step__name {
-  display: flex;
-  align-items: center;
-  gap: var(--ak-space-3);
-  font-size: var(--ak-font-size-xl);
-  font-weight: var(--ak-font-weight-medium);
-  letter-spacing: var(--ak-font-tracking-tight);
-}
-
-.step__text {
-  font-size: var(--ak-font-size-sm);
-  color: var(--ak-semantic-fg-muted);
-}
-
 /* @component Muro de logos */
 /* Los logos van en gris y recuperan su color al hover: cinco marcas a todo color
    competirían con el acento rojo y romperían la jerarquía de la página.
@@ -837,248 +850,18 @@ i[data-lucide] {
   }
 }
 
-/* ============================================================
-   INNOVACIÓN — sección con fondo en video
-   ============================================================ */
-
-.inno {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/* El clip (1280x720) cubre la sección completa. object-fit lo recorta según
-   la proporción; no hay foco que preservar porque es una textura abstracta. */
-.inno__video {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-}
-
-/* El halo central del clip llega a #fafafa: sin este velo el titular blanco
-   desaparecería justo encima. Más denso a la izquierda, que es donde va el texto. */
-.inno__scrim {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    linear-gradient(100deg,
-      rgba(10, 10, 10, 0.94) 0%,
-      rgba(10, 10, 10, 0.86) 42%,
-      rgba(10, 10, 10, 0.62) 70%,
-      rgba(10, 10, 10, 0.72) 100%);
-}
-
-/* Rejilla asimétrica: texto a la izquierda, foto alta a la derecha ocupando
-   las dos filas, y la cita cerrando bajo el texto. */
-.inno__inner {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: var(--ak-space-8) var(--ak-space-6);
-  align-items: start;
-}
-
-.inno__intro {
-  grid-column: 1 / span 6;
-  display: flex;
-  flex-direction: column;
-  gap: var(--ak-space-4);
-}
-
-.inno__display {
-  font-size: var(--ak-font-size-4xl);
-  font-weight: var(--ak-font-weight-medium);
-  line-height: 0.88;
-  letter-spacing: var(--ak-font-tracking-tighter);
-  /* Rótulo de fondo: marca el territorio sin competir con el titular. */
-  color: transparent;
-  -webkit-text-stroke: 1px var(--ak-color-ink-500);
-}
-
-.inno__title {
-  font-size: var(--ak-font-size-2xl);
-  letter-spacing: var(--ak-font-tracking-tight);
-  color: var(--ak-semantic-fg-inverse);
-  text-wrap: balance;
-  margin-top: var(--ak-space-2);
-}
-
-.inno .lead {
-  color: var(--ak-semantic-fg-inverse-muted);
-  max-width: 46ch;
-}
-
-/* La foto arranca más arriba que el texto y se sale de la caja: rompe la
-   simetría de la rejilla, que es lo que hace el layout menos plano. */
-.inno__figure {
-  grid-column: 8 / span 5;
-  grid-row: 1 / span 2;
-  margin: 0;
-  align-self: center;
-}
-
-.inno__frame {
-  position: relative;
-  isolation: isolate;
-}
-
-.inno__frame::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: var(--ak-radius-lg);
-  background: var(--ak-semantic-bg-accent);
-  transform: translate(var(--ak-space-3), var(--ak-space-3));
-  transition: transform var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
-}
-
-.inno__figure:hover .inno__frame::before {
-  transform: translate(var(--ak-space-5), var(--ak-space-5));
-}
-
-.inno__photo {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  /* El encuadre original es apaisado: al recortarlo a vertical hay que
-     sostener a la diseñadora y el wireframe, que están a la izquierda. */
-  object-position: 34% center;
-  border-radius: var(--ak-radius-lg);
-}
-
-.inno__caption {
-  display: flex;
-  align-items: baseline;
-  gap: var(--ak-space-3);
-  margin-top: var(--ak-space-4);
-  font-size: var(--ak-font-size-sm);
-  color: var(--ak-semantic-fg-inverse-muted);
-}
-
-.inno__caption-index {
-  font-weight: var(--ak-font-weight-medium);
-  color: var(--ak-semantic-fg-accent-inverse);
-  letter-spacing: var(--ak-font-tracking-wide);
-}
-
-/* Cita, no tarjeta: sin caja ni relleno, solo el filo rojo. */
-.inno__quote {
-  grid-column: 1 / span 6;
-  margin: 0;
-  padding-inline-start: var(--ak-space-5);
-  border-inline-start: var(--ak-border-heavy) solid var(--ak-semantic-border-accent);
-}
-
-.inno__quote-text {
-  font-size: var(--ak-font-size-xl);
-  font-weight: var(--ak-font-weight-medium);
-  line-height: var(--ak-font-leading-tight);
-  letter-spacing: var(--ak-font-tracking-tight);
-  color: var(--ak-semantic-fg-inverse);
-  text-wrap: balance;
-}
-
-.inno__quote-note {
-  margin-top: var(--ak-space-4);
-  font-size: var(--ak-font-size-sm);
-  color: var(--ak-semantic-fg-inverse-muted);
-  max-width: 54ch;
-}
-
-.inno__quote-link {
-  margin-top: var(--ak-space-5);
-  color: var(--ak-semantic-fg-accent-inverse);
-}
-
-@media (max-width: 900px) {
-  .inno__inner {
-    grid-template-columns: 1fr;
-    gap: var(--ak-space-6);
-  }
-
-  .inno__intro,
-  .inno__quote {
-    grid-column: 1;
-  }
-
-  /* En una columna la foto va entre el texto y la cita, no arriba: mantiene
-     el orden de lectura del argumento. */
-  .inno__figure {
-    grid-column: 1;
-    grid-row: auto;
-    max-width: 420px;
-  }
-
-  .inno__photo {
-    aspect-ratio: 4 / 3;
-  }
-
-  /* Sin columnas el degradado lateral no sirve: el texto ocupa todo el ancho. */
-  .inno__scrim {
-    background: rgba(10, 10, 10, 0.9);
-  }
-}
-
-/* Sin movimiento el video se congela; el póster queda de textura fija. */
-@media (prefers-reduced-motion: reduce) {
-  .inno__figure:hover .inno__frame::before {
-    transform: translate(var(--ak-space-3), var(--ak-space-3));
-  }
-}
-
 /* @component Logo del header */
 /* El SVG trae su color: negro + acento rojo. Manda la altura, como en los
    logos de cliente, para que el ancho se acomode solo. */
 .header__logo {
-  height: var(--ak-space-6);
+  height: var(--ak-component-header-logo-height);
   width: auto;
   display: block;
 }
 
 @media (max-width: 768px) {
   .header__logo {
-    height: var(--ak-space-5);
-  }
-}
-
-/* @component Pasos del proceso */
-/* Cuatro en una fila: es la lectura del proceso, y partirla deja el 04
-   huérfano. Bajo 1024px pasa a 2x2, que sigue leyéndose por parejas. */
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--ak-space-6) var(--ak-space-5);
-}
-
-.steps .step {
-  transition: border-color var(--ak-motion-duration-base) var(--ak-motion-ease-standard);
-}
-
-.steps .step:hover {
-  border-top-color: var(--ak-semantic-border-accent);
-}
-
-.steps .step__num {
-  font-size: var(--ak-font-size-lg);
-  font-weight: var(--ak-font-weight-medium);
-  letter-spacing: var(--ak-font-tracking-wide);
-}
-
-@media (max-width: 1023px) {
-  .steps {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 560px) {
-  .steps {
-    grid-template-columns: 1fr;
+    height: var(--ak-component-header-logo-height-sm);
   }
 }
 
@@ -1097,12 +880,16 @@ i[data-lucide] {
 }
 
 /* @component Pie de conversión */
+/* Pie corto a propósito. El prefooter que va justo encima ya cierra la venta con
+   su propio titular y su CTA rojo; este bloque solo repite el llamado y deja el
+   correo. Por eso el padding baja a space-8 fijo en vez del clamp que llegaba a
+   space-9: un pie alto tras un prefooter alto hacía dos pantallas de cierre. */
 .footer {
-  padding-block: clamp(var(--ak-space-8), 6vw, var(--ak-space-9)) var(--ak-space-6);
+  padding-block: var(--ak-space-8) var(--ak-space-6);
 }
 
-/* El llamado a la izquierda y los datos al costado: apilados hacían un pie
-   de tres pantallas para tres líneas de contacto. */
+/* El llamado a la izquierda y el correo al costado: apilados, tres líneas de
+   contacto ocupaban una pantalla entera. */
 .footer__top {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
@@ -1128,8 +915,18 @@ i[data-lucide] {
   align-content: start;
 }
 
+/* Rótulo del dato de contacto. Tenía su estilo prestado de la banda negra del
+   hero, que ya no existe; ahora es suyo. */
+.footer__label {
+  font-size: var(--ak-font-size-sm);
+  font-weight: var(--ak-font-weight-medium);
+  letter-spacing: var(--ak-font-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ak-semantic-fg-inverse);
+}
+
 .footer__legal {
-  margin-top: var(--ak-space-7);
+  margin-top: var(--ak-space-6);
   padding-top: var(--ak-space-5);
   border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
   font-size: var(--ak-font-size-xs);
@@ -1146,5 +943,360 @@ i[data-lucide] {
 
   .footer__meta {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+/* @component Fila de capacidades */
+/* Siete columnas separadas por filetes verticales. No son tarjetas: no hay
+   caja, ni fondo, ni sombra, ni hover — solo la línea que las separa, como las
+   columnas de un periódico.
+   Siete y no cuatro porque el número ES el mensaje ("todo esto hacemos junto a
+   ti"): la fila prioriza caber entera de un vistazo sobre que cada celda
+   respire, y por eso el texto baja a font-size xs. */
+.capabilities {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+}
+
+.capabilities__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ak-space-5);
+  padding: var(--ak-space-6) var(--ak-space-4);
+  text-align: center;
+  /* Filete solo ENTRE columnas: no toca los extremos de la fila. */
+  border-inline-start: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+}
+
+.capabilities__item:first-child {
+  border-inline-start: none;
+}
+
+/* El icono manda sobre el texto: va grande, en negro y con el trazo fino del
+   sistema. Es lo único que se ve al pasar la vista rápido por la fila. */
+.capabilities__icon {
+  color: var(--ak-semantic-fg-default);
+}
+
+/* size-sm y no xs: xs (13px) es el tamaño de eyebrows y metadatos —texto que se
+   reconoce, no que se lee—, y estas siete celdas son frases completas. Sube a
+   15px, que sigue siendo el escalón por debajo del cuerpo y mantiene la fila
+   compacta. */
+.capabilities__text {
+  font-size: var(--ak-font-size-sm);
+  line-height: var(--ak-font-leading-relaxed);
+  color: var(--ak-semantic-fg-muted);
+  max-width: 20ch;
+}
+
+/* Al reflowear, el filete izquierdo se reasigna a la primera celda de cada
+   fila y aparece un filete superior a partir de la segunda: el patrón de
+   separadores tiene que seguir a la rejilla, no quedarse en la de 7. */
+@media (max-width: 1100px) {
+  .capabilities {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .capabilities__item {
+    border-inline-start: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+  }
+  .capabilities__item:nth-child(4n + 1) {
+    border-inline-start: none;
+  }
+  .capabilities__item:nth-child(n + 5) {
+    border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+  }
+}
+
+@media (max-width: 640px) {
+  .capabilities {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .capabilities__item,
+  .capabilities__item:nth-child(4n + 1) {
+    border-inline-start: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+  }
+  .capabilities__item:nth-child(odd) {
+    border-inline-start: none;
+  }
+  .capabilities__item:nth-child(n + 3) {
+    border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-subtle);
+  }
+}
+
+/* @component Formulario de contacto */
+/* Campos sin caja: solo una línea inferior, como el CTA .btn--line. En una
+   página donde nada tiene borde completo salvo las tarjetas, un input con marco
+   de cuatro lados se lee como un elemento pegado de otra web.
+   El texto a la izquierda y el formulario a la derecha: el argumento ya se dio
+   en el prefooter, aquí solo queda pedir los datos. */
+.contacto {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: var(--ak-space-8);
+  align-items: start;
+}
+
+.contacto__title {
+  font-size: var(--ak-font-size-2xl);
+  max-width: 14ch;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-6);
+}
+
+/* Nombre y correo comparten fila: son cortos y pedirlos apilados alarga el
+   formulario sin ganar nada. El mensaje va siempre a lo ancho. */
+.form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ak-space-5);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-2);
+}
+
+.field__label {
+  font-family: var(--ak-font-family-sans);
+  font-size: var(--ak-font-size-xs);
+  font-weight: var(--ak-font-weight-semibold);
+  letter-spacing: var(--ak-font-tracking-widest);
+  text-transform: uppercase;
+  color: var(--ak-semantic-fg-muted);
+}
+
+.field__opcional {
+  font-weight: var(--ak-font-weight-regular);
+  letter-spacing: var(--ak-font-tracking-wide);
+  text-transform: none;
+}
+
+/* font: inherit lo pone base.css; aquí solo se fija el tamaño de cuerpo para
+   que escribir en el campo se lea igual que el resto de la página. */
+.field__input {
+  width: 100%;
+  padding-block: var(--ak-space-3);
+  font-size: var(--ak-font-size-base);
+  color: var(--ak-semantic-fg-default);
+  background: transparent;
+  border-bottom: var(--ak-border-hairline) solid var(--ak-semantic-border-default);
+  border-radius: var(--ak-radius-none);
+  transition: border-color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+
+.field__input:hover {
+  border-bottom-color: var(--ak-semantic-border-strong);
+}
+
+.field__input:focus {
+  outline: none;
+  border-bottom-color: var(--ak-semantic-border-accent);
+}
+
+/* El foco por teclado sí lleva anillo: el cambio de color del filete solo no
+   basta para cumplir el contraste de indicador de foco. */
+.field__input:focus-visible {
+  outline: var(--ak-border-thick) solid var(--ak-color-state-focus);
+  outline-offset: var(--ak-space-1);
+}
+
+/* :user-invalid y no :invalid — :invalid pinta de rojo los campos vacíos desde
+   que carga la página, antes de que nadie haya escrito nada. */
+.field__input:user-invalid {
+  border-bottom-color: var(--ak-color-state-danger);
+}
+
+.field__input--area {
+  resize: vertical;
+  min-height: 8ch;
+  line-height: var(--ak-font-leading-normal);
+}
+
+/* Fuera de la pantalla en vez de display:none: algunos bots ignoran los campos
+   ocultos con display, pero rellenan los que existen en el layout. */
+.form__trampa {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.form__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ak-space-5);
+  margin-top: var(--ak-space-2);
+}
+
+/* Es una live region (role=status): tiene que existir en el árbol de
+   accesibilidad DESDE LA CARGA para que el lector de pantalla anuncie su
+   contenido al aparecer. Por eso NO lleva `:empty { display: none }` — eso lo
+   sacaría del árbol y el anuncio se perdería. Vacío mide cero y no se ve. */
+.form__estado {
+  font-size: var(--ak-font-size-sm);
+  max-width: 40ch;
+}
+
+.form__estado[data-estado="ok"] {
+  color: var(--ak-color-state-success);
+}
+
+.form__estado[data-estado="error"] {
+  color: var(--ak-color-state-danger);
+}
+
+/* Mientras se envía: el botón queda inerte y lo dice. */
+.form[data-enviando] .btn {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .contacto {
+    grid-template-columns: 1fr;
+    gap: var(--ak-space-7);
+  }
+
+  .contacto__title {
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* @component Prefooter de cierre */
+/* Último argumento antes del pie. Va sobre la crema profunda para separarse del
+   lienzo sin usar un borde, y es la única sección donde el titular convive con
+   el CTA rojo en la misma pantalla: es el punto de conversión de la página.
+   La rejilla exterior reserva una columna a sangre para la foto ornamental, que
+   se corta contra el borde derecho del viewport. */
+.prefooter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(160px, 18%, 320px);
+  background: var(--ak-semantic-bg-subtle);
+}
+
+.prefooter__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ak-space-8);
+  align-items: start;
+  padding: var(--ak-space-9) var(--ak-space-gutter);
+}
+
+.prefooter__title {
+  font-size: var(--ak-font-size-2xl);
+  max-width: 16ch;
+}
+
+.prefooter__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ak-space-7);
+}
+
+/* La pregunta y el botón comparten fila: la pregunta abre y el CTA responde.
+   Apilados, el botón se lee como un elemento suelto y pierde ese diálogo. */
+.prefooter__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ak-space-6);
+}
+
+.prefooter__question {
+  font-size: var(--ak-font-size-sm);
+  font-weight: var(--ak-font-weight-semibold);
+  max-width: none;
+}
+
+.prefooter__ornament {
+  overflow: hidden;
+}
+
+.prefooter__ornament img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+  /* La foto ornamental es respiración, no información: al estrecharse queda en
+     una tira demasiado angosta para leerse y se retira entera. */
+  .prefooter {
+    grid-template-columns: 1fr;
+  }
+  .prefooter__ornament {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .prefooter__inner {
+    grid-template-columns: 1fr;
+    gap: var(--ak-space-7);
+    padding-block: var(--ak-space-8);
+  }
+  .prefooter__title {
+    max-width: none;
+  }
+}
+
+/* ============================================================
+   BOTÓN FLOTANTE DE WHATSAPP
+   Fijo abajo-derecha, sobre todo el contenido pero por debajo de
+   modales. Verde de marca WhatsApp (no es un token del sistema, es
+   color de un tercero). El JS no lo toca: es un enlace puro.
+   ============================================================ */
+.wa-float {
+  position: fixed;
+  right: var(--ak-space-5);
+  bottom: var(--ak-space-5);
+  z-index: var(--ak-layer-overlay);
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--ak-radius-pill);
+  background: #25d366;
+  color: #fff;
+  box-shadow: var(--ak-shadow-lg);
+  transition:
+    transform var(--ak-motion-duration-fast) var(--ak-motion-ease-spring),
+    box-shadow var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+.wa-float:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: var(--ak-shadow-lg), 0 0 0 6px rgba(37, 211, 102, 0.18);
+}
+.wa-float:focus-visible {
+  outline: 3px solid var(--ak-color-state-focus);
+  outline-offset: 3px;
+}
+.wa-float__icon {
+  width: 60%;
+  height: 60%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-float {
+    transition: none;
+  }
+  .wa-float:hover {
+    transform: none;
   }
 }

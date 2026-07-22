@@ -10,7 +10,7 @@
       content="Consultora de estrategia, branding y diseño de innovación. Acompañamos a emprendedores y empresas a construir marcas sólidas, coherentes y rentables en el tiempo."
     />
     <link rel="canonical" href="https://alkance.cl/" />
-    <meta name="theme-color" content="#0A0A0A" />
+    <meta name="theme-color" content="#F7F5F1" />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://alkance.cl/" />
@@ -23,6 +23,14 @@
     <meta property="og:locale" content="es_CL" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!-- Precarga solo los dos archivos que hacen falta para pintar la primera
+         pantalla: la Garamond romana del h1 y la Outfit variable del cuerpo. Sin
+         esto el navegador no los descubre hasta parsear fonts.css, y el texto
+         aparece con la fuente de respaldo y salta después. -->
+    <link rel="preload" href="src/fonts/eb-garamond-400-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="src/fonts/outfit-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+    <link rel="stylesheet" href="src/styles/fonts.css" />
     <link rel="stylesheet" href="src/styles/tokens.css" />
     <link rel="stylesheet" href="src/styles/base.css" />
     <link rel="stylesheet" href="src/styles/layout.css" />
@@ -38,10 +46,8 @@
         "description": "Consultora de estrategia, branding y diseño de innovación.",
         "url": "https://alkance.cl",
         "email": "hola@alkance.cl",
-        "telephone": "+56912345678",
         "address": {
           "@type": "PostalAddress",
-          "addressLocality": "Rancagua",
           "addressCountry": "CL"
         },
         "areaServed": "CL",
@@ -67,7 +73,7 @@
         </a>
         <nav class="header__nav" aria-label="Principal">
           <a class="link" href="#servicios">Servicios</a>
-          <a class="link" href="#innovacion">Innovación</a>
+          <a class="link" href="#filosofia">Filosofía</a>
           <a class="btn btn--primary" href="#contacto">Agendar reunión</a>
         </nav>
       </div>
@@ -75,35 +81,39 @@
 
     <main id="main">
       <!-- ============ 1. HERO ============ -->
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero__content">
-          <p class="eyebrow reveal">Estrategia, branding &amp; diseño de innovación</p>
-
-          <!-- 3xl y no 5xl: el display grande es para hero a ancho completo. En
-               media columna, 96px parte "Transformamos" fuera de la caja. -->
-          <h1 class="display reveal" id="hero-title" style="font-size: var(--ak-font-size-3xl)">
-            Transformamos ideas en <span class="accent">marcas</span> que crecen.
+      <!-- Sin eyebrow: en la maqueta el h1 es lo primero que hay. Cualquier
+           rótulo encima le roba el golpe de entrada. -->
+      <section class="split" aria-labelledby="hero-title">
+        <div class="split__body">
+          <h1 class="display split__title reveal" id="hero-title">
+            Construimos marcas desde el <em>propósito.</em>
           </h1>
 
-          <p class="lead reveal" style="max-width: 42ch">
-            Acompañamos a emprendedores y empresas a construir marcas sólidas,
-            coherentes y rentables en el tiempo.
-          </p>
+          <div class="prose reveal">
+            <p>
+              Ayudamos a emprendedores y empresas a descubrir aquello que las hace
+              únicas para transformarlo en una estrategia, una comunicación y una
+              identidad que les permita vender desde la autenticidad, y no desde
+              las tendencias.
+            </p>
+          </div>
 
-          <!-- Sin btn--lg: en media columna los dos botones grandes suman más que
-               el ancho disponible y el segundo cae a otra línea. -->
-          <div class="cluster reveal">
-            <a class="btn btn--primary" href="#contacto">Agendar reunión</a>
-            <a class="btn btn--ghost" href="#servicios">Ver servicios</a>
+          <div class="split__actions reveal">
+            <a class="btn btn--primary" href="#contacto">
+              Agendar una sesión estratégica
+              <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="btn btn--line" href="#forma-de-trabajar">
+              Conoce cómo trabajamos
+              <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
           </div>
         </div>
 
-        <!-- width/height reales (1024x572): reservan el espacio antes de que la
-             imagen cargue y evitan que el hero salte.
-             fetchpriority=high y sin lazy: es el LCP de la página. -->
-        <div class="hero__media reveal">
+        <!-- fetchpriority=high y sin lazy: es el LCP de la página. -->
+        <div class="split__media reveal">
           <img
-            src="src/img/herobanner.jpg"
+            src="src/img/hero.png"
             alt="Presentación de marca Alkance en un laptop, junto a una planta y una taza sobre un escritorio"
             width="1024"
             height="572"
@@ -113,40 +123,121 @@
         </div>
       </section>
 
-      <!-- Pie del hero: banda negra a ancho completo, pegada al hero (sin
-           .container ni .section, que meterían márgenes y romperían el corte). -->
-      <section class="support" aria-label="Áreas de servicio">
-        <div class="support__item">
-          <i data-lucide="lightbulb" class="icon icon--xl support__icon" aria-hidden="true"></i>
-          <h2 class="support__title">Estrategia</h2>
-          <p class="support__text">
-            Definimos el propósito, posicionamiento y plan de crecimiento.
-          </p>
+      <!-- ============ 2. FORMA DE TRABAJAR ============ -->
+      <!-- Pegado al hero, con la foto al otro lado: los dos banners forman la
+           unidad de entrada de la maqueta y entre ellos no va nada. -->
+      <section
+        class="split split--reverse split--compact"
+        id="forma-de-trabajar"
+        aria-labelledby="forma-title"
+      >
+        <div class="split__body">
+          <p class="eyebrow reveal">Nuestra forma de trabajar</p>
+
+          <h2 class="split__title reveal" id="forma-title">
+            No llegamos a entregar un proyecto. Llegamos para
+            <em>construirlo contigo.</em>
+          </h2>
+
+          <div class="prose reveal">
+            <p>
+              Nos involucramos desde la primera conversación, comprendiendo tu
+              negocio, tus objetivos y los desafíos que enfrenta tu marca.
+            </p>
+            <p>
+              Trabajamos de manera colaborativa para que cada decisión tenga un
+              propósito y cada acción contribuya al crecimiento de tu negocio.
+            </p>
+            <p>
+              Y una vez que el proyecto está en marcha, seguimos acompañándote,
+              optimizando y evolucionando tu marca junto a ti.
+            </p>
+            <p><strong>Porque creemos en relaciones de largo plazo.</strong></p>
+          </div>
+
+          <a class="btn btn--line reveal" href="#servicios">
+            Ver proyectos
+            <span class="btn__arrow" aria-hidden="true">→</span>
+          </a>
         </div>
-        <div class="support__item">
-          <i data-lucide="pen-tool" class="icon icon--xl support__icon" aria-hidden="true"></i>
-          <h2 class="support__title">Branding</h2>
-          <p class="support__text">
-            Construimos identidades memorables y coherentes con tu negocio.
-          </p>
-        </div>
-        <div class="support__item">
-          <i data-lucide="monitor" class="icon icon--xl support__icon" aria-hidden="true"></i>
-          <h2 class="support__title">Diseño digital</h2>
-          <p class="support__text">
-            Diseñamos experiencias digitales que conectan y convierten.
-          </p>
-        </div>
-        <div class="support__item">
-          <i data-lucide="bar-chart-3" class="icon icon--xl support__icon" aria-hidden="true"></i>
-          <h2 class="support__title">Acompañamiento</h2>
-          <p class="support__text">
-            Te acompañamos en el tiempo para que tu marca siga creciendo.
-          </p>
+
+        <!-- PLACEHOLDER — reemplazar por la foto definitiva del cliente. -->
+        <div class="split__media reveal">
+          <img
+            src="src/img/banner2.png"
+            alt="Dos personas del equipo revisando juntas la propuesta de identidad de una marca"
+            width="1200"
+            height="1000"
+            loading="lazy"
+          />
         </div>
       </section>
 
-      <!-- ============ 2. SEGMENTACIÓN ============ -->
+      <!-- ============ 3. PROCESO / LO QUE HACEMOS JUNTO A TI ============ -->
+      <!-- Absorbe el titular de la antigua sección «Metodología»: eran dos
+           bloques diciendo lo mismo (el proceso) con distinta forma. Aquí el
+           titular encabeza y las siete columnas son el detalle.
+           .container--full: la fila necesita todo el ancho de la pantalla; con
+           el tope de 1280px, en monitores anchos quedaba una tira estrecha en
+           medio de dos vacíos enormes. -->
+      <section class="section" id="capacidades" aria-labelledby="capacidades-title">
+        <div class="container container--full stack stack--loose">
+          <div class="stack stack--tight">
+            <p class="eyebrow reveal">Lo que hacemos junto a ti</p>
+            <h2 class="reveal" id="capacidades-title">
+              Un proceso claro. <span class="accent">Resultados reales.</span>
+            </h2>
+          </div>
+
+          <div class="capabilities reveal-stagger">
+            <div class="capabilities__item" style="--i: 0">
+              <i data-lucide="compass" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+              <p class="capabilities__text">
+                Definimos el propósito y posicionamiento de tu marca.
+              </p>
+            </div>
+            <div class="capabilities__item" style="--i: 1">
+              <i data-lucide="search" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+              <p class="capabilities__text">
+                Analizamos tu negocio y propuesta de valor.
+              </p>
+            </div>
+            <div class="capabilities__item" style="--i: 2">
+              <i data-lucide="lightbulb" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+              <p class="capabilities__text">
+                Detectamos oportunidades de crecimiento y diferenciación.
+              </p>
+            </div>
+            <div class="capabilities__item" style="--i: 3">
+              <i data-lucide="pencil" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+              <p class="capabilities__text">
+                Diseñamos una identidad visual coherente con tu estrategia.
+              </p>
+            </div>
+            <div class="capabilities__item" style="--i: 4">
+              <i data-lucide="monitor" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+              <p class="capabilities__text">
+                Creamos experiencias digitales que fortalecen la conexión con tus
+                clientes.
+              </p>
+            </div>
+            <div class="capabilities__item" style="--i: 5">
+              <i data-lucide="trending-up" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+              <p class="capabilities__text">
+                Desarrollamos estrategias de marketing orientadas a resultados.
+              </p>
+            </div>
+            <div class="capabilities__item" style="--i: 6">
+              <i data-lucide="users" class="icon icon--lg capabilities__icon" aria-hidden="true"></i>
+              <p class="capabilities__text">
+                Te acompañamos en la implementación y evolución de tu marca.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 4. SEGMENTACIÓN ============ -->
       <section class="section section--subtle" id="clientes" aria-labelledby="clientes-title">
         <div class="container stack stack--loose">
           <div class="stack stack--tight">
@@ -174,9 +265,7 @@
                   marca.
                 </p>
               </div>
-              <div class="card__foot">
-                <a class="link-arrow" href="#servicios">Ver servicios</a>
-              </div>
+             
             </article>
 
             <article class="card" style="--i: 1">
@@ -195,9 +284,7 @@
                   Estrategia y acompañamiento para empresas que quieren crecer en serio.
                 </p>
               </div>
-              <div class="card__foot">
-                <a class="link-arrow" href="#contacto">Ver requisitos</a>
-              </div>
+             
             </article>
           </div>
         </div>
@@ -231,7 +318,7 @@
         </div>
       </section>
 
-      <!-- ============ 3. CAPACIDADES / SERVICIOS ============ -->
+      <!-- ============ 5. SERVICIOS ============ -->
       <section class="section" id="servicios" aria-labelledby="servicios-title">
         <div class="container stack stack--loose">
           <div class="stack stack--tight">
@@ -317,119 +404,35 @@
         </div>
       </section>
 
-      <!-- ============ 4. INNOVACIÓN ============ -->
-      <!-- Única sección con fondo en movimiento. El clip es gris oscuro con un
-           halo central, así que la sección pasa a negro y el video hace de
-           textura: sobre fondo claro quedaría lodoso. -->
-      <section class="section section--inverse inno" id="innovacion" aria-labelledby="innovacion-title">
-        <video
-          class="inno__video"
-          src="src/img/Video_Gen_Claro.mp4"
-          poster="src/img/video-poster.jpg"
-          autoplay muted loop playsinline
-          preload="metadata"
-          aria-hidden="true"
-          tabindex="-1"></video>
-        <!-- Baja el contraste del clip para que el texto se lea encima. -->
-        <span class="inno__scrim" aria-hidden="true"></span>
+      <!-- ============ 6. FILOSOFÍA ============ -->
+      <!-- Mismo componente que los banners de entrada, con la foto a la derecha:
+           cierra el argumento con la misma estructura con que lo abrió. -->
+      <section class="split split--compact" id="filosofia" aria-labelledby="filosofia-title">
+        <div class="split__body">
+          <p class="eyebrow reveal">Nuestra filosofía</p>
 
-        <div class="container inno__inner">
-          <div class="inno__intro">
-            <p class="eyebrow eyebrow--inverse reveal">Consultoría de innovación &amp; diseño</p>
-            <p class="inno__display reveal" aria-hidden="true">Innovación</p>
-            <h2 class="inno__title reveal" id="innovacion-title">
-              Tu socio estratégico en <span class="accent">innovación</span>.
-            </h2>
-            <p class="lead reveal">
-              Nos especializamos en crear nuevos negocios, evaluar y mejorar servicios
-              existentes y desarrollar productos digitales de alta calidad. A través de
-              diseño estratégico, aplicando metodologías ágiles y diseño centrado en el
-              usuario para asegurar el encaje mercado-producto.
+          <h2 class="split__title reveal" id="filosofia-title">
+            No creemos en crear logotipos. Creemos en construir marcas desde el
+            <em>SER</em>, antes que desde el <em>HACER</em>.
+          </h2>
+
+          <div class="prose reveal">
+            <p>
+              Porque una marca auténtica no sigue tendencias.<br />
+              Las inspira.
             </p>
           </div>
-
-          <figure class="inno__figure reveal">
-            <div class="inno__frame">
-              <img
-                class="inno__photo"
-                src="src/img/innova.png"
-                alt="Diseñadora mostrando dos wireframes dibujados a mano frente a un muro de bocetos de interfaz."
-                width="1496"
-                height="992"
-                loading="lazy"
-              />
-            </div>
-            <figcaption class="inno__caption">
-              <span class="inno__caption-index">01</span>
-              Del brief al prototipo validado.
-            </figcaption>
-          </figure>
-
-          <!-- Antes era una tarjeta rosa; sobre el negro pasa a cita editorial:
-               el filo rojo y el tamaño hacen el trabajo que hacía la caja. -->
-          <blockquote class="inno__quote reveal">
-            <p class="inno__quote-text">
-              No necesitas más desarrollo.<br />
-              Necesitas <span class="accent">claridad</span>.
-            </p>
-            <p class="inno__quote-note">
-              El mayor riesgo en etapas tempranas no es técnico, es estratégico. Ideas
-              mal enfocadas, problemas mal definidos y decisiones apresuradas.
-              Trabajamos contigo para entender qué construir, por qué y para quién.
-              Porque antes de escalar, hay que validar.
-            </p>
-            <a class="link-arrow inno__quote-link" href="#contacto">Escríbenos</a>
-          </blockquote>
         </div>
-      </section>
 
-      <!-- ============ 6. METODOLOGÍA ============ -->
-      <section class="section section--subtle" id="metodologia" aria-labelledby="metodologia-title">
-        <div class="container stack stack--loose">
-          <div class="stack stack--tight">
-            <p class="eyebrow reveal">Hasta el detalle</p>
-            <h2 class="reveal" id="metodologia-title">
-              Un proceso claro. <span class="accent">Resultados reales.</span>
-            </h2>
-          </div>
-
-          <!-- Rejilla propia y no .grid-auto: con minmax(280px) los cuatro pasos
-               no caben en el contenedor (1152px útiles) y el 04 caía solo a una
-               segunda fila. -->
-          <div class="steps reveal-stagger">
-            <div class="step" style="--i: 0">
-              <span class="step__num">01</span>
-              <h3 class="step__name">
-                <i data-lucide="ear" class="icon icon--sm icon--accent" aria-hidden="true"></i>
-                Entender
-              </h3>
-              <p class="step__text">Profundizamos en tu negocio y objetivos.</p>
-            </div>
-            <div class="step" style="--i: 1">
-              <span class="step__num">02</span>
-              <h3 class="step__name">
-                <i data-lucide="users" class="icon icon--sm icon--accent" aria-hidden="true"></i>
-                Co-crear
-              </h3>
-              <p class="step__text">Ideamos y prototipamos soluciones en conjunto.</p>
-            </div>
-            <div class="step" style="--i: 2">
-              <span class="step__num">03</span>
-              <h3 class="step__name">
-                <i data-lucide="map" class="icon icon--sm icon--accent" aria-hidden="true"></i>
-                Definir
-              </h3>
-              <p class="step__text">Establecemos la hoja de ruta y especificaciones.</p>
-            </div>
-            <div class="step" style="--i: 3">
-              <span class="step__num">04</span>
-              <h3 class="step__name">
-                <i data-lucide="handshake" class="icon icon--sm icon--accent" aria-hidden="true"></i>
-                Acompañar
-              </h3>
-              <p class="step__text">Apoyamos la implementación y mejora continua.</p>
-            </div>
-          </div>
+        <!-- PLACEHOLDER — reemplazar por la foto definitiva del cliente. -->
+        <div class="split__media reveal">
+          <img
+            src="src/img/banner3.png"
+            alt="Muro con láminas de moodboard: propósito, estrategia, identidad, conexión y crecimiento"
+            width="1200"
+            height="1000"
+            loading="lazy"
+          />
         </div>
       </section>
 
@@ -455,32 +458,170 @@
               <img class="logos__item" src="src/img/logos-clientes/foodware.svg" alt="Foodware" width="653" height="100" />
               <img class="logos__item" src="src/img/logos-clientes/aulatec.svg" alt="Aulatec" width="598" height="133" />
               <img class="logos__item" src="src/img/logos-clientes/h2v.svg" alt="H2V+" width="411" height="105" />
-              <img class="logos__item" src="src/img/logos-clientes/chrysalis.png" alt="Chrysalis" width="583" height="151" />
               <img class="logos__item" src="src/img/logos-clientes/foodware.svg" alt="" aria-hidden="true" width="653" height="100" />
               <img class="logos__item" src="src/img/logos-clientes/aulatec.svg" alt="" aria-hidden="true" width="598" height="133" />
               <img class="logos__item" src="src/img/logos-clientes/h2v.svg" alt="" aria-hidden="true" width="411" height="105" />
-              <img class="logos__item" src="src/img/logos-clientes/chrysalis.png" alt="" aria-hidden="true" width="583" height="151" />
             </div>
             <div class="marquee__group" aria-hidden="true">
               <img class="logos__item" src="src/img/logos-clientes/foodware.svg" alt="" width="653" height="100" />
               <img class="logos__item" src="src/img/logos-clientes/aulatec.svg" alt="" width="598" height="133" />
               <img class="logos__item" src="src/img/logos-clientes/h2v.svg" alt="" width="411" height="105" />
-              <img class="logos__item" src="src/img/logos-clientes/chrysalis.png" alt="" width="583" height="151" />
               <img class="logos__item" src="src/img/logos-clientes/foodware.svg" alt="" width="653" height="100" />
               <img class="logos__item" src="src/img/logos-clientes/aulatec.svg" alt="" width="598" height="133" />
               <img class="logos__item" src="src/img/logos-clientes/h2v.svg" alt="" width="411" height="105" />
-              <img class="logos__item" src="src/img/logos-clientes/chrysalis.png" alt="" width="583" height="151" />
             </div>
           </div>
         </div>
       </section>
+      <!-- ============ 8. PREFOOTER DE CIERRE ============ -->
+      <!-- Fuera de .section: el fondo crema profundo tiene que llegar al filo de
+           la pantalla y la foto ornamental cortarse contra el borde derecho. -->
+      <section class="prefooter" aria-labelledby="cierre-title">
+        <div class="prefooter__inner">
+          <h2 class="prefooter__title reveal" id="cierre-title">
+            Las grandes marcas no aparecen de un día para otro.
+            <em>Se construyen paso a paso.</em>
+          </h2>
+
+          <div class="prefooter__body">
+            <div class="prose reveal">
+              <p>
+                Y ese camino es mucho más valioso cuando alguien te acompaña desde
+                el principio.
+              </p>
+              <p>
+                En ALKANCE creemos en el trabajo colaborativo, en las relaciones de
+                largo plazo y en construir marcas que crecen junto a las personas
+                que las hacen posibles.
+              </p>
+            </div>
+
+            <div class="prefooter__cta reveal">
+              <p class="prefooter__question">¿Comenzamos a construir la tuya?</p>
+              <a class="btn btn--primary" href="#contacto">
+                Agendar una sesión estratégica
+                <span class="btn__arrow" aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLACEHOLDER — reemplazar por la foto definitiva del cliente.
+             Decorativa: alt vacío para que el lector de pantalla la ignore. -->
+        <div class="prefooter__ornament">
+          <img
+            src="src/img/banner4.png"
+            alt=""
+            width="500"
+            height="1000"
+            loading="lazy"
+          />
+        </div>
+      </section>
+
+      <!-- ============ 9. CONTACTO ============ -->
+      <!-- Va al final de <main>, después del prefooter: todos los CTA de la
+           página apuntan a #contacto, así que el formulario tiene que quedar por
+           debajo de todos ellos para que el salto sea siempre hacia abajo.
+           El <form> funciona SIN JavaScript: hace POST nativo y la Function
+           responde con un 303 a /?envio=ok. main.js solo intercepta para evitar
+           la recarga. -->
+      <section class="section section--subtle" id="contacto" aria-labelledby="contacto-title">
+        <div class="container contacto">
+          <div class="stack stack--tight contacto__intro">
+            <p class="eyebrow reveal">Hablemos</p>
+            <h2 class="contacto__title reveal" id="contacto-title">
+              Cuéntanos de tu <em>proyecto.</em>
+            </h2>
+            <div class="prose reveal">
+              <p>
+                Escríbenos y agendamos una primera conversación, sin costo, para
+                entender qué necesita tu marca.
+              </p>
+            </div>
+          </div>
+
+          <form class="form reveal" action="/api/contacto" method="post" data-form>
+            <div class="form__row">
+              <label class="field">
+                <span class="field__label">Nombre</span>
+                <input
+                  class="field__input"
+                  type="text"
+                  name="nombre"
+                  required
+                  maxlength="100"
+                  autocomplete="name"
+                />
+              </label>
+
+              <label class="field">
+                <span class="field__label">Correo</span>
+                <input
+                  class="field__input"
+                  type="email"
+                  name="email"
+                  required
+                  maxlength="254"
+                  autocomplete="email"
+                />
+              </label>
+            </div>
+
+            <label class="field">
+              <span class="field__label">Empresa <span class="field__opcional">(opcional)</span></span>
+              <input
+                class="field__input"
+                type="text"
+                name="empresa"
+                maxlength="120"
+                autocomplete="organization"
+              />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Mensaje</span>
+              <textarea
+                class="field__input field__input--area"
+                name="mensaje"
+                required
+                maxlength="4000"
+                rows="5"
+              ></textarea>
+            </label>
+
+            <!-- Trampa para bots. Invisible para las personas y fuera del orden
+                 de tabulación; si llega con contenido, la Function descarta el
+                 envío. aria-hidden + tabindex para que ningún lector de pantalla
+                 se lo ofrezca a una persona. -->
+            <div class="form__trampa" aria-hidden="true">
+              <label>
+                No rellenar
+                <input type="text" name="web" tabindex="-1" autocomplete="off" />
+              </label>
+            </div>
+
+            <div class="form__pie">
+              <button class="btn btn--primary" type="submit">
+                Enviar mensaje
+                <span class="btn__arrow" aria-hidden="true">→</span>
+              </button>
+
+              <!-- role=status: el lector de pantalla anuncia el resultado sin
+                   que haya que mover el foco. -->
+              <p class="form__estado" data-form-estado role="status"></p>
+            </div>
+          </form>
+        </div>
+      </section>
     </main>
 
-    <!-- ============ 8. FOOTER DE CONVERSIÓN ============ -->
-    <!-- Con .section el pie usaba el padding de una sección completa (hasta 160px
-         arriba y abajo) y apilaba titular, botón y datos: mucho alto para tres
-         líneas de contacto. Ahora los datos van al costado del llamado. -->
-    <footer class="section--inverse footer" id="contacto">
+    <!-- ============ 10. FOOTER ============ -->
+    <!-- Pie mínimo: el llamado, el botón y el correo. Nada más.
+         El trabajo de convertir ya lo hace el prefooter, que va justo encima con
+         su propio CTA; repetir aquí teléfono, web y enlaces solo alargaba la
+         página con información que nadie lee dos veces. -->
+    <footer class="section--inverse footer">
       <div class="container">
         <div class="footer__top">
           <div class="footer__cta">
@@ -488,31 +629,39 @@
               Hablemos de tu proyecto y construyamos juntos el futuro de tu
               <span class="accent">marca</span>.
             </h2>
-            <a class="btn btn--inverse btn--lg reveal" href="mailto:hola@alkance.cl">Contacto</a>
+            <a class="btn btn--inverse reveal" href="mailto:hola@alkance.cl">Contacto</a>
           </div>
 
           <div class="footer__meta reveal">
             <div>
-              <p class="support__title">Teléfono</p>
-              <a class="link" href="tel:+56912345678">+56 9 1234 5678</a>
-            </div>
-            <div>
-              <p class="support__title">Email</p>
+              <p class="footer__label">Email</p>
               <a class="link" href="mailto:hola@alkance.cl">hola@alkance.cl</a>
-            </div>
-            <div>
-              <p class="support__title">Web</p>
-              <a class="link" href="https://alkance.cl">alkance.cl</a>
             </div>
           </div>
         </div>
 
-        <p class="footer__legal">
-          &copy; <span data-year>2026</span> Alkance · Rancagua, Chile ·
-          <a class="link" href="designsystem.html">Design System</a>
-        </p>
+        <p class="footer__legal">&copy; <span data-year>2026</span> Alkance</p>
       </div>
     </footer>
+
+    <!-- Botón flotante de WhatsApp. Enlace wa.me + número en formato
+         internacional sin signos (56 = Chile). El icono va inline como SVG
+         propio: Lucide no trae la marca WhatsApp. -->
+    <a
+      class="wa-float"
+      href="https://wa.me/56968173704?text=Hola%20Alkance%2C%20me%20gustar%C3%ADa%20conversar%20sobre%20un%20proyecto."
+      target="_blank"
+      rel="noopener"
+      aria-label="Escríbenos por WhatsApp"
+    >
+      <svg class="wa-float__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path
+          fill="currentColor"
+          d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.39a9.86 9.86 0 0 0 4.73 1.2h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm0 18.05h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.03-.2-.31a8.16 8.16 0 0 1-1.25-4.36c0-4.54 3.7-8.23 8.23-8.23a8.2 8.2 0 0 1 8.22 8.24c0 4.54-3.7 8.23-8.23 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43-.14-.01-.31-.01-.47-.01a.9.9 0 0 0-.65.31c-.22.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.54.12.17 1.73 2.64 4.19 3.7.58.26 1.04.41 1.4.52.59.19 1.12.16 1.54.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"
+        />
+      </svg>
+    </a>
+
     <!-- Lucide: iconos SVG por CDN. Sustituye cada <i data-lucide> por un <svg>
          inline, por eso se puede estilar con CSS. En producción conviene un
          sprite local — ver design/ICONS.md. -->

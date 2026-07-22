@@ -76,32 +76,73 @@ function initTabs() {
   select(0);
 }
 
-/* --- Fondo en video de innovación --- */
-/* El clip trae pista de audio: va siempre silenciado (y el autoplay lo exige).
- * Solo corre mientras la sección está a la vista; fuera, el póster basta. */
-function initInnoVideo() {
-  const video = document.querySelector(".inno__video");
-  if (!video) return;
+/* --- Formulario de contacto --- */
+/* Mejora progresiva: el <form> ya funciona solo. Sin este JS hace un POST
+ * nativo y la Function responde con un 303 a /?envio=ok, que initAvisoEnvio()
+ * convierte en mensaje. Lo único que aporta el JS es evitar la recarga.
+ * Se respeta la regla del sistema: el JS mueve atributos de estado
+ * (data-enviando, data-estado) y la apariencia entera vive en CSS. */
+function initContactForm() {
+  const form = document.querySelector("[data-form]");
+  if (!form) return;
 
-  video.muted = true;
+  const estado = form.querySelector("[data-form-estado]");
 
-  if (REDUCED_MOTION) {
-    video.removeAttribute("autoplay");
-    video.pause();
-    return;
+  const decir = (texto, tipo) => {
+    estado.textContent = texto;
+    estado.dataset.estado = tipo;
+  };
+
+  form.addEventListener("submit", async (event) => {
+    // Deja que el navegador muestre sus propios avisos de campo obligatorio.
+    if (!form.checkValidity()) return;
+
+    event.preventDefault();
+    if (form.dataset.enviando !== undefined) return; // doble clic
+
+    form.dataset.enviando = "";
+    decir("Enviando…", "");
+
+    try {
+      const respuesta = await fetch(form.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Object.fromEntries(new FormData(form))),
+      });
+      const datos = await respuesta.json().catch(() => ({}));
+
+      if (respuesta.ok && datos.ok) {
+        form.reset();
+        decir("Gracias. Te responderemos pronto.", "ok");
+      } else {
+        decir(datos.error || "No pudimos enviar el mensaje. Escríbenos a hola@alkance.cl.", "error");
+      }
+    } catch {
+      // Red caída o sin conexión: fetch rechaza antes de llegar al servidor.
+      decir("Revisa tu conexión e inténtalo de nuevo.", "error");
+    } finally {
+      delete form.dataset.enviando;
+    }
+  });
+}
+
+/* --- Aviso tras un envío sin JavaScript --- */
+/* La Function redirige a /?envio=ok|error. Se traduce a texto y se limpia la
+ * URL, para que recargar no vuelva a mostrar el aviso. */
+function initAvisoEnvio() {
+  const envio = new URLSearchParams(location.search).get("envio");
+  if (!envio) return;
+
+  const estado = document.querySelector("[data-form-estado]");
+  if (estado) {
+    estado.textContent =
+      envio === "ok"
+        ? "Gracias. Te responderemos pronto."
+        : "No pudimos enviar el mensaje. Escríbenos a hola@alkance.cl.";
+    estado.dataset.estado = envio === "ok" ? "ok" : "error";
   }
 
-  new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        const played = video.play();
-        if (played) played.catch(() => {}); // el navegador puede negar el autoplay
-      } else {
-        video.pause();
-      }
-    },
-    { threshold: 0.1 }
-  ).observe(video);
+  history.replaceState(null, "", location.pathname + location.hash);
 }
 
 /* --- Año dinámico del footer --- */
@@ -115,5 +156,6 @@ function initYear() {
 initHeader();
 initReveal();
 initTabs();
-initInnoVideo();
+initContactForm();
+initAvisoEnvio();
 initYear();
