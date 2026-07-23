@@ -885,7 +885,7 @@ i[data-lucide] {
    correo. Por eso el padding baja a space-8 fijo en vez del clamp que llegaba a
    space-9: un pie alto tras un prefooter alto hacía dos pantallas de cierre. */
 .footer {
-  padding-block: var(--ak-space-8) var(--ak-space-6);
+  padding-block: var(--ak-space-7) var(--ak-space-5);
 }
 
 /* El llamado a la izquierda y el correo al costado: apilados, tres líneas de
@@ -893,7 +893,7 @@ i[data-lucide] {
 .footer__top {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: var(--ak-space-8);
+  gap: var(--ak-space-7);
   align-items: start;
 }
 
@@ -902,6 +902,13 @@ i[data-lucide] {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--ak-space-6);
+}
+
+/* Logo sobre la banda negra: usa la variante clara (logo-dark.svg). Alto fijo y
+   ancho automático para respetar su proporción sin deformarlo. */
+.footer__logo {
+  height: 2.5rem;
+  width: auto;
 }
 
 .footer__title {
@@ -926,8 +933,8 @@ i[data-lucide] {
 }
 
 .footer__legal {
-  margin-top: var(--ak-space-6);
-  padding-top: var(--ak-space-5);
+  margin-top: var(--ak-space-5);
+  padding-top: var(--ak-space-4);
   border-top: var(--ak-border-hairline) solid var(--ak-semantic-border-inverse);
   font-size: var(--ak-font-size-xs);
   color: var(--ak-semantic-fg-inverse-muted);
@@ -1224,14 +1231,18 @@ i[data-lucide] {
   max-width: none;
 }
 
+/* Franja ornamental de la derecha. La foto va como BACKGROUND del div, no como
+   <img>: con background-size:cover la imagen recorta para llenar la celda sin
+   deformarse jamás, sea cual sea su proporción (cuadrada, apaisada o vertical).
+   El div, vacío, se estira al alto de la fila del grid y el fondo lo cubre.
+   Para cambiar la foto o el encuadre, tocar las variables de aquí. */
 .prefooter__ornament {
-  overflow: hidden;
-}
-
-.prefooter__ornament img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  --prefooter-foto: url("../img/banner4.png");
+  --prefooter-encuadre: center; /* center | top | right | "50% 30%"… */
+  background-image: var(--prefooter-foto);
+  background-size: cover;
+  background-position: var(--prefooter-encuadre);
+  background-repeat: no-repeat;
 }
 
 @media (max-width: 1024px) {
@@ -1299,4 +1310,50 @@ i[data-lucide] {
   .wa-float:hover {
     transform: none;
   }
+}
+
+/* ============================================================
+   REDES SOCIALES (iconos)
+   Grupo de iconos que hereda el color del contexto vía currentColor:
+   tinta en el header, claro en el footer inverso. Sin href por ahora
+   son marcadores de posición; el cursor de mano solo aparece cuando
+   se les ponga href. Los <i data-lucide> los sustituye Lucide por SVG.
+   ============================================================ */
+.social {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ak-space-1);
+}
+.social__link {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--ak-radius-pill);
+  color: currentColor;
+  transition:
+    color var(--ak-motion-duration-fast) var(--ak-motion-ease-standard),
+    background var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+.social__link:focus-visible {
+  outline: 2px solid var(--ak-color-state-focus);
+  outline-offset: 2px;
+}
+/* Los iconos son SVG propios cargados como <img>: no se recolorean por CSS,
+   así que el realce es un leve cambio de opacidad y escala, no de color. */
+.social__link img {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: block;
+  transition: transform var(--ak-motion-duration-fast) var(--ak-motion-ease-spring);
+}
+.social__link {
+  opacity: 0.85;
+  transition: opacity var(--ak-motion-duration-fast) var(--ak-motion-ease-standard);
+}
+.social__link:hover {
+  opacity: 1;
+}
+.social__link:hover img {
+  transform: scale(1.1);
 }

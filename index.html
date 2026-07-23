@@ -10,6 +10,8 @@
       content="Consultora de estrategia, branding y diseño de innovación. Acompañamos a emprendedores y empresas a construir marcas sólidas, coherentes y rentables en el tiempo."
     />
     <link rel="canonical" href="https://alkance.cl/" />
+    <link rel="icon" href="src/img/logos/icon-3.png" type="image/png" />
+    <link rel="apple-touch-icon" href="src/img/logos/icon-3.png" />
     <meta name="theme-color" content="#F7F5F1" />
 
     <meta property="og:type" content="website" />
@@ -45,7 +47,7 @@
         "name": "Alkance",
         "description": "Consultora de estrategia, branding y diseño de innovación.",
         "url": "https://alkance.cl",
-        "email": "hola@alkance.cl",
+        "email": "contacto@alkancedigital.cl",
         "address": {
           "@type": "PostalAddress",
           "addressCountry": "CL"
@@ -73,7 +75,6 @@
         </a>
         <nav class="header__nav" aria-label="Principal">
           <a class="link" href="#servicios">Servicios</a>
-          <a class="link" href="#filosofia">Filosofía</a>
           <a class="btn btn--primary" href="#contacto">Agendar reunión</a>
         </nav>
       </div>
@@ -412,8 +413,8 @@
           <p class="eyebrow reveal">Nuestra filosofía</p>
 
           <h2 class="split__title reveal" id="filosofia-title">
-            No creemos en crear logotipos. Creemos en construir marcas desde el
-            <em>SER</em>, antes que desde el <em>HACER</em>.
+         Toda gran <em>marca </em> comienza
+con una buena  <em>estrategia</em>.
           </h2>
 
           <div class="prose reveal">
@@ -507,16 +508,10 @@
         </div>
 
         <!-- PLACEHOLDER — reemplazar por la foto definitiva del cliente.
-             Decorativa: alt vacío para que el lector de pantalla la ignore. -->
-        <div class="prefooter__ornament">
-          <img
-            src="src/img/banner4.png"
-            alt=""
-            width="500"
-            height="1000"
-            loading="lazy"
-          />
-        </div>
+             Decorativa (role=presentation): la foto va como background del div,
+             así background-size:cover la recorta sin deformar jamás, sea cual
+             sea su proporción. Para cambiarla, editar --prefooter-foto abajo. -->
+        <div class="prefooter__ornament" role="presentation"></div>
       </section>
 
       <!-- ============ 9. CONTACTO ============ -->
@@ -625,17 +620,36 @@
       <div class="container">
         <div class="footer__top">
           <div class="footer__cta">
+            <img
+              class="footer__logo"
+              src="src/img/logos/logo-dark.svg"
+              alt="Alkance"
+              width="638"
+              height="138"
+            />
             <h2 class="footer__title reveal">
               Hablemos de tu proyecto y construyamos juntos el futuro de tu
               <span class="accent">marca</span>.
             </h2>
-            <a class="btn btn--inverse reveal" href="mailto:hola@alkance.cl">Contacto</a>
           </div>
 
           <div class="footer__meta reveal">
             <div>
               <p class="footer__label">Email</p>
-              <a class="link" href="mailto:hola@alkance.cl">hola@alkance.cl</a>
+              <a class="link" href="mailto:contacto@alkancedigital.cl">contacto@alkancedigital.cl</a>
+            </div>
+            <div>
+              <p class="footer__label">Síguenos</p>
+              <!-- Iconos propios (src/img/RRSS_*.svg). Sin href mientras no haya
+                   URLs: al tenerlas, poner href + target="_blank" rel="noopener". -->
+              <span class="social" role="list" aria-label="Redes sociales">
+                <a class="social__link" role="listitem" aria-label="LinkedIn (próximamente)">
+                  <img src="src/img/RRSS_linkedin.svg" alt="" width="24" height="24" />
+                </a>
+                <a class="social__link" role="listitem" aria-label="Instagram (próximamente)">
+                  <img src="src/img/RRSS_instagram.svg" alt="" width="24" height="24" />
+                </a>
+              </span>
             </div>
           </div>
         </div>

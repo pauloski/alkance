@@ -109,7 +109,7 @@ export async function onRequestPost({ request, env }) {
     console.error("Faltan RESEND_API_KEY o CONTACT_TO en el entorno.");
     return responder(500, {
       ok: false,
-      error: "El formulario no está disponible ahora. Escríbenos a hola@alkance.cl.",
+      error: "El formulario no está disponible ahora. Escríbenos a contacto@alkancedigital.cl.",
     });
   }
 
@@ -153,14 +153,14 @@ export async function onRequestPost({ request, env }) {
       console.error("Resend respondió", r.status, await r.text());
       return responder(502, {
         ok: false,
-        error: "No pudimos enviar el mensaje. Escríbenos a hola@alkance.cl.",
+        error: "No pudimos enviar el mensaje. Escríbenos a contacto@alkancedigital.cl.",
       });
     }
   } catch (e) {
     console.error("Fallo al llamar a Resend:", e);
     return responder(502, {
       ok: false,
-      error: "No pudimos enviar el mensaje. Escríbenos a hola@alkance.cl.",
+      error: "No pudimos enviar el mensaje. Escríbenos a contacto@alkancedigital.cl.",
     });
   }
 
