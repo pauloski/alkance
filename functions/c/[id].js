@@ -10,6 +10,32 @@
  */
 import { clp, escapar, totalDeItems } from "../api/_lib/http.js";
 
+/** Saneador para el HTML del texto enriquecido guardado desde el panel.
+ *  Deja solo una lista blanca de etiquetas, SIN atributos (mata on*, style,
+ *  href javascript:, etc.) y elimina el contenido de <script>/<style>. */
+const TAGS_RICOS = new Set(["b", "strong", "i", "em", "u", "ul", "ol", "li", "br", "p", "div", "span"]);
+function sanitizarRico(html) {
+  if (!html) return "";
+  let s = String(html)
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, "");
+  s = s.replace(/<\/?([a-zA-Z0-9]+)([^>]*)>/g, (m, tag) => {
+    const t = tag.toLowerCase();
+    if (!TAGS_RICOS.has(t)) return "";
+    if (m.startsWith("</")) return `</${t}>`;
+    return t === "br" ? "<br>" : `<${t}>`;
+  });
+  return s;
+}
+
+/** Renderiza un campo que puede venir como HTML rico (nuevo) o texto plano
+ *  (cotizaciones antiguas): si parece HTML lo sanea; si no, respeta párrafos. */
+function renderRico(valor) {
+  if (!valor) return "";
+  if (Array.isArray(valor)) valor = valor.join("\n\n");
+  return /<[a-z][\s\S]*>/i.test(valor) ? sanitizarRico(valor) : parrafos(valor);
+}
+
 function parrafos(intro) {
   const arr = Array.isArray(intro)
     ? intro
@@ -33,7 +59,7 @@ function renderFase(f, i) {
     <section class="fase">
       <h3 class="fase__titulo">${escapar(f?.titulo ?? `Fase ${i + 1}`)}</h3>
       ${f?.dedicacion ? `<p class="fase__dedicacion">${escapar(f.dedicacion)}</p>` : ""}
-      ${f?.descripcion ? `<p class="fase__desc">${escapar(f.descripcion)}</p>` : ""}
+      ${f?.descripcion ? `<div class="fase__desc rico">${renderRico(f.descripcion)}</div>` : ""}
       ${puntos ? `<ul class="fase__puntos">${puntos}</ul>` : ""}
       ${
         f?.entregable
@@ -110,7 +136,7 @@ function renderFooter(footer) {
   return `
     <footer class="doc-footer">
       ${campos.length ? `<h3>Datos para transferencia</h3><div class="datos">${lineas}</div>` : ""}
-      ${footer.notas ? `<p class="notas">${escapar(footer.notas)}</p>` : ""}
+      ${footer.notas ? `<div class="notas rico">${renderRico(footer.notas)}</div>` : ""}
     </footer>`;
 }
 
@@ -214,6 +240,15 @@ export async function onRequestGet({ params, env }) {
     }
     .intro p { margin: 0 0 .75rem; white-space: pre-line; }
     .intro p:last-child { margin-bottom: 0; }
+    /* Contenido de texto enriquecido (negritas y viñetas del panel). */
+    .rico ul, .rico ol { padding-left: 1.35rem; margin: .5rem 0; }
+    .rico ul { list-style: disc; }
+    .rico ol { list-style: decimal; }
+    .rico li { margin: .25rem 0; }
+    .rico > div, .rico > p { margin: 0 0 .6rem; }
+    .rico > div:last-child, .rico > p:last-child { margin-bottom: 0; }
+    .rico strong, .rico b { font-weight: 700; }
+    .rico em, .rico i { font-style: italic; }
     .fase {
       border: 1px solid var(--ak-color-cream-300, #e4e0d7); border-radius: 8px;
       padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;
@@ -277,7 +312,7 @@ export async function onRequestGet({ params, env }) {
 
     ${renderCliente(data)}
 
-    ${data.intro ? `<div class="intro">${parrafos(data.intro)}</div>` : ""}
+    ${data.intro ? `<div class="intro rico">${renderRico(data.intro)}</div>` : ""}
 
     ${
       fases.length

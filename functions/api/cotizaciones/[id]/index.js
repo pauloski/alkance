@@ -8,7 +8,7 @@
  *
  * Protegido por _middleware.js. Usa el binding D1 `DB`.
  */
-import { json, totalDeItems } from "../_lib/http.js";
+import { json, totalDeItems } from "../../_lib/http.js";
 
 async function traer(env, id) {
   return env.DB.prepare(`SELECT * FROM cotizaciones WHERE id = ?`).bind(id).first();

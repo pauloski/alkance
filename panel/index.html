@@ -133,6 +133,23 @@
     .col-label { font-size: 12px; font-weight: 600; color: var(--ak-color-ink-400,#6b6b6b); }
     .items-labels { display: none; }
     .ayuda { font-size: 12px; color: var(--ak-color-ink-400,#6b6b6b); margin: -.5rem 0 1rem; }
+    /* Acciones de cada tarjeta del listado (envuelven en pantallas chicas) */
+    .card__acciones { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: flex-end; }
+    /* Editor de texto enriquecido */
+    .rt { border: 1px solid var(--ak-color-cream-400,#cfc8ba); border-radius: 6px; overflow: hidden; }
+    .rt:focus-within { outline: 2px solid var(--ak-color-accent-500,#e5241a); outline-offset: -1px; }
+    .rt__bar { display: flex; gap: .25rem; padding: .35rem; background: var(--ak-color-cream-100,#f7f5f1); border-bottom: 1px solid var(--ak-color-cream-300,#e4e0d7); }
+    .rt__btn { font: inherit; font-size: 13px; line-height: 1; min-width: 2rem; padding: .3rem .55rem; border: 1px solid var(--ak-color-cream-400,#cfc8ba); border-radius: 5px; background: #fff; cursor: pointer; color: inherit; }
+    .rt__btn:hover { background: var(--ak-color-cream-200,#efede8); }
+    .rt-editor { min-height: 5rem; padding: .55rem .7rem; font-size: 14px; outline: none; }
+    .rt--sm .rt-editor { min-height: 3rem; }
+    .rt-editor:empty::before { content: attr(data-ph); color: var(--ak-color-ink-300,#949494); }
+    .rt-editor ul, .rt-editor ol { padding-left: 1.25rem; margin: .35rem 0; }
+    .rt-editor ul { list-style: disc; }
+    .rt-editor ol { list-style: decimal; }
+    .rt-editor li { margin: .2rem 0; }
+    .rt-editor strong, .rt-editor b { font-weight: 700; }
+    .rt-editor em, .rt-editor i { font-style: italic; }
     @media (min-width: 720px) {
       .items-labels { display: grid; grid-template-columns: 1.4fr 2fr 1fr auto; gap: .6rem; margin-bottom: .3rem; }
     }
@@ -196,7 +213,14 @@
         <div class="campo"><label>Fecha</label><input type="date" data-field="fecha"></div>
       </div>
       <div class="campo"><label>Descripción inicial</label>
-        <textarea data-field="intro" rows="5" placeholder="Párrafo introductorio. Deja una línea en blanco para separar párrafos."></textarea></div>
+        <div class="rt">
+          <div class="rt__bar">
+            <button type="button" class="rt__btn" data-cmd="bold" title="Negrita"><b>B</b></button>
+            <button type="button" class="rt__btn" data-cmd="italic" title="Cursiva"><i>I</i></button>
+            <button type="button" class="rt__btn" data-cmd="insertUnorderedList" title="Viñetas">• Lista</button>
+          </div>
+          <div class="rt-editor" contenteditable="true" data-field="intro" data-ph="Párrafo introductorio. Usa negrita y viñetas si quieres."></div>
+        </div></div>
     </div>
 
     <div class="panel-sec">
@@ -236,7 +260,15 @@
         <div class="campo"><label>Teléfono</label><input data-footer="telefono"></div>
       </div>
       <div class="campo"><label>Email</label><input data-footer="email"></div>
-      <div class="campo"><label>Notas (opcional)</label><textarea data-footer="notas" rows="2"></textarea></div>
+      <div class="campo"><label>Notas (opcional)</label>
+        <div class="rt rt--sm">
+          <div class="rt__bar">
+            <button type="button" class="rt__btn" data-cmd="bold" title="Negrita"><b>B</b></button>
+            <button type="button" class="rt__btn" data-cmd="italic" title="Cursiva"><i>I</i></button>
+            <button type="button" class="rt__btn" data-cmd="insertUnorderedList" title="Viñetas">• Lista</button>
+          </div>
+          <div class="rt-editor" contenteditable="true" data-footer="notas" data-ph="Notas adicionales."></div>
+        </div></div>
     </div>
 
     <div class="barra-guardar">
@@ -348,6 +380,32 @@
     const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const hoy = () => new Date().toISOString().slice(0, 10);
 
+    // ---- Texto enriquecido (contenteditable) ----
+    const TAGS_RICOS = new Set(["B","STRONG","I","EM","U","UL","OL","LI","BR","P","DIV","SPAN"]);
+    function sanitizeHTML(html) {
+      const tpl = document.createElement("template");
+      tpl.innerHTML = html || "";
+      const limpia = (nodo) => {
+        [...nodo.childNodes].forEach((n) => {
+          if (n.nodeType === 1) {
+            if (!TAGS_RICOS.has(n.tagName)) { n.replaceWith(...n.childNodes); return; }
+            [...n.attributes].forEach((a) => n.removeAttribute(a.name)); // sin style/on*/href
+            limpia(n);
+          } else if (n.nodeType === 8) { n.remove(); } // comentarios
+        });
+      };
+      limpia(tpl.content);
+      return tpl.innerHTML;
+    }
+    const esRico = (el) => el && el.classList && el.classList.contains("rt-editor");
+    const setRich = (el, html) => { if (el) el.innerHTML = sanitizeHTML(html || ""); };
+    function getRich(el) {
+      if (!el) return "";
+      const s = sanitizeHTML(el.innerHTML).trim();
+      // Un editor vacío deja "<br>" o "<div><br></div>": lo tratamos como vacío.
+      return /^(<br\s*\/?>|<div><br\s*\/?><\/div>|<p><br\s*\/?><\/p>)?$/i.test(s) ? "" : s;
+    }
+
     const VISTAS = ["login", "lista", "editor", "clientes", "cliente-editor", "emisor"];
     function mostrar(vista) {
       document.getElementById("vista-login").classList.toggle("oculto", vista !== "login");
@@ -428,20 +486,54 @@
           <div class="card__meta">${esc(c.cliente || "—")} · ${fecha} · <span class="badge ${est}">${esc(c.estado)}</span> · v${c.version}</div>
         </div>
         <div class="card__total">${clp(c.total)}</div>
-        <a class="btn btn--ghost btn--sm" href="/c/${c.id}" target="_blank" rel="noopener">Ver ↗</a>
-        <button class="btn btn--ghost btn--sm" data-accion="editar" data-id="${c.id}">Editar</button>
-        <button class="btn btn--danger btn--sm" data-accion="borrar" data-id="${c.id}">Eliminar</button>
+        <div class="card__acciones">
+          <a class="btn btn--ghost btn--sm" href="/c/${c.id}" target="_blank" rel="noopener">Ver ↗</a>
+          <button class="btn btn--ghost btn--sm" data-accion="enviar" data-id="${c.id}">Enviar</button>
+          <button class="btn btn--ghost btn--sm" data-accion="duplicar" data-id="${c.id}">Duplicar</button>
+          <button class="btn btn--ghost btn--sm" data-accion="editar" data-id="${c.id}">Editar</button>
+          <button class="btn btn--danger btn--sm" data-accion="borrar" data-id="${c.id}">Eliminar</button>
+        </div>
       </div>`;
     }
     $("#lista-items").addEventListener("click", async (e) => {
       const btn = e.target.closest("[data-accion]"); if (!btn) return;
       const id = btn.dataset.id;
       if (btn.dataset.accion === "editar") abrirEditor(id);
+      else if (btn.dataset.accion === "duplicar") duplicarCotizacion(id);
+      else if (btn.dataset.accion === "enviar") enviarCotizacion(id);
       else if (btn.dataset.accion === "borrar") {
         if (!confirm("¿Eliminar esta cotización? No se puede deshacer.")) return;
         await api("/api/cotizaciones/" + id, { method: "DELETE" }); irALista();
       }
     });
+
+    async function duplicarCotizacion(id) {
+      const { ok, body } = await api("/api/cotizaciones/" + id);
+      if (!ok) { alert("No se pudo duplicar."); return; }
+      const data = body.cotizacion.data || {};
+      data.titulo = (data.titulo || "Cotización") + " (copia)";
+      delete data.enviadaEl; delete data.enviadaA; // la copia parte como borrador nuevo
+      const res = await api("/api/cotizaciones", { method: "POST", body: JSON.stringify({ data }) });
+      if (!res.ok) { alert(res.body.error || "No se pudo duplicar."); return; }
+      abrirEditor(res.body.id); // abre la copia lista para ajustar
+    }
+
+    async function enviarCotizacion(id) {
+      const { ok, body } = await api("/api/cotizaciones/" + id);
+      if (!ok) { alert("No se pudo cargar la cotización."); return; }
+      const data = body.cotizacion.data || {};
+      const sugerido = (data.clienteInfo && data.clienteInfo.email) || "";
+      const to = prompt("Enviar la cotización al correo del cliente:", sugerido);
+      if (to === null) return; // cancelado
+      if (!to.trim()) { alert("Necesitas un correo de destino."); return; }
+      const mensaje = prompt("Mensaje opcional para el cliente (puede ir vacío):", "") || "";
+      const res = await api("/api/cotizaciones/" + id + "/enviar", {
+        method: "POST", body: JSON.stringify({ to: to.trim(), mensaje: mensaje.trim() }),
+      });
+      if (!res.ok) { alert(res.body.error || "No se pudo enviar."); return; }
+      alert("Cotización enviada a " + res.body.enviadaA + "\n(con respaldo a la empresa).");
+      irALista();
+    }
     $("#btn-nueva").addEventListener("click", () => abrirEditor(null));
     $("#btn-volver").addEventListener("click", () => { if (puedeSalirDelEditor()) irALista(); });
 
@@ -480,9 +572,9 @@
     }
 
     function cargarCotizacion(data) {
-      $$("[data-field]").forEach((el) => { el.value = data[el.dataset.field] ?? ""; });
+      $$("[data-field]").forEach((el) => { const v = data[el.dataset.field] ?? ""; esRico(el) ? setRich(el, v) : (el.value = v); });
       const f = data.footer || {};
-      $$("[data-footer]").forEach((el) => { el.value = f[el.dataset.footer] ?? ""; });
+      $$("[data-footer]").forEach((el) => { const v = f[el.dataset.footer] ?? ""; esRico(el) ? setRich(el, v) : (el.value = v); });
       poblarSelectClientes(data.clienteId || "");
       const cf = $("#fases"); cf.innerHTML = "";
       (data.fases || []).forEach((fase) => cf.appendChild(faseNode(fase)));
@@ -504,7 +596,14 @@
         <div class="campo"><label>Tiempo estimado</label>
           <input data-fase="dedicacion" placeholder="Semanas 1 a 3 (3 semanas)"></div>
         <div class="campo"><label>Descripción de la fase (opcional)</label>
-          <textarea data-fase="descripcion" rows="2"></textarea></div>
+          <div class="rt rt--sm">
+            <div class="rt__bar">
+              <button type="button" class="rt__btn" data-cmd="bold" title="Negrita"><b>B</b></button>
+              <button type="button" class="rt__btn" data-cmd="italic" title="Cursiva"><i>I</i></button>
+              <button type="button" class="rt__btn" data-cmd="insertUnorderedList" title="Viñetas">• Lista</button>
+            </div>
+            <div class="rt-editor" contenteditable="true" data-fase="descripcion" data-ph="Descripción de la fase."></div>
+          </div></div>
         <label>Puntos / actividades</label>
         <div class="puntos"></div>
         <button type="button" class="btn btn--ghost btn--sm" data-add="punto">+ Punto</button>
@@ -512,7 +611,7 @@
           <input data-fase="entregable" placeholder="Archivo interactivo en Figma…"></div>`;
       div.querySelector('[data-fase="titulo"]').value = fase.titulo ?? "";
       div.querySelector('[data-fase="dedicacion"]').value = fase.dedicacion ?? "";
-      div.querySelector('[data-fase="descripcion"]').value = fase.descripcion ?? "";
+      setRich(div.querySelector('[data-fase="descripcion"]'), fase.descripcion);
       div.querySelector('[data-fase="entregable"]').value = fase.entregable ?? "";
       const cp = div.querySelector(".puntos");
       const puntos = (fase.puntos && fase.puntos.length) ? fase.puntos : [{}];
@@ -562,6 +661,13 @@
     );
     $("#btn-add-fase").addEventListener("click", () => { dirty = true; });
     $("#btn-add-item").addEventListener("click", () => { dirty = true; });
+    // Toolbar de texto enriquecido: mousedown para no perder la selección del editor.
+    $("#vista-editor").addEventListener("mousedown", (e) => {
+      const b = e.target.closest(".rt__btn"); if (!b) return;
+      e.preventDefault();
+      document.execCommand(b.dataset.cmd, false, null);
+      dirty = true;
+    });
     function recalcularTotal() {
       let total = 0;
       $$('#items [data-item="monto"]').forEach((el) => { total += Math.round(Number(el.value) || 0); });
@@ -570,9 +676,9 @@
 
     function recolectarCotizacion() {
       const data = {};
-      $$("[data-field]").forEach((el) => { data[el.dataset.field] = el.value.trim(); });
+      $$("[data-field]").forEach((el) => { data[el.dataset.field] = esRico(el) ? getRich(el) : el.value.trim(); });
       data.footer = {};
-      $$("[data-footer]").forEach((el) => { data.footer[el.dataset.footer] = el.value.trim(); });
+      $$("[data-footer]").forEach((el) => { data.footer[el.dataset.footer] = esRico(el) ? getRich(el) : el.value.trim(); });
       // Cliente: guarda id + snapshot de sus datos (para no romper el histórico).
       const cid = $("#sel-cliente").value;
       const cli = clientesCache.find((c) => c.id === cid);
@@ -588,7 +694,7 @@
           detalle: r.querySelector('[data-punto="detalle"]').value.trim(),
         })).filter((p) => p.titulo || p.detalle);
         return { titulo: g('[data-fase="titulo"]'), dedicacion: g('[data-fase="dedicacion"]'),
-          descripcion: g('[data-fase="descripcion"]'), puntos, entregable: g('[data-fase="entregable"]') };
+          descripcion: getRich(div.querySelector('[data-fase="descripcion"]')), puntos, entregable: g('[data-fase="entregable"]') };
       }).filter((f) => f.titulo || f.descripcion || f.puntos.length || f.entregable);
       data.items = $$(".item-row").map((r) => ({
         concepto: r.querySelector('[data-item="concepto"]').value.trim(),
