@@ -155,7 +155,7 @@ function contactoConDefaults(contacto) {
   return {
     sitioWeb: contacto.sitioWeb || "www.alkancedigital.cl",
     email: contacto.email || "contacto@alkancedigital.cl",
-    instagram: contacto.instagram || "@alkancedigital.cl",
+    instagram: contacto.instagram || "@alkance_consultora",
     instagramUrl: contacto.instagramUrl || "https://instagram.com/alkancedigital.cl",
   };
 }
@@ -176,8 +176,9 @@ function renderContacto(cont) {
 function renderTimeline({ estado, version, revisiones, fases, avance }) {
   const aprobado = estado === "aprobada";
   const rechazado = estado === "rechazada";
-  const f0 = aprobado ? "completado" : rechazado ? "rechazada" : "proceso";
-  const f0Label = aprobado ? "Aprobado" : rechazado ? "Rechazado" : "En evaluación por el cliente";
+  const borrador = estado === "borrador";
+  const f0 = aprobado ? "completado" : rechazado ? "rechazada" : borrador ? "borrador" : "proceso";
+  const f0Label = aprobado ? "Aprobado" : rechazado ? "Rechazado" : borrador ? "Borrador" : "En evaluación por el cliente";
 
   const versionActual = `<li><strong>Presupuesto v${version}</strong> · ${escapar(f0Label)}</li>`;
   const pasadas = (revisiones || [])
@@ -416,6 +417,7 @@ export async function onRequestGet({ params, env }) {
     .tl__f0 { background: var(--ak-color-cream-100, #f7f5f1); border-left: 4px solid var(--ak-color-accent-500, #e5241a); border-radius: 8px; padding: 1.1rem 1.25rem; margin-bottom: 1.5rem; }
     .tl__f0.f0--completado { border-left-color: var(--ak-color-state-success, #0f7b4f); }
     .tl__f0.f0--rechazada { border-left-color: var(--ak-color-state-danger, #b8170d); }
+    .tl__f0.f0--borrador { border-left-color: var(--ak-color-cream-400, #cfc8ba); }
     .tl__f0-head { display: flex; align-items: flex-start; gap: .9rem; }
     .tl__f0-head strong { display: block; font-size: 16px; margin-bottom: .3rem; }
     .tl__hitos { list-style: none; margin: .75rem 0 0 2rem; padding: 0; font-size: 13px; color: var(--ak-color-ink-400, #6b6b6b); }
