@@ -17,10 +17,14 @@ CREATE TABLE IF NOT EXISTS cotizaciones (
   estado      TEXT NOT NULL DEFAULT 'borrador', -- borrador | enviada
   version     INTEGER NOT NULL DEFAULT 1,
   total       INTEGER NOT NULL DEFAULT 0, -- suma de ítems, cacheada para el listado
-  data        TEXT NOT NULL DEFAULT '{}', -- JSON con toda la cotización
+  data        TEXT NOT NULL DEFAULT '{}', -- JSON con toda la cotización (VERSIONADO)
+  avance      TEXT NOT NULL DEFAULT '{}', -- JSON de ejecución del proyecto (Gantt). NO versionado.
   created_at  TEXT NOT NULL,
   updated_at  TEXT NOT NULL
 );
+
+-- Para bases que ya existían antes de agregar el Gantt (ignora el error si ya está):
+--   ALTER TABLE cotizaciones ADD COLUMN avance TEXT NOT NULL DEFAULT '{}';
 
 CREATE INDEX IF NOT EXISTS idx_cotizaciones_updated ON cotizaciones (updated_at DESC);
 

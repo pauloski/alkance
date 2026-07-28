@@ -43,9 +43,12 @@ export async function onRequestGet({ params, env, request }) {
     .bind(id)
     .all();
 
+  let avance = {};
+  try { avance = JSON.parse(c.avance || "{}"); } catch { avance = {}; }
+
   return json({
     ok: true,
-    cotizacion: { ...c, data: JSON.parse(c.data) },
+    cotizacion: { ...c, data: JSON.parse(c.data), avance },
     revisiones: revisiones ?? [],
   });
 }
@@ -66,7 +69,15 @@ export async function onRequestPut({ params, request, env }) {
   const ahora = new Date().toISOString();
   const total = totalDeItems(data);
   const nuevaVersion = actual.version + 1;
-  const estado = (body?.estado ?? actual.estado ?? "borrador").toString();
+
+  // Regla de re-evaluación: si se edita un presupuesto que ya estaba en manos del
+  // cliente (enviada = En evaluación, o aprobada), la nueva versión vuelve a
+  // "En evaluación" y la anterior queda como versión pasada (sustituida) en el
+  // historial. Borrador y rechazada conservan su estado.
+  let estado = (body?.estado ?? actual.estado ?? "borrador").toString();
+  if (body?.estado === undefined && (actual.estado === "aprobada" || actual.estado === "enviada")) {
+    estado = "enviada";
+  }
 
   // Archiva la versión que estaba guardada antes de sobrescribirla.
   await env.DB.prepare(
