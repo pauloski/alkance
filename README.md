@@ -251,6 +251,50 @@ Cloudflare, pon `node scripts/build-tokens.mjs` como build command y agrega
 
 ---
 
+## Gestor de cotizaciones
+
+Panel privado para crear cotizaciones, compartirlas por URL y descargarlas como
+PDF. Vive sobre el mismo stack (Pages Functions + D1), sin dependencias nuevas.
+
+```
+panel/index.html              → panel privado (login, cotizaciones, clientes, emisor)
+functions/api/login.js        → login por contraseña única (cookie firmada HMAC)
+functions/api/cotizaciones/*  → CRUD + versionado (snapshots en tabla revisiones)
+functions/api/clientes/*      → agenda de clientes
+functions/api/config/[clave]  → datos de emisor por defecto (transferencia)
+functions/c/[id].js           → vista PÚBLICA de la cotización (URL + botón PDF)
+schema.sql                    → tablas D1
+```
+
+**Rutas:** panel en `/panel/` · cotización pública en `/c/:id` (el id hace de
+llave del enlace, no pide login) · el PDF sale con el botón «Descargar PDF»
+(diálogo de imprimir → Guardar como PDF, con estilos de impresión ya afinados).
+
+### Variables de entorno
+
+| Variable | Dónde | Qué es |
+|---|---|---|
+| `PANEL_PASSWORD` | Secret | Contraseña única del panel. |
+| binding `DB` | D1 | Base `alkance-cotizaciones`. |
+
+En **local**: `PANEL_PASSWORD` va en `.dev.vars` y el binding `DB` en
+`wrangler.toml` (ambos ignorados por git). Correr con `npx wrangler pages dev .`.
+
+En **producción** (dashboard de Pages → Settings): `PANEL_PASSWORD` como Secret y
+el binding D1 `DB` en Bindings. `wrangler.toml` NO se versiona a propósito, para
+no cambiar el modo de config del proyecto en Pages.
+
+### Puesta en marcha de la base D1
+
+```bash
+npx wrangler d1 create alkance-cotizaciones          # una vez; copia el id
+npx wrangler d1 execute alkance-cotizaciones --remote --file=./schema.sql
+```
+
+Luego, en el dashboard: binding `DB` → esa base, y el Secret `PANEL_PASSWORD`.
+
+---
+
 ## Pendientes
 
 - **Logos**: la sección «Confían en nosotros» usa placeholders de dummyimage.
