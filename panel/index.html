@@ -899,13 +899,15 @@
         : await api("/api/cotizaciones/" + editando.id, { method: "PUT", body: JSON.stringify({ data }) });
       if (res.status === 401) return;
       if (!res.ok) { msg.className = "msg msg--err"; msg.textContent = res.body.error || "No se pudo guardar."; return; }
+      const prevVersion = editando ? editando.version : 0;
       const id = editando ? editando.id : res.body.id;
       editando = { id, version: res.body.version };
       $("#editor-titulo").textContent = "Editar cotización";
       $("#editor-version").textContent = "v" + res.body.version;
       const prev = $("#btn-preview"); prev.href = "/c/" + id; prev.classList.remove("oculto");
       dirty = false; // guardado: sin cambios pendientes
-      msg.className = "msg msg--ok"; msg.textContent = "Guardado ✓ (versión " + res.body.version + ")";
+      msg.className = "msg msg--ok";
+      msg.textContent = res.body.version > prevVersion ? ("Nueva versión v" + res.body.version + " ✓") : "Guardado ✓";
     });
 
     // ================= CLIENTES =================

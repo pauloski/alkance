@@ -68,24 +68,30 @@ export async function onRequestPut({ params, request, env }) {
   const data = body?.data ?? {};
   const ahora = new Date().toISOString();
   const total = totalDeItems(data);
-  const nuevaVersion = actual.version + 1;
 
-  // Regla de re-evaluación: si se edita un presupuesto que ya estaba en manos del
-  // cliente (enviada = En evaluación, o aprobada), la nueva versión vuelve a
-  // "En evaluación" y la anterior queda como versión pasada (sustituida) en el
-  // historial. Borrador y rechazada conservan su estado.
+  // Versionado por estado, para no ensuciar con cada guardado de borrador:
+  //  - borrador / rechazada  → se sobrescribe EN SITIO: no sube versión ni crea
+  //    revisión. Todos los guardados de trabajo quedan en la misma versión.
+  //  - enviada / aprobada (el cliente ya lo vio) → editar genera una versión
+  //    nueva: se archiva la anterior (Sustituida) y vuelve a "En evaluación".
+  // Solo se versiona lo que el cliente llega a ver.
+  const clienteFacing = actual.estado === "aprobada" || actual.estado === "enviada";
+  const versionar = body?.estado === undefined && clienteFacing;
+
   let estado = (body?.estado ?? actual.estado ?? "borrador").toString();
-  if (body?.estado === undefined && (actual.estado === "aprobada" || actual.estado === "enviada")) {
-    estado = "enviada";
-  }
+  let nuevaVersion = actual.version;
 
-  // Archiva la versión que estaba guardada antes de sobrescribirla.
-  await env.DB.prepare(
-    `INSERT INTO revisiones (cotizacion_id, version, total, data, created_at)
-     VALUES (?, ?, ?, ?, ?)`
-  )
-    .bind(id, actual.version, actual.total, actual.data, ahora)
-    .run();
+  if (versionar) {
+    // Archiva la versión que el cliente tenía antes de generar la nueva.
+    await env.DB.prepare(
+      `INSERT INTO revisiones (cotizacion_id, version, total, data, created_at)
+       VALUES (?, ?, ?, ?, ?)`
+    )
+      .bind(id, actual.version, actual.total, actual.data, ahora)
+      .run();
+    nuevaVersion = actual.version + 1;
+    estado = "enviada"; // nueva versión = vuelve a evaluación del cliente
+  }
 
   await env.DB.prepare(
     `UPDATE cotizaciones
