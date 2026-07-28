@@ -377,6 +377,23 @@
       <span class="msg" id="emisor-msg"></span><span class="sep"></span>
       <button class="btn" id="btn-guardar-emisor">Guardar datos de emisor</button>
     </div>
+
+    <div class="panel-sec" style="margin-top:1.5rem">
+      <h2>Datos de contacto (web / PDF / portal)</h2>
+      <p class="ayuda">Aparecen al pie de la vista pública y del PDF de cada cotización.</p>
+      <div class="fila">
+        <div class="campo"><label>Sitio web</label><input data-contacto="sitioWeb" placeholder="www.alkancedigital.cl"></div>
+        <div class="campo"><label>Email de contacto</label><input data-contacto="email" placeholder="contacto@alkancedigital.cl"></div>
+      </div>
+      <div class="fila">
+        <div class="campo"><label>Instagram (handle)</label><input data-contacto="instagram" placeholder="@alkancedigital.cl"></div>
+        <div class="campo"><label>Instagram (URL)</label><input data-contacto="instagramUrl" placeholder="https://instagram.com/alkancedigital.cl"></div>
+      </div>
+    </div>
+    <div class="barra-guardar">
+      <span class="msg" id="contacto-msg"></span><span class="sep"></span>
+      <button class="btn" id="btn-guardar-contacto">Guardar datos de contacto</button>
+    </div>
   </div>
 
   <!-- SEGUIMIENTO (Gantt admin) -->
@@ -969,14 +986,30 @@
     });
 
     // ================= EMISOR =================
+    const CONTACTO_DEFECTO = {
+      sitioWeb: "www.alkancedigital.cl", email: "contacto@alkancedigital.cl",
+      instagram: "@alkancedigital.cl", instagramUrl: "https://instagram.com/alkancedigital.cl"
+    };
     async function irAEmisor() {
       mostrar("emisor");
       $("#emisor-msg").textContent = "";
-      const { body } = await api("/api/config/emisor");
-      const v = body.valor && Object.keys(body.valor).length ? body.valor : { ...EMISOR_DEFECTO };
+      $("#contacto-msg").textContent = "";
+      const [em, co] = await Promise.all([api("/api/config/emisor"), api("/api/config/contacto")]);
+      const v = em.body.valor && Object.keys(em.body.valor).length ? em.body.valor : { ...EMISOR_DEFECTO };
       emisorCache = v;
       $$("[data-emisor]").forEach((el) => { el.value = v[el.dataset.emisor] ?? ""; });
+      const cv = co.body.valor && Object.keys(co.body.valor).length ? co.body.valor : { ...CONTACTO_DEFECTO };
+      $$("[data-contacto]").forEach((el) => { el.value = cv[el.dataset.contacto] ?? ""; });
     }
+    $("#btn-guardar-contacto").addEventListener("click", async () => {
+      const msg = $("#contacto-msg"); msg.className = "msg"; msg.textContent = "Guardando…";
+      const valor = {};
+      $$("[data-contacto]").forEach((el) => { valor[el.dataset.contacto] = el.value.trim(); });
+      const res = await api("/api/config/contacto", { method: "PUT", body: JSON.stringify({ valor }) });
+      if (res.status === 401) return;
+      if (!res.ok) { msg.className = "msg msg--err"; msg.textContent = res.body.error || "No se pudo guardar."; return; }
+      msg.className = "msg msg--ok"; msg.textContent = "Guardado ✓";
+    });
     $("#btn-guardar-emisor").addEventListener("click", async () => {
       const msg = $("#emisor-msg"); msg.className = "msg"; msg.textContent = "Guardando…";
       const valor = {};

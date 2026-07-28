@@ -8,7 +8,7 @@
  * Hereda el design system del sitio (src/styles/tokens.css) y añade encima un
  * estilo propio de documento pensado para pantalla y para papel A4.
  */
-import { clp, escapar, totalDeItems } from "../api/_lib/http.js";
+import { clp, escapar, totalDeItems } from "../../api/_lib/http.js";
 
 /** Saneador para el HTML del texto enriquecido guardado desde el panel.
  *  Deja solo una lista blanca de etiquetas, SIN atributos (mata on*, style,
@@ -147,6 +147,89 @@ function renderFooter(footer) {
     </footer>`;
 }
 
+const ETIQUETA_AVANCE = { pendiente: "Pendiente", proceso: "En proceso", completado: "Completado" };
+const faseKey = (f, i) => (f && f.id) || "idx:" + i;
+
+/** Datos de contacto con valores por defecto (editables en el panel > Emisor). */
+function contactoConDefaults(contacto) {
+  return {
+    sitioWeb: contacto.sitioWeb || "www.alkancedigital.cl",
+    email: contacto.email || "contacto@alkancedigital.cl",
+    instagram: contacto.instagram || "@alkancedigital.cl",
+    instagramUrl: contacto.instagramUrl || "https://instagram.com/alkancedigital.cl",
+  };
+}
+
+function renderContacto(cont) {
+  const web = cont.sitioWeb.replace(/^https?:\/\//, "");
+  return `<div class="contacto">
+    <a href="https://${escapar(web)}">${escapar(cont.sitioWeb)}</a>
+    <span aria-hidden="true">·</span>
+    <a href="mailto:${escapar(cont.email)}">${escapar(cont.email)}</a>
+    <span aria-hidden="true">·</span>
+    <a href="${escapar(cont.instagramUrl)}">${escapar(cont.instagram)} (Instagram)</a>
+  </div>`;
+}
+
+/** Línea de tiempo vertical (Gantt). Fase 0 = evaluación del presupuesto (con los
+ *  hitos de versión); luego las fases del proyecto, bloqueadas hasta aprobar. */
+function renderTimeline({ estado, version, revisiones, fases, avance }) {
+  const aprobado = estado === "aprobada";
+  const rechazado = estado === "rechazada";
+  const f0 = aprobado ? "completado" : rechazado ? "rechazada" : "proceso";
+  const f0Label = aprobado ? "Aprobado" : rechazado ? "Rechazado" : "En evaluación por el cliente";
+
+  const versionActual = `<li><strong>Presupuesto v${version}</strong> · ${escapar(f0Label)}</li>`;
+  const pasadas = (revisiones || [])
+    .map((r) => `<li>Presupuesto v${r.version} · <span class="sustituido">Sustituido</span></li>`)
+    .join("");
+
+  const total = fases.length;
+  const completadas = fases.filter((f, i) => avance[faseKey(f, i)] === "completado").length;
+  const pct = total ? Math.round((completadas / total) * 100) : 0;
+
+  const pasos = fases
+    .map((f, i) => {
+      const k = faseKey(f, i);
+      const av = aprobado ? avance[k] || "pendiente" : "bloqueada";
+      const etiqueta = aprobado ? ETIQUETA_AVANCE[av] || "Pendiente" : "En espera de aprobación";
+      return `<li class="paso paso--${av}" data-fase-key="${escapar(k)}">
+        <span class="paso__punto"></span>
+        <div class="paso__cuerpo">
+          <div class="paso__top">
+            <strong>${escapar(f.titulo || "Fase " + (i + 1))}</strong>
+            <span class="paso__chip chip--${av}">${escapar(etiqueta)}</span>
+          </div>
+          ${f.dedicacion ? `<span class="paso__meta">${escapar(f.dedicacion)}</span>` : ""}
+          ${f.entregable ? `<span class="paso__meta">Entregable: ${escapar(f.entregable)}</span>` : ""}
+        </div>
+      </li>`;
+    })
+    .join("");
+
+  return `
+    <div class="tl">
+      <div class="tl__f0 f0--${f0}">
+        <div class="tl__f0-head">
+          <span class="paso__punto"></span>
+          <div>
+            <strong>Fase 0 · Evaluación del presupuesto</strong>
+            <span class="paso__chip chip--${f0}">${escapar(f0Label)}</span>
+          </div>
+        </div>
+        <ul class="tl__hitos">${versionActual}${pasadas}</ul>
+      </div>
+
+      ${
+        aprobado
+          ? `<div class="tl__prog"><div class="tl__prog-bar"><span style="width:${pct}%"></span></div><span class="tl__prog-num">${completadas}/${total} fases · ${pct}%</span></div>`
+          : `<p class="tl__nota">Las fases del proyecto se activan cuando el presupuesto queda <strong>aprobado</strong>.</p>`
+      }
+
+      ${total ? `<ul class="pasos">${pasos}</ul>` : `<p class="tl__nota">Aún no hay fases definidas.</p>`}
+    </div>`;
+}
+
 function paginaNoEncontrada() {
   return new Response(
     `<!doctype html><meta charset="utf-8"><title>No encontrada</title>
@@ -160,7 +243,7 @@ function paginaNoEncontrada() {
 export async function onRequestGet({ params, env }) {
   if (!env.DB) return paginaNoEncontrada();
   const c = await env.DB.prepare(
-    `SELECT id, version, updated_at, data FROM cotizaciones WHERE id = ?`
+    `SELECT id, version, estado, updated_at, data, avance FROM cotizaciones WHERE id = ?`
   )
     .bind(params.id)
     .first();
@@ -172,6 +255,17 @@ export async function onRequestGet({ params, env }) {
   } catch {
     data = {};
   }
+  let avance = {};
+  try { avance = JSON.parse(c.avance || "{}"); } catch { avance = {}; }
+
+  // Historial de versiones (para los hitos de la línea de tiempo) y datos de
+  // contacto de la empresa (config 'contacto').
+  const { results: revisiones } = await env.DB.prepare(
+    `SELECT version FROM revisiones WHERE cotizacion_id = ? ORDER BY version DESC`
+  ).bind(params.id).all();
+  const cfgContacto = await env.DB.prepare(`SELECT valor FROM config WHERE clave = 'contacto'`).first();
+  let contacto = {};
+  try { contacto = cfgContacto ? JSON.parse(cfgContacto.valor) : {}; } catch { contacto = {}; }
 
   // Datos del cliente: se prefiere la ficha VIVA (por clienteId) para que
   // correcciones en la pestaña Clientes (p. ej. borrar un RUT) se reflejen al
@@ -188,6 +282,7 @@ export async function onRequestGet({ params, env }) {
   const items = Array.isArray(data.items) ? data.items : [];
   const fases = Array.isArray(data.fases) ? data.fases : [];
   const titulo = data.titulo || "Propuesta";
+  const cont = contactoConDefaults(contacto);
   const fechaFmt = data.fecha
     ? new Date(data.fecha + "T00:00:00").toLocaleDateString("es-CL", {
         day: "numeric",
@@ -302,6 +397,51 @@ export async function onRequestGet({ params, env }) {
     .doc-footer .datos p { margin: 0 0 .2rem; font-size: 14px; }
     .doc-footer .notas { margin-top: 1rem; font-size: 13px; color: var(--ak-color-ink-400, #6b6b6b); white-space: pre-line; }
     .sello { margin-top: 2rem; font-size: 12px; color: var(--ak-color-ink-350, #8a8a8a); }
+    .oculto { display: none !important; }
+
+    /* Pestañas */
+    .tabs { display: flex; gap: .25rem; margin-right: auto; }
+    .tab { color: rgba(255,255,255,.7); font-size: 14px; font-weight: 600; padding: .4rem .8rem; border-radius: 6px; }
+    .tab:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .tab.activa { color: #fff; background: rgba(255,255,255,.16); }
+
+    /* Contacto */
+    .doc-contacto { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--ak-color-cream-300, #e4e0d7); }
+    .contacto { display: flex; flex-wrap: wrap; gap: .5rem; font-size: 13px; color: var(--ak-color-ink-400, #6b6b6b); }
+    .contacto a { color: var(--ak-color-accent-600, #b8170d); text-decoration: none; }
+
+    /* Línea de tiempo (Gantt vertical) */
+    .doc--tl h1 { margin-bottom: .25rem; }
+    .tl__sub { color: var(--ak-color-ink-400, #6b6b6b); margin: 0 0 1.75rem; }
+    .tl__f0 { background: var(--ak-color-cream-100, #f7f5f1); border-left: 4px solid var(--ak-color-accent-500, #e5241a); border-radius: 8px; padding: 1.1rem 1.25rem; margin-bottom: 1.5rem; }
+    .tl__f0.f0--completado { border-left-color: var(--ak-color-state-success, #0f7b4f); }
+    .tl__f0.f0--rechazada { border-left-color: var(--ak-color-state-danger, #b8170d); }
+    .tl__f0-head { display: flex; align-items: flex-start; gap: .9rem; }
+    .tl__f0-head strong { display: block; font-size: 16px; margin-bottom: .3rem; }
+    .tl__hitos { list-style: none; margin: .75rem 0 0 2rem; padding: 0; font-size: 13px; color: var(--ak-color-ink-400, #6b6b6b); }
+    .tl__hitos li { margin-bottom: .2rem; }
+    .sustituido { color: var(--ak-color-ink-350, #8a8a8a); }
+    .tl__prog { display: flex; align-items: center; gap: .8rem; margin: 0 0 1.5rem; }
+    .tl__prog-bar { flex: 1; height: 8px; border-radius: 999px; background: var(--ak-color-cream-300, #e4e0d7); overflow: hidden; }
+    .tl__prog-bar span { display: block; height: 100%; background: var(--ak-color-state-success, #0f7b4f); }
+    .tl__prog-num { font-size: 13px; font-weight: 600; color: var(--ak-color-ink-500, #454545); white-space: nowrap; }
+    .tl__nota { font-size: 13px; color: var(--ak-color-ink-400, #6b6b6b); margin: 0 0 1.5rem; }
+    .pasos { list-style: none; margin: 0; padding: 0; }
+    .paso { position: relative; display: flex; gap: .9rem; padding-bottom: 1.35rem; }
+    .paso:not(:last-child)::before { content: ""; position: absolute; left: 6px; top: 16px; bottom: 0; width: 2px; background: var(--ak-color-cream-300, #e4e0d7); }
+    .paso__punto { flex: none; width: 14px; height: 14px; margin-top: 3px; border-radius: 50%; background: var(--ak-color-cream-400, #cfc8ba); box-shadow: 0 0 0 3px #fff; position: relative; z-index: 1; }
+    .paso--completado .paso__punto, .tl__f0.f0--completado .paso__punto { background: var(--ak-color-state-success, #0f7b4f); }
+    .paso--proceso .paso__punto, .tl__f0.f0--proceso .paso__punto { background: #d98a00; }
+    .tl__f0.f0--rechazada .paso__punto { background: var(--ak-color-state-danger, #b8170d); }
+    .paso__cuerpo { flex: 1; min-width: 0; }
+    .paso__top { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+    .paso__top strong { font-size: 15px; }
+    .paso__meta { display: block; font-size: 13px; color: var(--ak-color-ink-400, #6b6b6b); margin-top: .15rem; }
+    .paso__chip { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; padding: .12rem .55rem; border-radius: 999px; background: var(--ak-color-cream-200, #efede8); color: var(--ak-color-ink-500, #454545); }
+    .chip--completado { background: #e6f4ec; color: var(--ak-color-state-success, #0f7b4f); }
+    .chip--proceso { background: #fdf0dc; color: #8a5a00; }
+    .chip--rechazada { background: var(--ak-color-accent-50, #fef3f1); color: var(--ak-color-state-danger, #b8170d); }
+    .paso--bloqueada .paso__cuerpo { opacity: .55; }
 
     @media (max-width: 640px) {
       .doc { margin: 0; padding: 1.75rem 1.25rem; box-shadow: none; }
@@ -310,6 +450,9 @@ export async function onRequestGet({ params, env }) {
 
     @media print {
       .barra { display: none !important; }
+      /* El PDF es siempre el presupuesto, sin importar la pestaña en pantalla. */
+      #tab-seguimiento { display: none !important; }
+      #tab-presupuesto { display: block !important; }
       body { background: #fff; }
       .doc { max-width: none; margin: 0; padding: 0; box-shadow: none; }
       .fase, tr, .doc-footer { break-inside: avoid; }
@@ -326,46 +469,95 @@ export async function onRequestGet({ params, env }) {
     }
   </style>
 </head>
-<body>
+<body data-firma="${escapar(`${c.estado}|${c.version}|${JSON.stringify(avance)}`)}">
   <div class="barra">
-    <span>Versión ${escapar(c.version)}</span>
+    <nav class="tabs">
+      <a class="tab" href="#presupuesto" data-tab="presupuesto">Presupuesto</a>
+      <a class="tab" href="#seguimiento" data-tab="seguimiento">Seguimiento</a>
+    </nav>
     <button class="btn btn--ghost" onclick="window.print()">Imprimir</button>
     <button class="btn" onclick="window.print()">Descargar PDF</button>
   </div>
 
-  <article class="doc">
-    <header class="doc-head">
-      <img src="/src/img/logos/logo.svg" alt="Alkance" onerror="this.style.display='none'">
-      ${fechaFmt ? `<div class="fecha"><strong>Fecha:</strong> ${escapar(fechaFmt)}</div>` : ""}
-    </header>
+  <section id="tab-presupuesto" class="tab-panel">
+    <article class="doc">
+      <header class="doc-head">
+        <img src="/src/img/logos/logo.svg" alt="Alkance" onerror="this.style.display='none'">
+        ${fechaFmt ? `<div class="fecha"><strong>Fecha:</strong> ${escapar(fechaFmt)}</div>` : ""}
+      </header>
 
-    <h1>${escapar(titulo)}</h1>
+      <h1>${escapar(titulo)}</h1>
 
-    ${renderCliente(clienteInfo, data.cliente)}
+      ${renderCliente(clienteInfo, data.cliente)}
 
-    ${data.intro ? `<div class="intro rico">${renderRico(data.intro)}</div>` : ""}
+      ${data.intro ? `<div class="intro rico">${renderRico(data.intro)}</div>` : ""}
 
-    ${
-      fases.length
-        ? `<h2 class="seccion seccion--fases">Alcance del proyecto</h2>${fases.map(renderFase).join("")}`
-        : ""
-    }
+      ${
+        fases.length
+          ? `<h2 class="seccion seccion--fases">Alcance del proyecto</h2>${fases.map(renderFase).join("")}`
+          : ""
+      }
 
-    ${
-      items.length
-        ? `<h2 class="seccion">${escapar(data.tituloTabla || "Consolidado y forma de pago")}</h2>${renderItems(
-            items,
-            data.moneda
-          )}`
-        : ""
-    }
+      ${
+        items.length
+          ? `<h2 class="seccion">${escapar(data.tituloTabla || "Consolidado y forma de pago")}</h2>${renderItems(
+              items,
+              data.moneda
+            )}`
+          : ""
+      }
 
-    ${renderFooter(data.footer)}
+      ${renderFooter(data.footer)}
 
-    <p class="sello">Cotización ${escapar(c.id)} · versión ${escapar(c.version)}</p>
-  </article>
+      <div class="doc-contacto">${renderContacto(cont)}</div>
+    </article>
+  </section>
 
-  <div class="pie-web">www.alkancedigital.cl</div>
+  <section id="tab-seguimiento" class="tab-panel">
+    <article class="doc doc--tl">
+      <header class="doc-head">
+        <img src="/src/img/logos/logo.svg" alt="Alkance" onerror="this.style.display='none'">
+      </header>
+      <h1>Seguimiento del proyecto</h1>
+      <p class="tl__sub">${escapar(titulo)}</p>
+      ${renderTimeline({ estado: c.estado, version: c.version, revisiones, fases, avance })}
+      <div class="doc-contacto">${renderContacto(cont)}</div>
+    </article>
+  </section>
+
+  <div class="pie-web">${escapar(cont.sitioWeb)} · ${escapar(cont.email)} · ${escapar(cont.instagram)}</div>
+
+  <script>
+    (function () {
+      var tabs = ["presupuesto", "seguimiento"];
+      function activa() {
+        var h = (location.hash || "").replace("#", "");
+        return tabs.indexOf(h) >= 0 ? h : "presupuesto";
+      }
+      function pintar() {
+        var a = activa();
+        tabs.forEach(function (t) {
+          document.getElementById("tab-" + t).classList.toggle("oculto", t !== a);
+          var lnk = document.querySelector('.tab[data-tab="' + t + '"]');
+          if (lnk) lnk.classList.toggle("activa", t === a);
+        });
+      }
+      window.addEventListener("hashchange", pintar);
+      pintar();
+
+      // Auto-refresco: si el estado/avance cambió en el panel, recarga (conserva
+      // la pestaña por el hash). Cada 25s y al volver a la pestaña del navegador.
+      var firma = document.body.getAttribute("data-firma");
+      function chequear() {
+        fetch(location.pathname.replace(/\\/$/, "") + "/estado", { cache: "no-store" })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (d && d.ok && d.firma && d.firma !== firma) location.reload(); })
+          .catch(function () {});
+      }
+      setInterval(chequear, 25000);
+      document.addEventListener("visibilitychange", function () { if (!document.hidden) chequear(); });
+    })();
+  </script>
 </body>
 </html>`;
 
