@@ -324,6 +324,21 @@
     let clienteEditando = null;  // cliente en edición | null (nuevo)
     let clientesCache = [];
     let emisorCache = { ...EMISOR_DEFECTO };
+    let dirty = false;           // hay cambios sin guardar en el editor de cotización
+
+    // Aviso al cerrar/recargar la pestaña con cambios sin guardar.
+    window.addEventListener("beforeunload", (e) => {
+      const enEditor = !document.getElementById("vista-editor").classList.contains("oculto");
+      if (enEditor && dirty) { e.preventDefault(); e.returnValue = ""; }
+    });
+    // Guard para navegación interna: pregunta antes de abandonar el editor sucio.
+    function puedeSalirDelEditor() {
+      const enEditor = !document.getElementById("vista-editor").classList.contains("oculto");
+      if (enEditor && dirty) {
+        return confirm("Tienes cambios sin guardar en la cotización. ¿Salir y descartarlos?");
+      }
+      return true;
+    }
 
     const clp = (n) => {
       let x = Math.round(Number(n) || 0);
@@ -379,6 +394,7 @@
       else { msg.textContent = body.error || "No se pudo entrar."; }
     });
     $("#btn-salir").addEventListener("click", async () => {
+      if (!puedeSalirDelEditor()) return;
       await api("/api/logout", { method: "POST" });
       mostrar("login"); $("#password").focus();
     });
@@ -386,6 +402,7 @@
     // ---------- Navegación ----------
     $("#nav").addEventListener("click", (e) => {
       const b = e.target.closest("[data-nav]"); if (!b) return;
+      if (!puedeSalirDelEditor()) return;
       if (b.dataset.nav === "cotizaciones") irALista();
       else if (b.dataset.nav === "clientes") irAClientes();
       else if (b.dataset.nav === "emisor") irAEmisor();
@@ -426,7 +443,7 @@
       }
     });
     $("#btn-nueva").addEventListener("click", () => abrirEditor(null));
-    $("#btn-volver").addEventListener("click", irALista);
+    $("#btn-volver").addEventListener("click", () => { if (puedeSalirDelEditor()) irALista(); });
 
     function poblarSelectClientes(seleccionado) {
       const sel = $("#sel-cliente");
@@ -473,6 +490,7 @@
       const items = (data.items && data.items.length) ? data.items : [{}];
       items.forEach((it) => ci.appendChild(itemNode(it)));
       recalcularTotal();
+      dirty = false; // recién cargado: sin cambios pendientes
     }
 
     function faseNode(fase = {}) {
@@ -530,13 +548,20 @@
     $("#btn-add-item").addEventListener("click", () => $("#items").appendChild(itemNode({})));
     $("#vista-editor").addEventListener("click", (e) => {
       const add = e.target.closest("[data-add]");
-      if (add && add.dataset.add === "punto") { add.previousElementSibling.appendChild(puntoNode({})); return; }
+      if (add && add.dataset.add === "punto") { add.previousElementSibling.appendChild(puntoNode({})); dirty = true; return; }
       const x = e.target.closest("[data-x]"); if (!x) return;
       if (x.dataset.x === "fase") x.closest(".bloque--fase").remove();
       else if (x.dataset.x === "punto") x.closest(".punto-row").remove();
       else if (x.dataset.x === "item") { x.closest(".item-row").remove(); recalcularTotal(); }
+      dirty = true;
     });
     $("#items").addEventListener("input", (e) => { if (e.target.matches('[data-item="monto"]')) recalcularTotal(); });
+    // Cualquier edición de texto o selección marca cambios sin guardar.
+    ["input", "change"].forEach((ev) =>
+      $("#vista-editor").addEventListener(ev, () => { dirty = true; })
+    );
+    $("#btn-add-fase").addEventListener("click", () => { dirty = true; });
+    $("#btn-add-item").addEventListener("click", () => { dirty = true; });
     function recalcularTotal() {
       let total = 0;
       $$('#items [data-item="monto"]').forEach((el) => { total += Math.round(Number(el.value) || 0); });
@@ -586,6 +611,7 @@
       $("#editor-titulo").textContent = "Editar cotización";
       $("#editor-version").textContent = "v" + res.body.version;
       const prev = $("#btn-preview"); prev.href = "/c/" + id; prev.classList.remove("oculto");
+      dirty = false; // guardado: sin cambios pendientes
       msg.className = "msg msg--ok"; msg.textContent = "Guardado ✓ (versión " + res.body.version + ")";
     });
 
