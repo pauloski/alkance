@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Cotizaciones · Alkance</title>
+  <link rel="stylesheet" href="/src/styles/tokens.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--ak-semantic-bg-canvas, #f7f5f1);
+      color: var(--ak-semantic-fg-default, #0a0a0a);
+      font-family: var(--ak-font-family-sans, system-ui);
+      font-size: 15px; line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--ak-color-accent-600, #b8170d); }
+    .oculto { display: none !important; }
+
+    /* Barra superior */
+    .topbar {
+      display: flex; align-items: center; gap: 1rem;
+      padding: .7rem 1.5rem;
+      background: var(--ak-color-ink-900, #0a0a0a); color: #fff;
+      position: sticky; top: 0; z-index: 20;
+    }
+    .topbar img { height: 24px; width: auto; }
+    .topbar .marca { font-size: 14px; font-weight: 600; }
+    .nav { display: flex; gap: .25rem; margin-left: 1.5rem; }
+    .nav button {
+      font: inherit; font-size: 14px; color: rgba(255,255,255,.7); cursor: pointer;
+      background: transparent; border: none; padding: .4rem .8rem; border-radius: 6px;
+    }
+    .nav button:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .nav button.activo { color: #fff; background: rgba(255,255,255,.14); font-weight: 600; }
+    .topbar .sep { margin-left: auto; }
+    .btn-salir { font: inherit; font-size: 13px; color: #fff; background: transparent;
+      border: 1px solid rgba(255,255,255,.35); border-radius: 6px; padding: .35rem .7rem; cursor: pointer; }
+    .btn-salir:hover { background: rgba(255,255,255,.1); }
+
+    .wrap { max-width: 960px; margin: 2rem auto; padding: 0 1.25rem; }
+
+    /* Botones */
+    .btn {
+      font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+      padding: .55rem 1.05rem; border-radius: 4px; border: 1px solid transparent;
+      background: var(--ak-color-accent-600, #b8170d); color: #fff;
+      display: inline-flex; align-items: center; gap: .4rem; text-decoration: none;
+    }
+    .btn:hover { background: var(--ak-color-accent-700, #8e1109); }
+    .btn--ghost { background: transparent; border-color: var(--ak-color-cream-400, #cfc8ba); color: var(--ak-semantic-fg-default, #0a0a0a); }
+    .btn--ghost:hover { background: var(--ak-color-cream-200, #efede8); }
+    .btn--sm { padding: .35rem .7rem; font-size: 13px; }
+    .btn--danger { background: transparent; border-color: var(--ak-color-cream-400,#cfc8ba); color: var(--ak-color-state-danger, #b8170d); }
+    .btn--danger:hover { background: var(--ak-color-accent-50, #fef3f1); }
+
+    /* Login */
+    .login-card {
+      max-width: 22rem; margin: 12vh auto; padding: 2rem;
+      background: #fff; border: 1px solid var(--ak-color-cream-300, #e4e0d7); border-radius: 10px;
+    }
+    .login-card h1 { font-size: 20px; margin: 0 0 1.25rem; }
+
+    /* Campos */
+    label { display: block; font-size: 13px; font-weight: 600; margin: 0 0 .3rem; color: var(--ak-color-ink-500, #454545); }
+    input, textarea, select {
+      width: 100%; font: inherit; font-size: 14px;
+      padding: .55rem .7rem; border: 1px solid var(--ak-color-cream-400, #cfc8ba);
+      border-radius: 6px; background: #fff; color: inherit;
+    }
+    input:focus, textarea:focus, select:focus { outline: 2px solid var(--ak-color-accent-500, #e5241a); outline-offset: -1px; }
+    textarea { resize: vertical; min-height: 4.5rem; }
+    .campo { margin-bottom: 1rem; }
+    .fila { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .msg { font-size: 13px; margin-top: .75rem; min-height: 1.1em; }
+    .msg--err { color: var(--ak-color-state-danger, #b8170d); }
+    .msg--ok { color: var(--ak-color-state-success, #0f7b4f); }
+
+    /* Cabecera de sección */
+    .sec-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .sec-head h1 { font-size: 24px; margin: 0; }
+    .sec-head .sep { flex: 1; }
+
+    /* Tarjetas de listado */
+    .card {
+      background: #fff; border: 1px solid var(--ak-color-cream-300, #e4e0d7);
+      border-radius: 10px; padding: 1.1rem 1.25rem; margin-bottom: .9rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .card__main { flex: 1; min-width: 0; }
+    .card__main h3 { font-size: 16px; margin: 0 0 .2rem; }
+    .card__meta { font-size: 13px; color: var(--ak-color-ink-400, #6b6b6b); }
+    .card__total { font-weight: 700; white-space: nowrap; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+      padding: .12rem .5rem; border-radius: 999px; background: var(--ak-color-cream-200,#efede8); color: var(--ak-color-ink-500,#454545); }
+    .badge--enviada { background: #e6f4ec; color: var(--ak-color-state-success,#0f7b4f); }
+    .vacio { text-align: center; padding: 3rem 1rem; color: var(--ak-color-ink-400,#6b6b6b); }
+
+    /* Editor */
+    .panel-sec {
+      background: #fff; border: 1px solid var(--ak-color-cream-300, #e4e0d7);
+      border-radius: 10px; padding: 1.25rem 1.35rem; margin-bottom: 1.25rem;
+    }
+    .panel-sec > h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .03em;
+      color: var(--ak-color-ink-400,#6b6b6b); margin: 0 0 1rem; }
+    .bloque {
+      border: 1px solid var(--ak-color-cream-300, #e4e0d7); border-radius: 8px;
+      padding: 1rem; margin-bottom: 1rem; background: var(--ak-color-cream-50, #fbf9f6);
+    }
+    .bloque__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
+    .bloque__head strong { font-size: 13px; color: var(--ak-color-ink-400,#6b6b6b); }
+    .punto-row, .item-row { display: grid; gap: .6rem; margin-bottom: .6rem; align-items: start; }
+    .punto-row { grid-template-columns: 1fr 2fr auto; }
+    .item-row { grid-template-columns: 1.4fr 2fr 1fr auto; }
+    .item-row input, .punto-row input { margin: 0; }
+    .x {
+      border: 1px solid var(--ak-color-cream-400,#cfc8ba); background: #fff; border-radius: 6px;
+      width: 2.1rem; height: 2.1rem; font-size: 16px; line-height: 1; cursor: pointer; color: var(--ak-color-ink-400,#6b6b6b);
+    }
+    .x:hover { color: var(--ak-color-state-danger,#b8170d); border-color: var(--ak-color-state-danger,#b8170d); }
+    .total-linea { display: flex; justify-content: flex-end; align-items: baseline; gap: 1rem; padding-top: .75rem; border-top: 2px solid var(--ak-color-ink-900,#0a0a0a); margin-top: .5rem; }
+    .total-linea span { font-size: 13px; color: var(--ak-color-ink-400,#6b6b6b); text-transform: uppercase; letter-spacing: .03em; }
+    .total-linea strong { font-size: 22px; }
+    .barra-guardar {
+      position: sticky; bottom: 0; background: rgba(255,255,255,.95); backdrop-filter: blur(4px);
+      border-top: 1px solid var(--ak-color-cream-300,#e4e0d7);
+      display: flex; align-items: center; gap: .75rem; padding: .85rem 0; margin-top: 1rem;
+    }
+    .barra-guardar .sep { margin-left: auto; }
+    .col-label { font-size: 12px; font-weight: 600; color: var(--ak-color-ink-400,#6b6b6b); }
+    .items-labels { display: none; }
+    .ayuda { font-size: 12px; color: var(--ak-color-ink-400,#6b6b6b); margin: -.5rem 0 1rem; }
+    @media (min-width: 720px) {
+      .items-labels { display: grid; grid-template-columns: 1.4fr 2fr 1fr auto; gap: .6rem; margin-bottom: .3rem; }
+    }
+    @media (max-width: 719px) {
+      .fila { grid-template-columns: 1fr; }
+      .punto-row, .item-row { grid-template-columns: 1fr; }
+      .nav { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <img src="/src/img/logos/logo-dark.svg" alt="Alkance" onerror="this.style.display='none'">
+    <span class="marca">Cotizaciones</span>
+    <nav class="nav oculto" id="nav">
+      <button data-nav="cotizaciones">Cotizaciones</button>
+      <button data-nav="clientes">Clientes</button>
+      <button data-nav="emisor">Emisor</button>
+    </nav>
+    <span class="sep"></span>
+    <button id="btn-salir" class="btn-salir oculto">Cerrar sesión</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="vista-login" class="oculto">
+    <form class="login-card" id="form-login">
+      <h1>Acceso al panel</h1>
+      <div class="campo">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" autocomplete="current-password" autofocus>
+      </div>
+      <button class="btn" type="submit" style="width:100%">Entrar</button>
+      <p class="msg msg--err" id="login-msg"></p>
+    </form>
+  </div>
+
+  <!-- LISTADO COTIZACIONES -->
+  <div id="vista-lista" class="wrap oculto">
+    <div class="sec-head">
+      <h1>Cotizaciones</h1><span class="sep"></span>
+      <button class="btn" id="btn-nueva">+ Nueva cotización</button>
+    </div>
+    <div id="lista-items"></div>
+  </div>
+
+  <!-- EDITOR COTIZACIÓN -->
+  <div id="vista-editor" class="wrap oculto">
+    <div class="sec-head">
+      <button class="btn btn--ghost btn--sm" id="btn-volver">← Volver</button>
+      <h1 id="editor-titulo" style="flex:0 1 auto">Nueva cotización</h1>
+      <span id="editor-version" class="badge"></span>
+    </div>
+
+    <div class="panel-sec">
+      <h2>Encabezado</h2>
+      <div class="campo"><label>Título de la propuesta</label>
+        <input data-field="titulo" placeholder="Propuesta de Desarrollo: ..."></div>
+      <div class="fila">
+        <div class="campo"><label>Cliente</label>
+          <select id="sel-cliente"></select></div>
+        <div class="campo"><label>Fecha</label><input type="date" data-field="fecha"></div>
+      </div>
+      <div class="campo"><label>Descripción inicial</label>
+        <textarea data-field="intro" rows="5" placeholder="Párrafo introductorio. Deja una línea en blanco para separar párrafos."></textarea></div>
+    </div>
+
+    <div class="panel-sec">
+      <h2>Fases del proyecto</h2>
+      <div id="fases"></div>
+      <button class="btn btn--ghost btn--sm" id="btn-add-fase">+ Agregar fase</button>
+    </div>
+
+    <div class="panel-sec">
+      <h2>Ítems y montos</h2>
+      <div class="campo"><label>Título de la tabla</label>
+        <input data-field="tituloTabla" placeholder="Consolidado y forma de pago"></div>
+      <div class="items-labels">
+        <div class="col-label">Ítem / hito</div>
+        <div class="col-label">Detalle</div>
+        <div class="col-label">Monto</div>
+        <div></div>
+      </div>
+      <div id="items"></div>
+      <button class="btn btn--ghost btn--sm" id="btn-add-item">+ Agregar ítem</button>
+      <div class="total-linea"><span>Total</span><strong id="total-vivo">$0</strong></div>
+    </div>
+
+    <div class="panel-sec">
+      <h2>Pie · datos de transferencia</h2>
+      <p class="ayuda">Se prellenan con los datos de <strong>Emisor</strong>. Puedes ajustarlos solo para esta cotización.</p>
+      <div class="fila">
+        <div class="campo"><label>Titular</label><input data-footer="titular"></div>
+        <div class="campo"><label>RUT</label><input data-footer="rut"></div>
+      </div>
+      <div class="fila">
+        <div class="campo"><label>Banco</label><input data-footer="banco"></div>
+        <div class="campo"><label>Tipo de cuenta</label><input data-footer="tipoCuenta"></div>
+      </div>
+      <div class="fila">
+        <div class="campo"><label>N° de cuenta</label><input data-footer="cuenta"></div>
+        <div class="campo"><label>Teléfono</label><input data-footer="telefono"></div>
+      </div>
+      <div class="campo"><label>Email</label><input data-footer="email"></div>
+      <div class="campo"><label>Notas (opcional)</label><textarea data-footer="notas" rows="2"></textarea></div>
+    </div>
+
+    <div class="barra-guardar">
+      <span class="msg" id="editor-msg"></span>
+      <span class="sep"></span>
+      <a class="btn btn--ghost oculto" id="btn-preview" target="_blank" rel="noopener">Ver / PDF ↗</a>
+      <button class="btn" id="btn-guardar">Guardar</button>
+    </div>
+  </div>
+
+  <!-- LISTADO CLIENTES -->
+  <div id="vista-clientes" class="wrap oculto">
+    <div class="sec-head">
+      <h1>Clientes</h1><span class="sep"></span>
+      <button class="btn" id="btn-nuevo-cliente">+ Nuevo cliente</button>
+    </div>
+    <div id="clientes-items"></div>
+  </div>
+
+  <!-- EDITOR CLIENTE -->
+  <div id="vista-cliente-editor" class="wrap oculto">
+    <div class="sec-head">
+      <button class="btn btn--ghost btn--sm" id="btn-volver-clientes">← Volver</button>
+      <h1 id="cliente-titulo" style="flex:0 1 auto">Nuevo cliente</h1>
+    </div>
+    <div class="panel-sec">
+      <div class="fila">
+        <div class="campo"><label>Nombre de contacto</label><input data-cliente="nombre"></div>
+        <div class="campo"><label>Empresa</label><input data-cliente="empresa"></div>
+      </div>
+      <div class="fila">
+        <div class="campo"><label>RUT</label><input data-cliente="rut"></div>
+        <div class="campo"><label>Teléfono</label><input data-cliente="telefono"></div>
+      </div>
+      <div class="campo"><label>Email</label><input data-cliente="email"></div>
+      <div class="campo"><label>Dirección</label><input data-cliente="direccion"></div>
+      <div class="campo"><label>Notas</label><textarea data-cliente="notas" rows="2"></textarea></div>
+    </div>
+    <div class="barra-guardar">
+      <span class="msg" id="cliente-msg"></span><span class="sep"></span>
+      <button class="btn" id="btn-guardar-cliente">Guardar cliente</button>
+    </div>
+  </div>
+
+  <!-- EMISOR (config) -->
+  <div id="vista-emisor" class="wrap oculto">
+    <div class="sec-head"><h1>Datos de emisor</h1></div>
+    <div class="panel-sec">
+      <p class="ayuda">Estos datos de transferencia se copian a cada cotización nueva.</p>
+      <div class="fila">
+        <div class="campo"><label>Titular</label><input data-emisor="titular"></div>
+        <div class="campo"><label>RUT</label><input data-emisor="rut"></div>
+      </div>
+      <div class="fila">
+        <div class="campo"><label>Banco</label><input data-emisor="banco"></div>
+        <div class="campo"><label>Tipo de cuenta</label><input data-emisor="tipoCuenta"></div>
+      </div>
+      <div class="fila">
+        <div class="campo"><label>N° de cuenta</label><input data-emisor="cuenta"></div>
+        <div class="campo"><label>Teléfono</label><input data-emisor="telefono"></div>
+      </div>
+      <div class="campo"><label>Email</label><input data-emisor="email"></div>
+      <div class="campo"><label>Notas (opcional)</label><textarea data-emisor="notas" rows="2"></textarea></div>
+    </div>
+    <div class="barra-guardar">
+      <span class="msg" id="emisor-msg"></span><span class="sep"></span>
+      <button class="btn" id="btn-guardar-emisor">Guardar datos de emisor</button>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    "use strict";
+    const $ = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+    // Datos de emisor por defecto (primera vez, hasta que se guarden en "Emisor").
+    const EMISOR_DEFECTO = {
+      titular: "Paulo Roberto Correa Vargas", rut: "15.010.175-1", banco: "Banco Estado",
+      tipoCuenta: "Cuenta Rut", cuenta: "15010175",
+      email: "paulocorrea.contacto@gmail.com", telefono: "+56 9 33819393", notas: ""
+    };
+
+    let editando = null;         // cotización en edición | null (nueva)
+    let clienteEditando = null;  // cliente en edición | null (nuevo)
+    let clientesCache = [];
+    let emisorCache = { ...EMISOR_DEFECTO };
+
+    const clp = (n) => {
+      let x = Math.round(Number(n) || 0);
+      const neg = x < 0; x = Math.abs(x);
+      return (neg ? "-$" : "$") + String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const hoy = () => new Date().toISOString().slice(0, 10);
+
+    const VISTAS = ["login", "lista", "editor", "clientes", "cliente-editor", "emisor"];
+    function mostrar(vista) {
+      document.getElementById("vista-login").classList.toggle("oculto", vista !== "login");
+      document.getElementById("vista-lista").classList.toggle("oculto", vista !== "lista");
+      document.getElementById("vista-editor").classList.toggle("oculto", vista !== "editor");
+      document.getElementById("vista-clientes").classList.toggle("oculto", vista !== "clientes");
+      document.getElementById("vista-cliente-editor").classList.toggle("oculto", vista !== "cliente-editor");
+      document.getElementById("vista-emisor").classList.toggle("oculto", vista !== "emisor");
+      const authed = vista !== "login";
+      $("#nav").classList.toggle("oculto", !authed);
+      $("#btn-salir").classList.toggle("oculto", !authed);
+      const grupo = vista === "clientes" || vista === "cliente-editor" ? "clientes"
+                  : vista === "emisor" ? "emisor" : "cotizaciones";
+      $$("#nav button").forEach((b) => b.classList.toggle("activo", b.dataset.nav === grupo));
+    }
+
+    async function api(url, opts = {}) {
+      const r = await fetch(url, { headers: { "Content-Type": "application/json" }, ...opts });
+      let body = {};
+      try { body = await r.json(); } catch {}
+      if (r.status === 401) mostrar("login");
+      return { ok: r.ok, status: r.status, body };
+    }
+
+    // ---------- Arranque ----------
+    async function init() {
+      const { body } = await api("/api/login");
+      if (body.auth) { await precargar(); irALista(); }
+      else { mostrar("login"); $("#password").focus(); }
+    }
+
+    async function precargar() {
+      const [cl, em] = await Promise.all([api("/api/clientes"), api("/api/config/emisor")]);
+      clientesCache = cl.body.clientes || [];
+      emisorCache = em.body.valor && Object.keys(em.body.valor).length ? em.body.valor : { ...EMISOR_DEFECTO };
+    }
+
+    // ---------- Login ----------
+    $("#form-login").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const msg = $("#login-msg"); msg.textContent = "";
+      const { ok, body } = await api("/api/login", { method: "POST", body: JSON.stringify({ password: $("#password").value }) });
+      if (ok) { $("#password").value = ""; await precargar(); irALista(); }
+      else { msg.textContent = body.error || "No se pudo entrar."; }
+    });
+    $("#btn-salir").addEventListener("click", async () => {
+      await api("/api/logout", { method: "POST" });
+      mostrar("login"); $("#password").focus();
+    });
+
+    // ---------- Navegación ----------
+    $("#nav").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-nav]"); if (!b) return;
+      if (b.dataset.nav === "cotizaciones") irALista();
+      else if (b.dataset.nav === "clientes") irAClientes();
+      else if (b.dataset.nav === "emisor") irAEmisor();
+    });
+
+    // ================= COTIZACIONES =================
+    async function irALista() {
+      mostrar("lista");
+      const cont = $("#lista-items");
+      cont.innerHTML = '<div class="vacio">Cargando…</div>';
+      const { ok, body } = await api("/api/cotizaciones");
+      if (!ok) { cont.innerHTML = '<div class="vacio">Error al cargar.</div>'; return; }
+      const items = body.cotizaciones || [];
+      cont.innerHTML = items.length ? items.map(cardCotizacion).join("")
+        : '<div class="vacio">Aún no hay cotizaciones. Crea la primera con “+ Nueva cotización”.</div>';
+    }
+    function cardCotizacion(c) {
+      const fecha = c.fecha ? new Date(c.fecha + "T00:00:00").toLocaleDateString("es-CL") : "sin fecha";
+      const est = c.estado === "enviada" ? "badge--enviada" : "";
+      return `<div class="card">
+        <div class="card__main">
+          <h3>${esc(c.titulo || "(sin título)")}</h3>
+          <div class="card__meta">${esc(c.cliente || "—")} · ${fecha} · <span class="badge ${est}">${esc(c.estado)}</span> · v${c.version}</div>
+        </div>
+        <div class="card__total">${clp(c.total)}</div>
+        <a class="btn btn--ghost btn--sm" href="/c/${c.id}" target="_blank" rel="noopener">Ver ↗</a>
+        <button class="btn btn--ghost btn--sm" data-accion="editar" data-id="${c.id}">Editar</button>
+        <button class="btn btn--danger btn--sm" data-accion="borrar" data-id="${c.id}">Eliminar</button>
+      </div>`;
+    }
+    $("#lista-items").addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-accion]"); if (!btn) return;
+      const id = btn.dataset.id;
+      if (btn.dataset.accion === "editar") abrirEditor(id);
+      else if (btn.dataset.accion === "borrar") {
+        if (!confirm("¿Eliminar esta cotización? No se puede deshacer.")) return;
+        await api("/api/cotizaciones/" + id, { method: "DELETE" }); irALista();
+      }
+    });
+    $("#btn-nueva").addEventListener("click", () => abrirEditor(null));
+    $("#btn-volver").addEventListener("click", irALista);
+
+    function poblarSelectClientes(seleccionado) {
+      const sel = $("#sel-cliente");
+      const opts = ['<option value="">— Sin cliente —</option>'];
+      clientesCache.forEach((c) => {
+        const etq = c.nombre || c.empresa || "(sin nombre)";
+        const emp = c.empresa && c.nombre ? " · " + c.empresa : "";
+        opts.push(`<option value="${c.id}"${c.id === seleccionado ? " selected" : ""}>${esc(etq + emp)}</option>`);
+      });
+      sel.innerHTML = opts.join("");
+    }
+
+    function abrirEditor(id) {
+      if (id === null) {
+        editando = null;
+        cargarCotizacion({ fecha: hoy(), footer: { ...emisorCache }, fases: [], items: [{}] });
+        $("#editor-titulo").textContent = "Nueva cotización";
+        $("#editor-version").textContent = "";
+        $("#btn-preview").classList.add("oculto");
+        $("#editor-msg").textContent = "";
+        mostrar("editor");
+        return;
+      }
+      api("/api/cotizaciones/" + id).then(({ ok, body }) => {
+        if (!ok) { alert("No se pudo abrir la cotización."); return; }
+        editando = { id: body.cotizacion.id, version: body.cotizacion.version };
+        cargarCotizacion(body.cotizacion.data || {});
+        $("#editor-titulo").textContent = "Editar cotización";
+        $("#editor-version").textContent = "v" + body.cotizacion.version;
+        const prev = $("#btn-preview"); prev.href = "/c/" + id; prev.classList.remove("oculto");
+        $("#editor-msg").textContent = "";
+        mostrar("editor");
+      });
+    }
+
+    function cargarCotizacion(data) {
+      $$("[data-field]").forEach((el) => { el.value = data[el.dataset.field] ?? ""; });
+      const f = data.footer || {};
+      $$("[data-footer]").forEach((el) => { el.value = f[el.dataset.footer] ?? ""; });
+      poblarSelectClientes(data.clienteId || "");
+      const cf = $("#fases"); cf.innerHTML = "";
+      (data.fases || []).forEach((fase) => cf.appendChild(faseNode(fase)));
+      const ci = $("#items"); ci.innerHTML = "";
+      const items = (data.items && data.items.length) ? data.items : [{}];
+      items.forEach((it) => ci.appendChild(itemNode(it)));
+      recalcularTotal();
+    }
+
+    function faseNode(fase = {}) {
+      const div = document.createElement("div");
+      div.className = "bloque bloque--fase";
+      div.innerHTML = `
+        <div class="bloque__head"><strong>Fase</strong>
+          <button type="button" class="x" data-x="fase" title="Eliminar fase">×</button></div>
+        <div class="campo"><label>Título de la fase</label>
+          <input data-fase="titulo" placeholder="FASE 1: Diseño de interfaz…"></div>
+        <div class="campo"><label>Tiempo estimado</label>
+          <input data-fase="dedicacion" placeholder="Semanas 1 a 3 (3 semanas)"></div>
+        <div class="campo"><label>Descripción de la fase (opcional)</label>
+          <textarea data-fase="descripcion" rows="2"></textarea></div>
+        <label>Puntos / actividades</label>
+        <div class="puntos"></div>
+        <button type="button" class="btn btn--ghost btn--sm" data-add="punto">+ Punto</button>
+        <div class="campo" style="margin-top:1rem"><label>Entregable</label>
+          <input data-fase="entregable" placeholder="Archivo interactivo en Figma…"></div>`;
+      div.querySelector('[data-fase="titulo"]').value = fase.titulo ?? "";
+      div.querySelector('[data-fase="dedicacion"]').value = fase.dedicacion ?? "";
+      div.querySelector('[data-fase="descripcion"]').value = fase.descripcion ?? "";
+      div.querySelector('[data-fase="entregable"]').value = fase.entregable ?? "";
+      const cp = div.querySelector(".puntos");
+      const puntos = (fase.puntos && fase.puntos.length) ? fase.puntos : [{}];
+      puntos.forEach((p) => cp.appendChild(puntoNode(p)));
+      return div;
+    }
+    function puntoNode(p = {}) {
+      const row = document.createElement("div");
+      row.className = "punto-row";
+      row.innerHTML = `
+        <input data-punto="titulo" placeholder="Título (opcional)">
+        <input data-punto="detalle" placeholder="Detalle del punto">
+        <button type="button" class="x" data-x="punto" title="Quitar">×</button>`;
+      row.querySelector('[data-punto="titulo"]').value = p.titulo ?? "";
+      row.querySelector('[data-punto="detalle"]').value = p.detalle ?? "";
+      return row;
+    }
+    function itemNode(it = {}) {
+      const row = document.createElement("div");
+      row.className = "item-row";
+      row.innerHTML = `
+        <input data-item="concepto" placeholder="Ítem / hito">
+        <input data-item="detalle" placeholder="Detalle">
+        <input data-item="monto" type="number" inputmode="numeric" step="1000" placeholder="0">
+        <button type="button" class="x" data-x="item" title="Quitar">×</button>`;
+      row.querySelector('[data-item="concepto"]').value = it.concepto ?? "";
+      row.querySelector('[data-item="detalle"]').value = it.detalle ?? "";
+      row.querySelector('[data-item="monto"]').value = (it.monto ?? "") === "" ? "" : it.monto;
+      return row;
+    }
+
+    $("#btn-add-fase").addEventListener("click", () => $("#fases").appendChild(faseNode({ puntos: [{}] })));
+    $("#btn-add-item").addEventListener("click", () => $("#items").appendChild(itemNode({})));
+    $("#vista-editor").addEventListener("click", (e) => {
+      const add = e.target.closest("[data-add]");
+      if (add && add.dataset.add === "punto") { add.previousElementSibling.appendChild(puntoNode({})); return; }
+      const x = e.target.closest("[data-x]"); if (!x) return;
+      if (x.dataset.x === "fase") x.closest(".bloque--fase").remove();
+      else if (x.dataset.x === "punto") x.closest(".punto-row").remove();
+      else if (x.dataset.x === "item") { x.closest(".item-row").remove(); recalcularTotal(); }
+    });
+    $("#items").addEventListener("input", (e) => { if (e.target.matches('[data-item="monto"]')) recalcularTotal(); });
+    function recalcularTotal() {
+      let total = 0;
+      $$('#items [data-item="monto"]').forEach((el) => { total += Math.round(Number(el.value) || 0); });
+      $("#total-vivo").textContent = clp(total);
+    }
+
+    function recolectarCotizacion() {
+      const data = {};
+      $$("[data-field]").forEach((el) => { data[el.dataset.field] = el.value.trim(); });
+      data.footer = {};
+      $$("[data-footer]").forEach((el) => { data.footer[el.dataset.footer] = el.value.trim(); });
+      // Cliente: guarda id + snapshot de sus datos (para no romper el histórico).
+      const cid = $("#sel-cliente").value;
+      const cli = clientesCache.find((c) => c.id === cid);
+      data.clienteId = cid || "";
+      if (cli) {
+        data.cliente = cli.nombre || cli.empresa;
+        data.clienteInfo = { nombre: cli.nombre, empresa: cli.empresa, rut: cli.rut, email: cli.email, telefono: cli.telefono, direccion: cli.direccion };
+      } else { data.cliente = ""; data.clienteInfo = null; }
+      data.fases = $$(".bloque--fase").map((div) => {
+        const g = (sel) => div.querySelector(sel)?.value.trim() ?? "";
+        const puntos = $$(".punto-row", div).map((r) => ({
+          titulo: r.querySelector('[data-punto="titulo"]').value.trim(),
+          detalle: r.querySelector('[data-punto="detalle"]').value.trim(),
+        })).filter((p) => p.titulo || p.detalle);
+        return { titulo: g('[data-fase="titulo"]'), dedicacion: g('[data-fase="dedicacion"]'),
+          descripcion: g('[data-fase="descripcion"]'), puntos, entregable: g('[data-fase="entregable"]') };
+      }).filter((f) => f.titulo || f.descripcion || f.puntos.length || f.entregable);
+      data.items = $$(".item-row").map((r) => ({
+        concepto: r.querySelector('[data-item="concepto"]').value.trim(),
+        detalle: r.querySelector('[data-item="detalle"]').value.trim(),
+        monto: Math.round(Number(r.querySelector('[data-item="monto"]').value) || 0),
+      })).filter((it) => it.concepto || it.detalle || it.monto);
+      return data;
+    }
+
+    $("#btn-guardar").addEventListener("click", async () => {
+      const msg = $("#editor-msg"); msg.className = "msg"; msg.textContent = "Guardando…";
+      const data = recolectarCotizacion();
+      const res = editando === null
+        ? await api("/api/cotizaciones", { method: "POST", body: JSON.stringify({ data }) })
+        : await api("/api/cotizaciones/" + editando.id, { method: "PUT", body: JSON.stringify({ data }) });
+      if (res.status === 401) return;
+      if (!res.ok) { msg.className = "msg msg--err"; msg.textContent = res.body.error || "No se pudo guardar."; return; }
+      const id = editando ? editando.id : res.body.id;
+      editando = { id, version: res.body.version };
+      $("#editor-titulo").textContent = "Editar cotización";
+      $("#editor-version").textContent = "v" + res.body.version;
+      const prev = $("#btn-preview"); prev.href = "/c/" + id; prev.classList.remove("oculto");
+      msg.className = "msg msg--ok"; msg.textContent = "Guardado ✓ (versión " + res.body.version + ")";
+    });
+
+    // ================= CLIENTES =================
+    async function irAClientes() {
+      mostrar("clientes");
+      const cont = $("#clientes-items");
+      cont.innerHTML = '<div class="vacio">Cargando…</div>';
+      const { ok, body } = await api("/api/clientes");
+      if (!ok) { cont.innerHTML = '<div class="vacio">Error al cargar.</div>'; return; }
+      clientesCache = body.clientes || [];
+      cont.innerHTML = clientesCache.length ? clientesCache.map(cardCliente).join("")
+        : '<div class="vacio">Aún no hay clientes. Agrega el primero con “+ Nuevo cliente”.</div>';
+    }
+    function cardCliente(c) {
+      const meta = [c.empresa, c.email, c.telefono].filter(Boolean).join(" · ");
+      return `<div class="card">
+        <div class="card__main">
+          <h3>${esc(c.nombre || c.empresa || "(sin nombre)")}</h3>
+          <div class="card__meta">${esc(meta || "—")}</div>
+        </div>
+        <button class="btn btn--ghost btn--sm" data-cl-accion="editar" data-id="${c.id}">Editar</button>
+        <button class="btn btn--danger btn--sm" data-cl-accion="borrar" data-id="${c.id}">Eliminar</button>
+      </div>`;
+    }
+    $("#clientes-items").addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-cl-accion]"); if (!btn) return;
+      const id = btn.dataset.id;
+      if (btn.dataset.clAccion === "editar") abrirClienteEditor(id);
+      else if (btn.dataset.clAccion === "borrar") {
+        if (!confirm("¿Eliminar este cliente de la agenda?")) return;
+        await api("/api/clientes/" + id, { method: "DELETE" }); irAClientes();
+      }
+    });
+    $("#btn-nuevo-cliente").addEventListener("click", () => abrirClienteEditor(null));
+    $("#btn-volver-clientes").addEventListener("click", irAClientes);
+
+    function abrirClienteEditor(id) {
+      $("#cliente-msg").textContent = "";
+      if (id === null) {
+        clienteEditando = null;
+        $$("[data-cliente]").forEach((el) => (el.value = ""));
+        $("#cliente-titulo").textContent = "Nuevo cliente";
+        mostrar("cliente-editor"); return;
+      }
+      api("/api/clientes/" + id).then(({ ok, body }) => {
+        if (!ok) { alert("No se pudo abrir el cliente."); return; }
+        clienteEditando = { id };
+        const c = body.cliente;
+        $$("[data-cliente]").forEach((el) => { el.value = c[el.dataset.cliente] ?? ""; });
+        $("#cliente-titulo").textContent = "Editar cliente";
+        mostrar("cliente-editor");
+      });
+    }
+    $("#btn-guardar-cliente").addEventListener("click", async () => {
+      const msg = $("#cliente-msg"); msg.className = "msg"; msg.textContent = "Guardando…";
+      const cliente = {};
+      $$("[data-cliente]").forEach((el) => { cliente[el.dataset.cliente] = el.value.trim(); });
+      const res = clienteEditando === null
+        ? await api("/api/clientes", { method: "POST", body: JSON.stringify({ cliente }) })
+        : await api("/api/clientes/" + clienteEditando.id, { method: "PUT", body: JSON.stringify({ cliente }) });
+      if (res.status === 401) return;
+      if (!res.ok) { msg.className = "msg msg--err"; msg.textContent = res.body.error || "No se pudo guardar."; return; }
+      await precargar(); // refresca el cache que usa el selector de cotizaciones
+      msg.className = "msg msg--ok"; msg.textContent = "Guardado ✓";
+      setTimeout(irAClientes, 400);
+    });
+
+    // ================= EMISOR =================
+    async function irAEmisor() {
+      mostrar("emisor");
+      $("#emisor-msg").textContent = "";
+      const { body } = await api("/api/config/emisor");
+      const v = body.valor && Object.keys(body.valor).length ? body.valor : { ...EMISOR_DEFECTO };
+      emisorCache = v;
+      $$("[data-emisor]").forEach((el) => { el.value = v[el.dataset.emisor] ?? ""; });
+    }
+    $("#btn-guardar-emisor").addEventListener("click", async () => {
+      const msg = $("#emisor-msg"); msg.className = "msg"; msg.textContent = "Guardando…";
+      const valor = {};
+      $$("[data-emisor]").forEach((el) => { valor[el.dataset.emisor] = el.value.trim(); });
+      const res = await api("/api/config/emisor", { method: "PUT", body: JSON.stringify({ valor }) });
+      if (res.status === 401) return;
+      if (!res.ok) { msg.className = "msg msg--err"; msg.textContent = res.body.error || "No se pudo guardar."; return; }
+      emisorCache = valor;
+      msg.className = "msg msg--ok"; msg.textContent = "Guardado ✓ (se aplicará a las cotizaciones nuevas)";
+    });
+
+    init();
+  })();
+  </script>
+</body>
+</html>

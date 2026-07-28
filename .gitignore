@@ -23,6 +23,11 @@ dist/
 .env.*
 !.env.example
 
+# wrangler.toml es SOLO para dev local (bindings D1 + pages dev). En producción
+# el binding D1 y los secrets se configuran en el dashboard de Pages, igual que
+# RESEND. Si se versiona, Pages puede cambiar su modo de config y romper eso.
+wrangler.toml
+
 # --- SO / editor ---
 .DS_Store
 Thumbs.db
