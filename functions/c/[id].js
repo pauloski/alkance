@@ -109,9 +109,9 @@ function renderItems(items, moneda) {
     </table>`;
 }
 
-function renderCliente(data) {
-  const ci = data?.clienteInfo || {};
-  const nombre = ci.nombre || data?.cliente || "";
+function renderCliente(info, nombreFallback) {
+  const ci = info || {};
+  const nombre = ci.nombre || nombreFallback || "";
   if (!nombre && !ci.empresa) return "";
   const linea2 = [ci.empresa, ci.rut].filter(Boolean).join(" · ");
   const linea3 = [ci.email, ci.telefono].filter(Boolean).join(" · ");
@@ -171,6 +171,18 @@ export async function onRequestGet({ params, env }) {
     data = JSON.parse(c.data);
   } catch {
     data = {};
+  }
+
+  // Datos del cliente: se prefiere la ficha VIVA (por clienteId) para que
+  // correcciones en la pestaña Clientes (p. ej. borrar un RUT) se reflejen al
+  // instante. El snapshot guardado (clienteInfo) es solo respaldo si el cliente
+  // fue eliminado de la agenda.
+  let clienteInfo = data.clienteInfo || null;
+  if (data.clienteId) {
+    const vivo = await env.DB.prepare(
+      `SELECT nombre, empresa, rut, email, telefono, direccion FROM clientes WHERE id = ?`
+    ).bind(data.clienteId).first();
+    if (vivo) clienteInfo = vivo;
   }
 
   const items = Array.isArray(data.items) ? data.items : [];
@@ -329,7 +341,7 @@ export async function onRequestGet({ params, env }) {
 
     <h1>${escapar(titulo)}</h1>
 
-    ${renderCliente(data)}
+    ${renderCliente(clienteInfo, data.cliente)}
 
     ${data.intro ? `<div class="intro rico">${renderRico(data.intro)}</div>` : ""}
 
