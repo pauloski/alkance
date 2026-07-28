@@ -68,6 +68,13 @@ function renderFase(f, i) {
             )}</p>`
           : ""
       }
+      ${
+        f?.notas
+          ? `<div class="fase__notas rico"><span class="fase__notas-label">Notas:</span> ${renderRico(
+              f.notas
+            )}</div>`
+          : ""
+      }
     </section>`;
 }
 
@@ -263,7 +270,11 @@ export async function onRequestGet({ params, env }) {
     .fase__puntos { margin: 0 0 .5rem; padding-left: 1.1rem; list-style: disc; }
     .fase__puntos li { margin-bottom: .4rem; }
     .fase__entregable { margin: .5rem 0 0; }
-    h2.seccion { font-size: 18px; margin: 2rem 0 1rem; }
+    .fase__notas { margin: .6rem 0 0; font-size: 13px; color: var(--ak-color-ink-400, #6b6b6b); }
+    .fase__notas-label { font-weight: 700; }
+    h2.seccion { font-size: 18px; margin: 2rem 0 1rem; break-after: avoid; }
+    /* El pie con la URL, fijo abajo: en impresión se repite en cada página. */
+    .pie-web { display: none; }
     .tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
     .tabla th {
       background: var(--ak-color-ink-900, #0a0a0a); color: #fff;
@@ -291,7 +302,15 @@ export async function onRequestGet({ params, env }) {
       .doc { max-width: none; margin: 0; padding: 0; box-shadow: none; }
       .fase, tr, .doc-footer { break-inside: avoid; }
       a[href]:after { content: ""; }
-      @page { margin: 16mm 14mm; }
+      /* "Alcance del proyecto" siempre arranca en página nueva. */
+      .seccion--fases { break-before: page; }
+      /* Pie con la URL repetido en cada página impresa. */
+      .pie-web {
+        display: block; position: fixed; bottom: 6mm; left: 0; right: 0;
+        text-align: center; font-size: 10px; letter-spacing: .04em;
+        color: var(--ak-color-ink-350, #8a8a8a);
+      }
+      @page { margin: 16mm 14mm 20mm; }
     }
   </style>
 </head>
@@ -316,7 +335,7 @@ export async function onRequestGet({ params, env }) {
 
     ${
       fases.length
-        ? `<h2 class="seccion">Alcance del proyecto</h2>${fases.map(renderFase).join("")}`
+        ? `<h2 class="seccion seccion--fases">Alcance del proyecto</h2>${fases.map(renderFase).join("")}`
         : ""
     }
 
@@ -333,6 +352,8 @@ export async function onRequestGet({ params, env }) {
 
     <p class="sello">Cotización ${escapar(c.id)} · versión ${escapar(c.version)}</p>
   </article>
+
+  <div class="pie-web">www.alkancedigital.cl</div>
 </body>
 </html>`;
 

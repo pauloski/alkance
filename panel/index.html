@@ -121,6 +121,26 @@
       width: 2.1rem; height: 2.1rem; font-size: 16px; line-height: 1; cursor: pointer; color: var(--ak-color-ink-400,#6b6b6b);
     }
     .x:hover { color: var(--ak-color-state-danger,#b8170d); border-color: var(--ak-color-state-danger,#b8170d); }
+    /* Controles de una fila: subir, bajar, quitar */
+    .row-ctrls { display: flex; gap: .25rem; align-items: center; }
+    .mvbtn {
+      border: 1px solid var(--ak-color-cream-400,#cfc8ba); background: #fff; border-radius: 6px;
+      width: 1.9rem; height: 2.1rem; font-size: 11px; line-height: 1; cursor: pointer; color: var(--ak-color-ink-400,#6b6b6b);
+    }
+    .mvbtn:hover { color: var(--ak-color-accent-600,#b8170d); border-color: var(--ak-color-accent-500,#e5241a); }
+    /* Selector de estado (chip desplegable) */
+    .estado-select {
+      display: inline-block; width: auto; font: inherit; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .03em; padding: .12rem 1.5rem .12rem .6rem;
+      border-radius: 999px; border: 1px solid transparent; cursor: pointer;
+      -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='6'><path d='M1 1l3 3 3-3' fill='none' stroke='%23888' stroke-width='1.4'/></svg>");
+      background-repeat: no-repeat; background-position: right .55rem center;
+    }
+    .estado--borrador { background-color: var(--ak-color-cream-200,#efede8); color: var(--ak-color-ink-500,#454545); }
+    .estado--enviada { background-color: #e6eef6; color: #1d4e79; }
+    .estado--aprobada { background-color: #e6f4ec; color: var(--ak-color-state-success,#0f7b4f); }
+    .estado--rechazada { background-color: var(--ak-color-accent-50,#fef3f1); color: var(--ak-color-state-danger,#b8170d); }
     .total-linea { display: flex; justify-content: flex-end; align-items: baseline; gap: 1rem; padding-top: .75rem; border-top: 2px solid var(--ak-color-ink-900,#0a0a0a); margin-top: .5rem; }
     .total-linea span { font-size: 13px; color: var(--ak-color-ink-400,#6b6b6b); text-transform: uppercase; letter-spacing: .03em; }
     .total-linea strong { font-size: 22px; }
@@ -304,7 +324,8 @@
         <div class="campo"><label>Teléfono</label><input data-cliente="telefono"></div>
       </div>
       <div class="campo"><label>Email</label><input data-cliente="email"></div>
-      <div class="campo"><label>Dirección</label><input data-cliente="direccion"></div>
+      <div class="campo" id="campo-direccion" style="display:none"><label>Dirección</label><input data-cliente="direccion"></div>
+      <button type="button" class="btn btn--ghost btn--sm" id="btn-add-direccion" style="margin-bottom:1rem">+ Agregar dirección</button>
       <div class="campo"><label>Notas</label><textarea data-cliente="notas" rows="2"></textarea></div>
     </div>
     <div class="barra-guardar">
@@ -477,13 +498,19 @@
       cont.innerHTML = items.length ? items.map(cardCotizacion).join("")
         : '<div class="vacio">Aún no hay cotizaciones. Crea la primera con “+ Nueva cotización”.</div>';
     }
+    const ESTADOS = ["borrador", "enviada", "aprobada", "rechazada"];
+    const etiquetaEstado = (e) => ({ borrador: "Borrador", enviada: "Enviada", aprobada: "Aprobada", rechazada: "Rechazada" }[e] || e);
+    function estadoSelect(c) {
+      const est = ESTADOS.includes(c.estado) ? c.estado : "borrador";
+      const opts = ESTADOS.map((e) => `<option value="${e}"${e === est ? " selected" : ""}>${etiquetaEstado(e)}</option>`).join("");
+      return `<select class="estado-select estado--${est}" data-estado-id="${c.id}" title="Cambiar estado">${opts}</select>`;
+    }
     function cardCotizacion(c) {
       const fecha = c.fecha ? new Date(c.fecha + "T00:00:00").toLocaleDateString("es-CL") : "sin fecha";
-      const est = c.estado === "enviada" ? "badge--enviada" : "";
       return `<div class="card">
         <div class="card__main">
           <h3>${esc(c.titulo || "(sin título)")}</h3>
-          <div class="card__meta">${esc(c.cliente || "—")} · ${fecha} · <span class="badge ${est}">${esc(c.estado)}</span> · v${c.version}</div>
+          <div class="card__meta">${esc(c.cliente || "—")} · ${fecha} · ${estadoSelect(c)} · v${c.version}</div>
         </div>
         <div class="card__total">${clp(c.total)}</div>
         <div class="card__acciones">
@@ -505,6 +532,14 @@
         if (!confirm("¿Eliminar esta cotización? No se puede deshacer.")) return;
         await api("/api/cotizaciones/" + id, { method: "DELETE" }); irALista();
       }
+    });
+
+    $("#lista-items").addEventListener("change", async (e) => {
+      const sel = e.target.closest(".estado-select"); if (!sel) return;
+      const id = sel.dataset.estadoId, estado = sel.value;
+      const res = await api("/api/cotizaciones/" + id + "/estado", { method: "POST", body: JSON.stringify({ estado }) });
+      if (!res.ok) { alert(res.body.error || "No se pudo cambiar el estado."); irALista(); return; }
+      sel.className = "estado-select estado--" + estado; // recolorea el chip
     });
 
     async function duplicarCotizacion(id) {
@@ -590,7 +625,11 @@
       div.className = "bloque bloque--fase";
       div.innerHTML = `
         <div class="bloque__head"><strong>Fase</strong>
-          <button type="button" class="x" data-x="fase" title="Eliminar fase">×</button></div>
+          <div class="row-ctrls">
+            <button type="button" class="mvbtn" data-mv="up" data-mv-kind="fase" title="Subir">▲</button>
+            <button type="button" class="mvbtn" data-mv="down" data-mv-kind="fase" title="Bajar">▼</button>
+            <button type="button" class="x" data-x="fase" title="Eliminar fase">×</button>
+          </div></div>
         <div class="campo"><label>Título de la fase</label>
           <input data-fase="titulo" placeholder="FASE 1: Diseño de interfaz…"></div>
         <div class="campo"><label>Tiempo estimado</label>
@@ -608,11 +647,14 @@
         <div class="puntos"></div>
         <button type="button" class="btn btn--ghost btn--sm" data-add="punto">+ Punto</button>
         <div class="campo" style="margin-top:1rem"><label>Entregable</label>
-          <input data-fase="entregable" placeholder="Archivo interactivo en Figma…"></div>`;
+          <input data-fase="entregable" placeholder="Archivo interactivo en Figma…"></div>
+        <div class="campo"><label>Notas de la fase (opcional)</label>
+          <textarea data-fase="notas" rows="2" placeholder="Aclaraciones o notas de esta fase."></textarea></div>`;
       div.querySelector('[data-fase="titulo"]').value = fase.titulo ?? "";
       div.querySelector('[data-fase="dedicacion"]').value = fase.dedicacion ?? "";
       setRich(div.querySelector('[data-fase="descripcion"]'), fase.descripcion);
       div.querySelector('[data-fase="entregable"]').value = fase.entregable ?? "";
+      div.querySelector('[data-fase="notas"]').value = fase.notas ?? "";
       const cp = div.querySelector(".puntos");
       const puntos = (fase.puntos && fase.puntos.length) ? fase.puntos : [{}];
       puntos.forEach((p) => cp.appendChild(puntoNode(p)));
@@ -624,7 +666,11 @@
       row.innerHTML = `
         <input data-punto="titulo" placeholder="Título (opcional)">
         <input data-punto="detalle" placeholder="Detalle del punto">
-        <button type="button" class="x" data-x="punto" title="Quitar">×</button>`;
+        <div class="row-ctrls">
+          <button type="button" class="mvbtn" data-mv="up" data-mv-kind="punto" title="Subir">▲</button>
+          <button type="button" class="mvbtn" data-mv="down" data-mv-kind="punto" title="Bajar">▼</button>
+          <button type="button" class="x" data-x="punto" title="Quitar">×</button>
+        </div>`;
       row.querySelector('[data-punto="titulo"]').value = p.titulo ?? "";
       row.querySelector('[data-punto="detalle"]').value = p.detalle ?? "";
       return row;
@@ -636,7 +682,11 @@
         <input data-item="concepto" placeholder="Ítem / hito">
         <input data-item="detalle" placeholder="Detalle">
         <input data-item="monto" type="number" inputmode="numeric" step="1000" placeholder="0">
-        <button type="button" class="x" data-x="item" title="Quitar">×</button>`;
+        <div class="row-ctrls">
+          <button type="button" class="mvbtn" data-mv="up" data-mv-kind="item" title="Subir">▲</button>
+          <button type="button" class="mvbtn" data-mv="down" data-mv-kind="item" title="Bajar">▼</button>
+          <button type="button" class="x" data-x="item" title="Quitar">×</button>
+        </div>`;
       row.querySelector('[data-item="concepto"]').value = it.concepto ?? "";
       row.querySelector('[data-item="detalle"]').value = it.detalle ?? "";
       row.querySelector('[data-item="monto"]').value = (it.monto ?? "") === "" ? "" : it.monto;
@@ -645,7 +695,20 @@
 
     $("#btn-add-fase").addEventListener("click", () => $("#fases").appendChild(faseNode({ puntos: [{}] })));
     $("#btn-add-item").addEventListener("click", () => $("#items").appendChild(itemNode({})));
+    function mover(el, dir) {
+      if (!el) return;
+      if (dir === "up" && el.previousElementSibling) el.parentNode.insertBefore(el, el.previousElementSibling);
+      else if (dir === "down" && el.nextElementSibling) el.parentNode.insertBefore(el.nextElementSibling, el);
+      dirty = true;
+    }
     $("#vista-editor").addEventListener("click", (e) => {
+      const mv = e.target.closest("[data-mv]");
+      if (mv) {
+        const sel = mv.dataset.mvKind === "fase" ? ".bloque--fase"
+                  : mv.dataset.mvKind === "punto" ? ".punto-row" : ".item-row";
+        mover(mv.closest(sel), mv.dataset.mv);
+        return;
+      }
       const add = e.target.closest("[data-add]");
       if (add && add.dataset.add === "punto") { add.previousElementSibling.appendChild(puntoNode({})); dirty = true; return; }
       const x = e.target.closest("[data-x]"); if (!x) return;
@@ -694,8 +757,9 @@
           detalle: r.querySelector('[data-punto="detalle"]').value.trim(),
         })).filter((p) => p.titulo || p.detalle);
         return { titulo: g('[data-fase="titulo"]'), dedicacion: g('[data-fase="dedicacion"]'),
-          descripcion: getRich(div.querySelector('[data-fase="descripcion"]')), puntos, entregable: g('[data-fase="entregable"]') };
-      }).filter((f) => f.titulo || f.descripcion || f.puntos.length || f.entregable);
+          descripcion: getRich(div.querySelector('[data-fase="descripcion"]')), puntos,
+          entregable: g('[data-fase="entregable"]'), notas: g('[data-fase="notas"]') };
+      }).filter((f) => f.titulo || f.descripcion || f.puntos.length || f.entregable || f.notas);
       data.items = $$(".item-row").map((r) => ({
         concepto: r.querySelector('[data-item="concepto"]').value.trim(),
         detalle: r.querySelector('[data-item="detalle"]').value.trim(),
@@ -755,11 +819,22 @@
     $("#btn-nuevo-cliente").addEventListener("click", () => abrirClienteEditor(null));
     $("#btn-volver-clientes").addEventListener("click", irAClientes);
 
+    // Dirección es opcional: oculta hasta que se pide con el botón.
+    function mostrarDireccion(mostrar) {
+      $("#campo-direccion").style.display = mostrar ? "" : "none";
+      $("#btn-add-direccion").style.display = mostrar ? "none" : "";
+    }
+    $("#btn-add-direccion").addEventListener("click", () => {
+      mostrarDireccion(true);
+      $('[data-cliente="direccion"]').focus();
+    });
+
     function abrirClienteEditor(id) {
       $("#cliente-msg").textContent = "";
       if (id === null) {
         clienteEditando = null;
         $$("[data-cliente]").forEach((el) => (el.value = ""));
+        mostrarDireccion(false);
         $("#cliente-titulo").textContent = "Nuevo cliente";
         mostrar("cliente-editor"); return;
       }
@@ -768,6 +843,7 @@
         clienteEditando = { id };
         const c = body.cliente;
         $$("[data-cliente]").forEach((el) => { el.value = c[el.dataset.cliente] ?? ""; });
+        mostrarDireccion(Boolean((c.direccion ?? "").trim())); // muestra solo si ya tiene
         $("#cliente-titulo").textContent = "Editar cliente";
         mostrar("cliente-editor");
       });
