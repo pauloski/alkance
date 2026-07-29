@@ -295,6 +295,48 @@ Luego, en el dashboard: binding `DB` → esa base, y el Secret `PANEL_PASSWORD`.
 
 ---
 
+## Landing pages (independientes del home)
+
+Cada landing vive en su propia carpeta bajo `landings/<slug>/`, con su **propio
+token de diseño** (contexto de venta distinto al home) y sus estilos. No comparten
+el aspecto del sitio a propósito.
+
+```
+landings/<slug>/
+  tokens.json   → tokens DTCG propios de la landing (fuente de verdad visual)
+  tokens.css    → GENERADO. Variables --<prefix>- (no editar a mano)
+  styles.css    → estilos de la landing (consumen solo las variables)
+  app.js        → microinteracciones + envío del formulario (vanilla JS)
+  index.html    → la landing
+```
+
+Primera landing: `landings/ecommerce/` (E-commerce Headless + Edge), servida en
+`/landings/ecommerce/`.
+
+### Convertir un token JSON a variables CSS (comando genérico)
+
+`scripts/tokens-to-css.mjs` convierte **cualquier** `tokens.json` (formato W3C
+DTCG, con alias `{grupo.token}` y `$extensions…fluid`) a variables CSS, con el
+prefijo que elijas:
+
+```bash
+node scripts/tokens-to-css.mjs landings/ecommerce/tokens.json landings/ecommerce/tokens.css --prefix lp
+node scripts/tokens-to-css.mjs otra/tokens.json otra/tokens.css --prefix xx
+node scripts/tokens-to-css.mjs landings/ecommerce/tokens.json landings/ecommerce/tokens.css --prefix lp --check
+```
+
+El `--prefix` sale del argumento, o de `$extensions["cl.alkance.tokens"].prefix`,
+o `ak` por defecto. Sin dependencias (solo `node:fs`).
+
+### Formulario de la landing
+
+Los envíos van a `functions/api/lead.js` (Resend), que captura el **plan** elegido
+y los **parámetros de marcaje/UTM** de la URL (`?utm_source=…&plan=full`).
+Destinatario: `LEADS_TO` (o `CONTACT_TO` si falta). Reusa `RESEND_API_KEY` y
+`CONTACT_FROM`.
+
+---
+
 ## Pendientes
 
 - **Logos**: la sección «Confían en nosotros» usa placeholders de dummyimage.
