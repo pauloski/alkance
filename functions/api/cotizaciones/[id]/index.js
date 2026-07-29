@@ -75,7 +75,7 @@ export async function onRequestPut({ params, request, env }) {
   //  - enviada / aprobada (el cliente ya lo vio) → editar genera una versión
   //    nueva: se archiva la anterior (Sustituida) y vuelve a "En evaluación".
   // Solo se versiona lo que el cliente llega a ver.
-  const clienteFacing = actual.estado === "aprobada" || actual.estado === "enviada";
+  const clienteFacing = ["enviada", "ajustes", "aprobada"].includes(actual.estado);
   const versionar = body?.estado === undefined && clienteFacing;
 
   let estado = (body?.estado ?? actual.estado ?? "borrador").toString();
@@ -112,7 +112,7 @@ export async function onRequestPut({ params, request, env }) {
     )
     .run();
 
-  return json({ ok: true, id, version: nuevaVersion, total });
+  return json({ ok: true, id, version: nuevaVersion, total, estado });
 }
 
 export async function onRequestDelete({ params, env }) {

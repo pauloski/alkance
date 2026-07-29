@@ -87,13 +87,41 @@
     /* Tarjetas de listado */
     .card {
       background: #fff; border: 1px solid var(--ak-color-cream-300, #e4e0d7);
-      border-radius: 10px; padding: 1.1rem 1.25rem; margin-bottom: .9rem;
-      display: flex; align-items: center; gap: 1rem;
+      border-radius: 12px; padding: 1.15rem 1.35rem; margin-bottom: .9rem;
+      transition: box-shadow .15s, border-color .15s;
     }
+    .card:hover { border-color: var(--ak-color-cream-400, #cfc8ba); box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .card__head { display: flex; align-items: flex-start; gap: 1.25rem; }
     .card__main { flex: 1; min-width: 0; }
-    .card__main h3 { font-size: 16px; margin: 0 0 .2rem; }
+    .card__chips { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin-bottom: .5rem; }
+    .card__id { font-family: var(--ak-font-family-mono, ui-monospace, monospace); font-size: 12px; font-weight: 600;
+      color: var(--ak-color-ink-500, #454545); background: var(--ak-color-cream-100, #f7f5f1);
+      border: 1px solid var(--ak-color-cream-300, #e4e0d7); border-radius: 6px; padding: .1rem .45rem; }
+    .card__ver { font-size: 12px; color: var(--ak-color-ink-350, #8a8a8a); }
+    .card__titulo { font-size: 16px; font-weight: 600; margin: 0 0 .25rem; line-height: 1.3; }
     .card__meta { font-size: 13px; color: var(--ak-color-ink-400, #6b6b6b); }
-    .card__total { font-weight: 700; white-space: nowrap; }
+    .card__total { font-weight: 700; font-size: 18px; white-space: nowrap; padding-top: .15rem; }
+    .card__acts { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; }
+    .card__toggle { min-width: 4.2rem; }
+    .card__more { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: flex-end;
+      margin-top: .85rem; padding-top: .85rem; border-top: 1px dashed var(--ak-color-cream-300, #e4e0d7); }
+    @media (max-width: 720px) {
+      .card__head { flex-direction: column; align-items: stretch; }
+      .card__total { font-size: 20px; }
+      .card__acts, .card__more { justify-content: flex-start; }
+    }
+    /* Filtros por estado */
+    .filtros { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
+    .filtro { font: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+      padding: .4rem .8rem; border-radius: 999px; border: 1px solid var(--ak-color-cream-400, #cfc8ba);
+      background: #fff; color: var(--ak-color-ink-500, #454545); display: inline-flex; align-items: center; gap: .4rem; }
+    .filtro:hover { background: var(--ak-color-cream-100, #f7f5f1); }
+    .filtro span { font-size: 11px; font-weight: 700; opacity: .6; }
+    .filtro.activa { background: var(--ak-color-ink-900, #0a0a0a); color: #fff; border-color: var(--ak-color-ink-900, #0a0a0a); }
+    .filtro.activa span { opacity: .8; }
+    /* Sección de estado del editor */
+    .panel-sec--estado .estado-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .estado-acciones { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: flex-end; }
     .badge { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
       padding: .12rem .5rem; border-radius: 999px; background: var(--ak-color-cream-200,#efede8); color: var(--ak-color-ink-500,#454545); }
     .badge--enviada { background: #e6f4ec; color: var(--ak-color-state-success,#0f7b4f); }
@@ -129,18 +157,18 @@
     }
     .mvbtn:hover { color: var(--ak-color-accent-600,#b8170d); border-color: var(--ak-color-accent-500,#e5241a); }
     /* Selector de estado (chip desplegable) */
-    .estado-select {
-      display: inline-block; width: auto; font: inherit; font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .03em; padding: .12rem 1.5rem .12rem .6rem;
-      border-radius: 999px; border: 1px solid transparent; cursor: pointer;
-      -webkit-appearance: none; appearance: none;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='6'><path d='M1 1l3 3 3-3' fill='none' stroke='%23888' stroke-width='1.4'/></svg>");
-      background-repeat: no-repeat; background-position: right .55rem center;
+    .estado-chip {
+      display: inline-flex; align-items: center; gap: .35rem; width: auto; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .03em; padding: .18rem .6rem;
+      border-radius: 999px; border: 1px solid transparent; white-space: nowrap;
     }
+    .estado-chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .8; }
     .estado--borrador { background-color: var(--ak-color-cream-200,#efede8); color: var(--ak-color-ink-500,#454545); }
     .estado--enviada { background-color: #e6eef6; color: #1d4e79; }
+    .estado--ajustes { background-color: #fdf0dc; color: #8a5a00; }
     .estado--aprobada { background-color: #e6f4ec; color: var(--ak-color-state-success,#0f7b4f); }
     .estado--rechazada { background-color: var(--ak-color-accent-50,#fef3f1); color: var(--ak-color-state-danger,#b8170d); }
+    .estado--cancelada { background-color: var(--ak-color-cream-200,#efede8); color: var(--ak-color-ink-350,#8a8a8a); }
     /* Seguimiento (Gantt admin) */
     .seg-fase { display: flex; align-items: center; gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--ak-color-cream-300,#e4e0d7); }
     .seg-fase:last-child { border-bottom: none; }
@@ -231,6 +259,7 @@
       <h1>Cotizaciones</h1><span class="sep"></span>
       <button class="btn" id="btn-nueva">+ Nueva cotización</button>
     </div>
+    <div class="filtros" id="filtros"></div>
     <div id="lista-items"></div>
   </div>
 
@@ -240,6 +269,17 @@
       <button class="btn btn--ghost btn--sm" id="btn-volver">← Volver</button>
       <h1 id="editor-titulo" style="flex:0 1 auto">Nueva cotización</h1>
       <span id="editor-version" class="badge"></span>
+    </div>
+
+    <div class="panel-sec panel-sec--estado oculto" id="editor-estado-sec">
+      <div class="estado-head">
+        <div>
+          <h2 style="margin:0 0 .35rem">Estado</h2>
+          <div id="editor-estado-chip"></div>
+        </div>
+        <div class="estado-acciones" id="editor-estado-acciones"></div>
+      </div>
+      <p class="ayuda" id="editor-estado-ayuda" style="margin:.75rem 0 0"></p>
     </div>
 
     <div class="panel-sec">
@@ -554,42 +594,101 @@
     });
 
     // ================= COTIZACIONES =================
+    // Modelo de estados. El chip es INFORMATIVO en la lista; las transiciones se
+    // hacen desde el editor (y "Aprobada por cliente" solo ahí).
+    const ESTADOS = ["borrador", "enviada", "ajustes", "aprobada", "rechazada", "cancelada"];
+    const ETIQUETA_ESTADO = {
+      borrador: "En preparación",
+      enviada: "Enviada a cliente",
+      ajustes: "Ajustes solicitados",
+      aprobada: "Aprobada por cliente",
+      rechazada: "Rechazada por cliente",
+      cancelada: "Sin respuesta",
+    };
+    const normEstado = (e) => (ESTADOS.includes(e) ? e : "borrador");
+    const etiquetaEstado = (e) => ETIQUETA_ESTADO[e] || e;
+    const estadoChip = (estado) => `<span class="estado-chip estado--${normEstado(estado)}">${etiquetaEstado(normEstado(estado))}</span>`;
+
+    let cotizacionesCache = [];
+    let filtroActual = "todas";
+
     async function irALista() {
       mostrar("lista");
       const cont = $("#lista-items");
       cont.innerHTML = '<div class="vacio">Cargando…</div>';
       const { ok, body } = await api("/api/cotizaciones");
       if (!ok) { cont.innerHTML = '<div class="vacio">Error al cargar.</div>'; return; }
-      const items = body.cotizaciones || [];
-      cont.innerHTML = items.length ? items.map(cardCotizacion).join("")
-        : '<div class="vacio">Aún no hay cotizaciones. Crea la primera con “+ Nueva cotización”.</div>';
+      cotizacionesCache = body.cotizaciones || [];
+      pintarFiltros();
+      pintarLista();
     }
-    const ESTADOS = ["borrador", "enviada", "aprobada", "rechazada"];
-    const etiquetaEstado = (e) => ({ borrador: "Borrador", enviada: "En evaluación", aprobada: "Aprobada", rechazada: "Rechazada" }[e] || e);
-    function estadoSelect(c) {
-      const est = ESTADOS.includes(c.estado) ? c.estado : "borrador";
-      const opts = ESTADOS.map((e) => `<option value="${e}"${e === est ? " selected" : ""}>${etiquetaEstado(e)}</option>`).join("");
-      return `<select class="estado-select estado--${est}" data-estado-id="${c.id}" title="Cambiar estado">${opts}</select>`;
+
+    function pintarFiltros() {
+      const n = (est) => est === "todas" ? cotizacionesCache.length
+        : cotizacionesCache.filter((c) => normEstado(c.estado) === est).length;
+      const items = [["todas", "Todas"], ...ESTADOS.map((e) => [e, etiquetaEstado(e)])];
+      $("#filtros").innerHTML = items
+        .filter(([k]) => k === "todas" || n(k) > 0 || k === filtroActual)
+        .map(([k, label]) => `<button class="filtro${k === filtroActual ? " activa" : ""} filtro--${k}" data-filtro="${k}">${esc(label)} <span>${n(k)}</span></button>`)
+        .join("");
     }
+
+    function pintarLista() {
+      const cont = $("#lista-items");
+      if (!cotizacionesCache.length) {
+        cont.innerHTML = '<div class="vacio">Aún no hay cotizaciones. Crea la primera con “+ Nueva cotización”.</div>';
+        return;
+      }
+      const lista = filtroActual === "todas" ? cotizacionesCache
+        : cotizacionesCache.filter((c) => normEstado(c.estado) === filtroActual);
+      cont.innerHTML = lista.length ? lista.map(cardCotizacion).join("")
+        : '<div class="vacio">No hay cotizaciones en este estado.</div>';
+    }
+
+    $("#filtros").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-filtro]"); if (!b) return;
+      filtroActual = b.dataset.filtro; pintarFiltros(); pintarLista();
+    });
+
     function cardCotizacion(c) {
       const fecha = c.fecha ? new Date(c.fecha + "T00:00:00").toLocaleDateString("es-CL") : "sin fecha";
-      return `<div class="card">
-        <div class="card__main">
-          <h3>${esc(c.titulo || "(sin título)")}</h3>
-          <div class="card__meta">${esc(c.cliente || "—")} · ${fecha} · ${estadoSelect(c)} · v${c.version}</div>
+      const est = normEstado(c.estado);
+      return `<div class="card" data-estado="${est}">
+        <div class="card__head">
+          <div class="card__main">
+            <div class="card__chips">
+              ${estadoChip(est)}
+              <span class="card__id" title="ID del proyecto">#${esc(c.id)}</span>
+              <span class="card__ver">v${c.version}</span>
+            </div>
+            <h3 class="card__titulo">${esc(c.titulo || "(sin título)")}</h3>
+            <div class="card__meta">${esc(c.cliente || "—")} · ${fecha}</div>
+          </div>
+          <div class="card__total">${clp(c.total)}</div>
+          <div class="card__acts">
+            <a class="btn btn--ghost btn--sm" href="/c/${c.id}" target="_blank" rel="noopener">Ver ↗</a>
+            <button class="btn btn--ghost btn--sm" data-accion="editar" data-id="${c.id}">Editar</button>
+            <button class="btn btn--ghost btn--sm card__toggle" data-toggle="${c.id}" aria-expanded="false">Más ⌄</button>
+          </div>
         </div>
-        <div class="card__total">${clp(c.total)}</div>
-        <div class="card__acciones">
-          <a class="btn btn--ghost btn--sm" href="/c/${c.id}" target="_blank" rel="noopener">Ver ↗</a>
+        <div class="card__more oculto" id="more-${c.id}">
           <button class="btn btn--ghost btn--sm" data-accion="seguimiento" data-id="${c.id}">Seguimiento</button>
           <button class="btn btn--ghost btn--sm" data-accion="enviar" data-id="${c.id}">Enviar</button>
           <button class="btn btn--ghost btn--sm" data-accion="duplicar" data-id="${c.id}">Duplicar</button>
-          <button class="btn btn--ghost btn--sm" data-accion="editar" data-id="${c.id}">Editar</button>
           <button class="btn btn--danger btn--sm" data-accion="borrar" data-id="${c.id}">Eliminar</button>
         </div>
       </div>`;
     }
+
     $("#lista-items").addEventListener("click", async (e) => {
+      const tog = e.target.closest("[data-toggle]");
+      if (tog) {
+        const more = document.getElementById("more-" + tog.dataset.toggle);
+        const abierto = !more.classList.toggle("oculto");
+        tog.setAttribute("aria-expanded", String(abierto));
+        tog.innerHTML = abierto ? "Menos ⌃" : "Más ⌄";
+        return;
+      }
       const btn = e.target.closest("[data-accion]"); if (!btn) return;
       const id = btn.dataset.id;
       if (btn.dataset.accion === "editar") abrirEditor(id);
@@ -600,14 +699,6 @@
         if (!confirm("¿Eliminar esta cotización? No se puede deshacer.")) return;
         await api("/api/cotizaciones/" + id, { method: "DELETE" }); irALista();
       }
-    });
-
-    $("#lista-items").addEventListener("change", async (e) => {
-      const sel = e.target.closest(".estado-select"); if (!sel) return;
-      const id = sel.dataset.estadoId, estado = sel.value;
-      const res = await api("/api/cotizaciones/" + id + "/estado", { method: "POST", body: JSON.stringify({ estado }) });
-      if (!res.ok) { alert(res.body.error || "No se pudo cambiar el estado."); irALista(); return; }
-      sel.className = "estado-select estado--" + estado; // recolorea el chip
     });
 
     async function duplicarCotizacion(id) {
@@ -621,21 +712,27 @@
       abrirEditor(res.body.id); // abre la copia lista para ajustar
     }
 
-    async function enviarCotizacion(id) {
-      const { ok, body } = await api("/api/cotizaciones/" + id);
-      if (!ok) { alert("No se pudo cargar la cotización."); return; }
-      const data = body.cotizacion.data || {};
-      const sugerido = (data.clienteInfo && data.clienteInfo.email) || "";
-      const to = prompt("Enviar la cotización al correo del cliente:", sugerido);
-      if (to === null) return; // cancelado
-      if (!to.trim()) { alert("Necesitas un correo de destino."); return; }
+    // Flujo de envío por correo reutilizable (lista y editor). Devuelve el body
+    // de la respuesta ({estado:'enviada', enviadaA}) o null si se cancela/falla.
+    async function enviarPorCorreo(id, emailSugerido) {
+      const to = prompt("Enviar la cotización al correo del cliente:", emailSugerido || "");
+      if (to === null) return null;
+      if (!to.trim()) { alert("Necesitas un correo de destino."); return null; }
       const mensaje = prompt("Mensaje opcional para el cliente (puede ir vacío):", "") || "";
       const res = await api("/api/cotizaciones/" + id + "/enviar", {
         method: "POST", body: JSON.stringify({ to: to.trim(), mensaje: mensaje.trim() }),
       });
-      if (!res.ok) { alert(res.body.error || "No se pudo enviar."); return; }
-      alert("Cotización enviada a " + res.body.enviadaA + "\n(con respaldo a la empresa).");
-      irALista();
+      if (!res.ok) { alert(res.body.error || "No se pudo enviar."); return null; }
+      alert("Cotización enviada a " + res.body.enviadaA + "\n(con respaldo a la empresa). Estado: Enviada a cliente.");
+      return res.body;
+    }
+
+    async function enviarCotizacion(id) {
+      const { ok, body } = await api("/api/cotizaciones/" + id);
+      if (!ok) { alert("No se pudo cargar la cotización."); return; }
+      const sug = (body.cotizacion.data && body.cotizacion.data.clienteInfo && body.cotizacion.data.clienteInfo.email) || "";
+      const r = await enviarPorCorreo(id, sug);
+      if (r) irALista();
     }
     $("#btn-nueva").addEventListener("click", () => abrirEditor(null));
     $("#btn-volver").addEventListener("click", () => { if (puedeSalirDelEditor()) irALista(); });
@@ -658,7 +755,7 @@
       const c = body.cotizacion, data = c.data || {}, avance = c.avance || {};
       $("#seg-titulo").textContent = data.titulo || "(sin título)";
       $("#seg-ver").href = "/c/" + id;
-      $("#seg-estado").innerHTML = estadoSelect({ id, estado: c.estado });
+      $("#seg-estado").innerHTML = estadoChip(c.estado) + ' <span class="ayuda" style="margin-left:.5rem">El estado se cambia desde el editor.</span>';
       const fases = data.fases || [];
       $("#seg-fases").innerHTML = fases.length ? fases.map((f, i) => {
         const k = faseKey(f, i);
@@ -679,12 +776,6 @@
     }
 
     $("#btn-volver-seg").addEventListener("click", irALista);
-    $("#seg-estado").addEventListener("change", async (e) => {
-      const sel = e.target.closest(".estado-select"); if (!sel) return;
-      const res = await api("/api/cotizaciones/" + segId + "/estado", { method: "POST", body: JSON.stringify({ estado: sel.value }) });
-      if (!res.ok) { alert(res.body.error || "No se pudo cambiar el estado."); return; }
-      sel.className = "estado-select estado--" + sel.value;
-    });
     $("#seg-fases").addEventListener("change", async (e) => {
       const sel = e.target.closest(".avance-select"); if (!sel) return;
       const msg = $("#seg-msg"); msg.className = "msg"; msg.textContent = "Guardando…";
@@ -712,21 +803,74 @@
         $("#editor-titulo").textContent = "Nueva cotización";
         $("#editor-version").textContent = "";
         $("#btn-preview").classList.add("oculto");
+        $("#editor-estado-sec").classList.add("oculto"); // estado aparece tras guardar
         $("#editor-msg").textContent = "";
         mostrar("editor");
         return;
       }
       api("/api/cotizaciones/" + id).then(({ ok, body }) => {
         if (!ok) { alert("No se pudo abrir la cotización."); return; }
-        editando = { id: body.cotizacion.id, version: body.cotizacion.version };
+        editando = { id: body.cotizacion.id, version: body.cotizacion.version, estado: body.cotizacion.estado };
         cargarCotizacion(body.cotizacion.data || {});
         $("#editor-titulo").textContent = "Editar cotización";
         $("#editor-version").textContent = "v" + body.cotizacion.version;
         const prev = $("#btn-preview"); prev.href = "/c/" + id; prev.classList.remove("oculto");
+        renderEstadoEditor(body.cotizacion.estado);
         $("#editor-msg").textContent = "";
         mostrar("editor");
       });
     }
+
+    // --- Máquina de estados dentro del editor ---
+    function renderEstadoEditor(estado) {
+      const e = normEstado(estado);
+      $("#editor-estado-chip").innerHTML = estadoChip(e);
+      const btn = (label, act, danger) => `<button class="btn ${danger ? "btn--danger" : "btn--ghost"} btn--sm" data-estado-act="${act}">${label}</button>`;
+      const A = [];
+      let ayuda = "";
+      if (e === "borrador") {
+        A.push(btn("Enviar a cliente →", "enviar"));
+        ayuda = "Al enviar por correo, el presupuesto queda en manos del cliente y pasa a “Enviada a cliente”.";
+      } else if (e === "enviada" || e === "ajustes") {
+        A.push(btn("Reenviar por correo", "enviar"));
+        A.push(btn("✓ Aprobada (pagó 1ª parte)", "aprobada"));
+        A.push(btn("Ajustes solicitados", "ajustes"));
+        A.push(btn("Rechazada", "rechazada", true));
+        A.push(btn("Sin respuesta", "cancelada", true));
+        ayuda = "“Aprobada por cliente” = confirmó y pagó la primera parte. Editar y guardar genera una versión nueva.";
+      } else if (e === "aprobada") {
+        A.push(btn("Reabrir a evaluación", "enviada"));
+        ayuda = "Proyecto aprobado: el Seguimiento (Gantt) queda activo para el cliente.";
+      } else {
+        A.push(btn("Reactivar (a preparación)", "borrador"));
+        ayuda = "Puedes reactivarlo para volver a prepararlo y reenviarlo.";
+      }
+      $("#editor-estado-acciones").innerHTML = A.join("");
+      $("#editor-estado-ayuda").textContent = ayuda;
+      $("#editor-estado-sec").classList.remove("oculto");
+    }
+
+    async function cambiarEstadoEditor(nuevo) {
+      const res = await api("/api/cotizaciones/" + editando.id + "/estado", { method: "POST", body: JSON.stringify({ estado: nuevo }) });
+      if (!res.ok) { alert(res.body.error || "No se pudo cambiar el estado."); return; }
+      editando.estado = nuevo;
+      renderEstadoEditor(nuevo);
+    }
+
+    async function enviarDesdeEditor() {
+      const cid = $("#sel-cliente").value;
+      const cli = clientesCache.find((c) => c.id === cid);
+      const r = await enviarPorCorreo(editando.id, cli && cli.email);
+      if (r) { editando.estado = r.estado || "enviada"; renderEstadoEditor(editando.estado); }
+    }
+
+    $("#editor-estado-acciones").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-estado-act]"); if (!b || !editando) return;
+      if (dirty && !confirm("Tienes cambios sin guardar. La acción usa la última versión guardada. ¿Continuar?")) return;
+      const act = b.dataset.estadoAct;
+      if (act === "enviar") enviarDesdeEditor();
+      else cambiarEstadoEditor(act);
+    });
 
     function cargarCotizacion(data) {
       $$("[data-field]").forEach((el) => { const v = data[el.dataset.field] ?? ""; esRico(el) ? setRich(el, v) : (el.value = v); });
@@ -901,10 +1045,13 @@
       if (!res.ok) { msg.className = "msg msg--err"; msg.textContent = res.body.error || "No se pudo guardar."; return; }
       const prevVersion = editando ? editando.version : 0;
       const id = editando ? editando.id : res.body.id;
-      editando = { id, version: res.body.version };
+      // estado: nuevo desde POST (borrador) o el que devuelve el PUT.
+      const nuevoEstado = res.body.estado || (editando ? editando.estado : "borrador");
+      editando = { id, version: res.body.version, estado: nuevoEstado };
       $("#editor-titulo").textContent = "Editar cotización";
       $("#editor-version").textContent = "v" + res.body.version;
       const prev = $("#btn-preview"); prev.href = "/c/" + id; prev.classList.remove("oculto");
+      renderEstadoEditor(nuevoEstado); // muestra la sección de estado tras el 1er guardado
       dirty = false; // guardado: sin cambios pendientes
       msg.className = "msg msg--ok";
       msg.textContent = res.body.version > prevVersion ? ("Nueva versión v" + res.body.version + " ✓") : "Guardado ✓";

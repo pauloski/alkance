@@ -175,10 +175,17 @@ function renderContacto(cont) {
  *  hitos de versión); luego las fases del proyecto, bloqueadas hasta aprobar. */
 function renderTimeline({ estado, version, revisiones, fases, avance }) {
   const aprobado = estado === "aprobada";
-  const rechazado = estado === "rechazada";
-  const borrador = estado === "borrador";
-  const f0 = aprobado ? "completado" : rechazado ? "rechazada" : borrador ? "borrador" : "proceso";
-  const f0Label = aprobado ? "Aprobado" : rechazado ? "Rechazado" : borrador ? "Borrador" : "En evaluación por el cliente";
+  const F0 = {
+    borrador: { c: "borrador", l: "En preparación" },
+    enviada: { c: "proceso", l: "En evaluación" },
+    ajustes: { c: "proceso", l: "Ajustes solicitados" },
+    aprobada: { c: "completado", l: "Aprobado" },
+    rechazada: { c: "rechazada", l: "Rechazado" },
+    cancelada: { c: "rechazada", l: "Cerrada sin respuesta" },
+  };
+  const f0info = F0[estado] || F0.borrador;
+  const f0 = f0info.c;
+  const f0Label = f0info.l;
 
   const versionActual = `<li><strong>Presupuesto v${version}</strong> · ${escapar(f0Label)}</li>`;
   const pasadas = (revisiones || [])

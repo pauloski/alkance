@@ -6,7 +6,7 @@
  */
 import { json } from "../../_lib/http.js";
 
-const ESTADOS = new Set(["borrador", "enviada", "aprobada", "rechazada"]);
+const ESTADOS = new Set(["borrador", "enviada", "ajustes", "aprobada", "rechazada", "cancelada"]);
 
 export async function onRequestPost({ params, request, env }) {
   let body;
