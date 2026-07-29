@@ -37,17 +37,17 @@
   --lp-semantic-bg-canvas: var(--lp-color-surface-0);
   --lp-semantic-bg-subtle: var(--lp-color-surface-50);
   --lp-semantic-bg-muted: var(--lp-color-surface-100);
-  --lp-semantic-bg-tint: var(--lp-color-orange-50);
+  --lp-semantic-bg-tint: var(--lp-color-surface-100);
   --lp-semantic-bg-dark: var(--lp-color-ink-950);
   --lp-semantic-fg-default: var(--lp-color-ink-800);
   --lp-semantic-fg-strong: var(--lp-color-ink-950);
   --lp-semantic-fg-muted: var(--lp-color-ink-400);
   --lp-semantic-fg-on-dark: var(--lp-color-on-dark-strong);
   --lp-semantic-fg-on-dark-muted: var(--lp-color-on-dark-muted);
-  --lp-semantic-fg-accent: var(--lp-color-orange-600);
-  --lp-semantic-brand-500: var(--lp-color-orange-500);
-  --lp-semantic-brand-600: var(--lp-color-orange-600);
-  --lp-semantic-brand-700: var(--lp-color-orange-700);
+  --lp-semantic-fg-accent: var(--lp-color-ink-500);
+  --lp-semantic-brand-500: var(--lp-color-ink-950);
+  --lp-semantic-brand-600: var(--lp-color-ink-900);
+  --lp-semantic-brand-700: var(--lp-color-ink-800);
   --lp-semantic-cta-bg: var(--lp-color-ink-950);
   --lp-semantic-cta-bg-hover: var(--lp-color-ink-800);
   --lp-semantic-cta-fg: #FFFFFF;
@@ -56,8 +56,8 @@
   --lp-semantic-success: var(--lp-color-green-500);
 
   /* gradient — Gradientes de marca (uso puntual) */
-  --lp-gradient-brand: linear-gradient(120deg, #FF6633 0%, #F6821F 50%, #FBAD41 100%);
-  --lp-gradient-glow: radial-gradient(60% 55% at 50% 0%, rgba(246,130,31,0.10) 0%, rgba(246,130,31,0) 72%);
+  --lp-gradient-brand: linear-gradient(120deg, #1F1F22 0%, #141416 100%);
+  --lp-gradient-glow: radial-gradient(60% 55% at 50% 0%, rgba(20,20,22,0.03) 0%, rgba(20,20,22,0) 72%);
 
   /* font — Tipografía */
   --lp-font-family-sans: Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
