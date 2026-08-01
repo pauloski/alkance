@@ -674,6 +674,7 @@
         <div class="card__more oculto" id="more-${c.id}">
           <button class="btn btn--ghost btn--sm" data-accion="seguimiento" data-id="${c.id}">Seguimiento</button>
           <button class="btn btn--ghost btn--sm" data-accion="enviar" data-id="${c.id}">Enviar</button>
+          ${est === "borrador" ? `<button class="btn btn--ghost btn--sm" data-accion="marcar-enviada" data-id="${c.id}">Marcar enviada</button>` : ""}
           <button class="btn btn--ghost btn--sm" data-accion="duplicar" data-id="${c.id}">Duplicar</button>
           <button class="btn btn--danger btn--sm" data-accion="borrar" data-id="${c.id}">Eliminar</button>
         </div>
@@ -695,6 +696,7 @@
       else if (btn.dataset.accion === "seguimiento") abrirSeguimiento(id);
       else if (btn.dataset.accion === "duplicar") duplicarCotizacion(id);
       else if (btn.dataset.accion === "enviar") enviarCotizacion(id);
+      else if (btn.dataset.accion === "marcar-enviada") marcarEnviadaSinCorreo(id);
       else if (btn.dataset.accion === "borrar") {
         if (!confirm("¿Eliminar esta cotización? No se puede deshacer.")) return;
         await api("/api/cotizaciones/" + id, { method: "DELETE" }); irALista();
@@ -733,6 +735,15 @@
       const sug = (body.cotizacion.data && body.cotizacion.data.clienteInfo && body.cotizacion.data.clienteInfo.email) || "";
       const r = await enviarPorCorreo(id, sug);
       if (r) irALista();
+    }
+
+    // Marca la cotización como "Enviada a cliente" sin disparar el correo
+    // (para cuando se envía por fuera: WhatsApp, en persona, etc.).
+    async function marcarEnviadaSinCorreo(id) {
+      if (!confirm("¿Marcar como “Enviada a cliente” sin enviar el correo?\nÚsalo cuando ya la enviaste por fuera (WhatsApp, en persona, etc.).")) return;
+      const res = await api("/api/cotizaciones/" + id + "/estado", { method: "POST", body: JSON.stringify({ estado: "enviada" }) });
+      if (!res.ok) { alert(res.body.error || "No se pudo cambiar el estado."); return; }
+      irALista();
     }
     $("#btn-nueva").addEventListener("click", () => abrirEditor(null));
     $("#btn-volver").addEventListener("click", () => { if (puedeSalirDelEditor()) irALista(); });
@@ -830,7 +841,8 @@
       let ayuda = "";
       if (e === "borrador") {
         A.push(btn("Enviar a cliente →", "enviar"));
-        ayuda = "Al enviar por correo, el presupuesto queda en manos del cliente y pasa a “Enviada a cliente”.";
+        A.push(btn("Marcar enviada (sin correo)", "enviada"));
+        ayuda = "Al enviar por correo, el presupuesto queda en manos del cliente y pasa a “Enviada a cliente”. Si ya la enviaste por fuera, usa “Marcar enviada (sin correo)”.";
       } else if (e === "enviada" || e === "ajustes") {
         A.push(btn("Reenviar por correo", "enviar"));
         A.push(btn("✓ Aprobada (pagó 1ª parte)", "aprobada"));
