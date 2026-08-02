@@ -143,7 +143,8 @@
     .punto-row, .item-row { display: grid; gap: .6rem; margin-bottom: .6rem; align-items: start; }
     .punto-row { grid-template-columns: 1fr 2fr auto; }
     .item-row { grid-template-columns: 1.4fr 2fr 1fr auto; }
-    .item-row input, .punto-row input { margin: 0; }
+    .item-row input, .punto-row input, .punto-row textarea { margin: 0; }
+    .punto-row textarea { min-height: 3.2rem; }
     .x {
       border: 1px solid var(--ak-color-cream-400,#cfc8ba); background: #fff; border-radius: 6px;
       width: 2.1rem; height: 2.1rem; font-size: 16px; line-height: 1; cursor: pointer; color: var(--ak-color-ink-400,#6b6b6b);
@@ -1469,9 +1470,9 @@
             </div>
             <div class="rt-editor" contenteditable="true" data-fase="descripcion" data-ph="Descripción de la fase."></div>
           </div></div>
-        <label>Puntos / actividades</label>
+        <label>Actividades</label>
         <div class="puntos"></div>
-        <button type="button" class="btn btn--ghost btn--sm" data-add="punto">+ Punto</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-add="punto">+ Actividad</button>
         <div class="campo" style="margin-top:1rem"><label>Entregable</label>
           <input data-fase="entregable" placeholder="Archivo interactivo en Figma…"></div>
         <div class="campo"><label>Notas de la fase (opcional)</label>
@@ -1491,7 +1492,7 @@
       row.className = "punto-row";
       row.innerHTML = `
         <input data-punto="titulo" placeholder="Título (opcional)">
-        <input data-punto="detalle" placeholder="Detalle del punto">
+        <textarea data-punto="detalle" rows="2" placeholder="Detalle de la actividad"></textarea>
         <div class="row-ctrls">
           <button type="button" class="mvbtn" data-mv="up" data-mv-kind="punto" title="Subir">▲</button>
           <button type="button" class="mvbtn" data-mv="down" data-mv-kind="punto" title="Bajar">▼</button>
