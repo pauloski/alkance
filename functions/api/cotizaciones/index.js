@@ -38,6 +38,8 @@ export async function onRequestGet({ env, request }) {
         key: faseKey(f, i),
         titulo: (f?.titulo ?? "").toString(),
         dedicacion: (f?.dedicacion ?? "").toString(),
+        estimado: f?.estimado && typeof f.estimado === "object" ? f.estimado : null,
+        valor: Math.round(Number(f?.valor) || 0),
       }));
       const { data: _omit, ...meta } = c;
       return { ...meta, fases, avance, ejecucion };

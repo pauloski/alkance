@@ -160,9 +160,20 @@ function fechaLocal(iso) {
   return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
 }
 
-/** Ventanas estimadas por fase, en cascada desde fechaInicio usando duraciones
- *  (días por faseKey). Las fases sin duración se omiten y no cortan la cadena.
- *  Devuelve { faseKey: { inicio: Date, fin: Date } }. */
+/** Días de una fase derivados del tiempo estimado (cantidad + unidad). Fallback al
+ *  valor manual `duraciones[key]` para proyectos anteriores. horas→⌈n/8⌉. */
+const UNIDAD_DIAS = { horas: 1 / 8, dias: 1, semanas: 7, meses: 30 };
+function diasDeEstimado(est) {
+  if (!est || typeof est !== "object") return 0;
+  const n = Number(est.cantidad) || 0;
+  const f = UNIDAD_DIAS[est.unidad];
+  if (n <= 0 || !f) return 0;
+  return Math.max(1, Math.ceil(n * f));
+}
+
+/** Ventanas estimadas por fase, en cascada desde fechaInicio. Los días salen del
+ *  tiempo estimado de cada fase (o de `duraciones` como fallback). Fases sin
+ *  duración se omiten y no cortan la cadena. Devuelve { faseKey: {inicio, fin} }. */
 function ventanasFases(fechaInicio, fases, duraciones) {
   const inicio = fechaLocal(fechaInicio);
   const dur = duraciones && typeof duraciones === "object" ? duraciones : {};
@@ -171,11 +182,10 @@ function ventanasFases(fechaInicio, fases, duraciones) {
   let cursor = inicio.getTime();
   fases.forEach((f, i) => {
     const k = faseKey(f, i);
-    const dias = Math.round(Number(dur[k]) || 0);
+    const dias = diasDeEstimado(f && f.estimado) || Math.round(Number(dur[k]) || 0);
     if (dias <= 0) return;
-    const ini = cursor;
     const fin = cursor + (dias - 1) * DIA_MS;
-    out[k] = { inicio: new Date(ini), fin: new Date(fin) };
+    out[k] = { inicio: new Date(cursor), fin: new Date(fin) };
     cursor = fin + DIA_MS;
   });
   return out;

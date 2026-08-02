@@ -287,6 +287,42 @@
     .toggle-vista { display: flex; gap: .25rem; }
     .toggle-vista button { font: inherit; font-size: 13px; font-weight: 600; padding: .35rem .8rem; border-radius: 999px; border: 1px solid var(--ak-color-cream-400,#cfc8ba); background: #fff; cursor: pointer; color: var(--ak-color-ink-500,#454545); }
     .toggle-vista button.activo { background: var(--ak-color-ink-900,#0a0a0a); color: #fff; border-color: var(--ak-color-ink-900,#0a0a0a); }
+
+    /* Tiempo estimado: número + unidad */
+    .estimado-row { display: grid; grid-template-columns: 6rem 1fr; gap: .5rem; }
+    .estimado-row input, .estimado-row select { margin: 0; }
+
+    /* Página de Pagos */
+    .pagos-cols { display: grid; grid-template-columns: 300px 1fr; gap: 1.25rem; align-items: start; }
+    @media (max-width: 860px) { .pagos-cols { grid-template-columns: 1fr; } }
+    .pagos-kpis { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem; }
+    .pagos-kpis .kpi { display: flex; flex-direction: column; }
+    .pagos-kpis .kpi span { font-size: 12px; color: var(--ak-color-ink-400,#6b6b6b); text-transform: uppercase; letter-spacing: .03em; }
+    .pagos-kpis .kpi strong { font-size: 22px; }
+    .pagos-mes { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .pagos-mes th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--ak-color-ink-400,#6b6b6b); padding: .4rem .6rem; border-bottom: 1px solid var(--ak-color-cream-300,#e4e0d7); }
+    .pagos-mes td { padding: .45rem .6rem; border-bottom: 1px solid var(--ak-color-cream-200,#efede8); }
+    .pagos-mes .num { text-align: right; white-space: nowrap; }
+    .pagos-lista h2, .pagos-h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .03em; color: var(--ak-color-ink-400,#6b6b6b); margin: 0 0 .75rem; }
+    .pagos-h3 { margin: 1.4rem 0 .6rem; }
+    .pago-item { display: block; width: 100%; text-align: left; cursor: pointer; font: inherit;
+      background: #fff; border: 1px solid var(--ak-color-cream-300,#e4e0d7); border-radius: 10px; padding: .7rem .8rem; margin-bottom: .6rem; }
+    .pago-item:hover { border-color: var(--ak-color-cream-400,#cfc8ba); }
+    .pago-item.activo { border-color: var(--ak-color-ink-900,#0a0a0a); box-shadow: 0 0 0 1px var(--ak-color-ink-900,#0a0a0a); }
+    .pago-item__tit { font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: .25rem; }
+    .pago-item__meta { font-size: 12px; color: var(--ak-color-ink-400,#6b6b6b); }
+    .pago-item__bar { height: 6px; border-radius: 999px; background: var(--ak-color-cream-300,#e4e0d7); overflow: hidden; margin: .4rem 0; }
+    .pago-item__bar span { display: block; height: 100%; background: var(--ak-color-state-success,#0f7b4f); }
+    .fase-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .fase-chip { font-size: 12px; background: var(--ak-color-cream-100,#f7f5f1); border: 1px solid var(--ak-color-cream-300,#e4e0d7); border-radius: 999px; padding: .18rem .6rem; }
+    .pagos-gen { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+    .gen-panel { background: var(--ak-color-cream-50,#fbf9f6); border: 1px solid var(--ak-color-cream-300,#e4e0d7); border-radius: 8px; padding: 1rem; margin-top: .75rem; }
+    .gen-panel strong { font-size: 13px; display: block; margin-bottom: .6rem; }
+    .gen-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: .6rem; }
+    .gen-row input[type="text"] { flex: 1; min-width: 8rem; margin: 0; }
+    .gen-fases { display: flex; flex-direction: column; gap: .35rem; }
+    .gen-chk { display: flex; align-items: center; gap: .5rem; font-size: 14px; }
+    .gen-chk input { width: auto; margin: 0; }
   </style>
 </head>
 <body>
@@ -296,6 +332,7 @@
     <nav class="nav oculto" id="nav">
       <button data-nav="cotizaciones">Cotizaciones</button>
       <button data-nav="tablero">Tablero</button>
+      <button data-nav="pagos">Pagos</button>
       <button data-nav="clientes">Clientes</button>
       <button data-nav="emisor">Emisor</button>
     </nav>
@@ -499,57 +536,6 @@
     </div>
   </div>
 
-  <!-- SEGUIMIENTO (Gantt admin) -->
-  <div id="vista-seguimiento" class="wrap oculto">
-    <div class="sec-head">
-      <button class="btn btn--ghost btn--sm" id="btn-volver-seg">← Volver</button>
-      <h1 id="seg-titulo" style="flex:0 1 auto">Seguimiento</h1>
-      <a class="btn btn--ghost btn--sm" id="seg-ver" target="_blank" rel="noopener">Ver ↗</a>
-    </div>
-
-    <div class="panel-sec">
-      <h2>Estado del presupuesto</h2>
-      <p class="ayuda">Mueve el estado a mano. Al editar el presupuesto, vuelve a “En evaluación”.</p>
-      <div id="seg-estado"></div>
-    </div>
-
-    <div class="panel-sec">
-      <div class="estado-head" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-        <h2 style="margin:0">Avance de las fases</h2>
-        <div class="toggle-vista" id="seg-toggle">
-          <button data-vista-seg="lista" class="activo">Lista</button>
-          <button data-vista-seg="tablero">Tablero</button>
-        </div>
-      </div>
-      <p class="ayuda">Cambiar el avance se guarda al instante y NO sube la versión del presupuesto. Se refleja en el seguimiento del cliente.</p>
-      <div class="campo" style="max-width:16rem">
-        <label>Fecha de inicio del proyecto</label>
-        <input type="date" id="seg-fecha-inicio">
-        <p class="ayuda" style="margin:.4rem 0 0">Con la fecha de inicio y los días por fase se calculan los plazos y las alertas.</p>
-      </div>
-      <div id="seg-fases"></div>
-      <div id="seg-tablero" class="tablero tablero--proyecto oculto"></div>
-      <span class="msg" id="seg-msg"></span>
-    </div>
-
-    <div class="panel-sec">
-      <h2>Estructura de pagos</h2>
-      <p class="ayuda">Registra los hitos de pago del acuerdo (ej. inicio y contra entrega). No lo ve el cliente.</p>
-      <div id="seg-pagos"></div>
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
-        <button class="btn btn--ghost btn--sm" id="seg-pago-add">+ Agregar pago</button>
-        <button class="btn btn--ghost btn--sm" id="seg-pago-5050">Generar 50 / 50 desde el total</button>
-      </div>
-      <span class="msg" id="seg-pagos-msg"></span>
-    </div>
-
-    <div class="panel-sec">
-      <h2>Historial de versiones</h2>
-      <p class="ayuda">La versión más alta es la activa; las anteriores quedan como sustituidas.</p>
-      <div id="seg-historial"></div>
-    </div>
-  </div>
-
   <!-- TABLERO KANBAN (interno) -->
   <div id="vista-tablero" class="wrap wrap--ancho oculto">
     <div class="sec-head">
@@ -558,6 +544,20 @@
     </div>
     <p class="ayuda">Vista interna (no la ve el cliente). El <strong>Backlog</strong> son cotizaciones sin aprobar; las aprobadas se abren en tarjetas por fase que puedes arrastrar entre columnas. Mover una fase se refleja al instante en el seguimiento del cliente.</p>
     <div class="tablero" id="tablero-cols"></div>
+  </div>
+
+  <!-- PAGOS (interno) -->
+  <div id="vista-pagos" class="wrap wrap--ancho oculto">
+    <div class="sec-head">
+      <h1>Pagos</h1><span class="sep"></span>
+      <button class="btn btn--ghost btn--sm" id="btn-pagos-refrescar">↻ Actualizar</button>
+    </div>
+    <p class="ayuda">Acomoda el modelo de pago de cada cliente en los proyectos <strong>aprobados</strong>. El costo total sale de los ítems de la cotización; los valores por fase se editan en el editor. No lo ve el cliente.</p>
+    <div id="pagos-calc"></div>
+    <div class="pagos-cols">
+      <div class="panel-sec pagos-lista" id="pagos-lista"></div>
+      <div class="panel-sec pagos-detalle" id="pagos-detalle"></div>
+    </div>
   </div>
 
   <!-- DRAWER lateral de detalle -->
@@ -638,14 +638,17 @@
       document.getElementById("vista-clientes").classList.toggle("oculto", vista !== "clientes");
       document.getElementById("vista-cliente-editor").classList.toggle("oculto", vista !== "cliente-editor");
       document.getElementById("vista-emisor").classList.toggle("oculto", vista !== "emisor");
-      document.getElementById("vista-seguimiento").classList.toggle("oculto", vista !== "seguimiento");
       document.getElementById("vista-tablero").classList.toggle("oculto", vista !== "tablero");
+      document.getElementById("vista-pagos").classList.toggle("oculto", vista !== "pagos");
       const authed = vista !== "login";
       $("#nav").classList.toggle("oculto", !authed);
       $("#btn-salir").classList.toggle("oculto", !authed);
       const grupo = vista === "clientes" || vista === "cliente-editor" ? "clientes"
-                  : vista === "emisor" ? "emisor" : vista === "tablero" ? "tablero" : "cotizaciones";
+                  : vista === "emisor" ? "emisor" : vista === "tablero" ? "tablero"
+                  : vista === "pagos" ? "pagos" : "cotizaciones";
       $$("#nav button").forEach((b) => b.classList.toggle("activo", b.dataset.nav === grupo));
+      const dw = document.getElementById("drawer"); // cerrar el drawer al cambiar de vista
+      if (dw && !dw.classList.contains("oculto")) { dw.classList.add("oculto"); dw.innerHTML = ""; }
     }
 
     async function api(url, opts = {}) {
@@ -689,6 +692,7 @@
       if (!puedeSalirDelEditor()) return;
       if (b.dataset.nav === "cotizaciones") irALista();
       else if (b.dataset.nav === "tablero") irATablero();
+      else if (b.dataset.nav === "pagos") irAPagos();
       else if (b.dataset.nav === "clientes") irAClientes();
       else if (b.dataset.nav === "emisor") irAEmisor();
     });
@@ -772,7 +776,6 @@
           </div>
         </div>
         <div class="card__more oculto" id="more-${c.id}">
-          <button class="btn btn--ghost btn--sm" data-accion="seguimiento" data-id="${c.id}">Seguimiento</button>
           <button class="btn btn--ghost btn--sm" data-accion="enviar" data-id="${c.id}">Enviar</button>
           ${est === "borrador" ? `<button class="btn btn--ghost btn--sm" data-accion="marcar-enviada" data-id="${c.id}">Marcar enviada</button>` : ""}
           <button class="btn btn--ghost btn--sm" data-accion="duplicar" data-id="${c.id}">Duplicar</button>
@@ -793,7 +796,6 @@
       const btn = e.target.closest("[data-accion]"); if (!btn) return;
       const id = btn.dataset.id;
       if (btn.dataset.accion === "editar") abrirEditor(id);
-      else if (btn.dataset.accion === "seguimiento") abrirSeguimiento(id);
       else if (btn.dataset.accion === "duplicar") duplicarCotizacion(id);
       else if (btn.dataset.accion === "enviar") enviarCotizacion(id);
       else if (btn.dataset.accion === "marcar-enviada") marcarEnviadaSinCorreo(id);
@@ -856,17 +858,51 @@
     const fechaLocalJS = (iso) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || "")); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
     const hoyMid = () => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); };
 
-    /** Ventanas estimadas por fase, en cascada desde fechaInicio. `keys` es la lista
-     *  ordenada de faseKeys; `duraciones` mapea faseKey -> días. Fases sin duración
-     *  se omiten (no cortan la cadena). Devuelve { key: {inicio, fin} } (Date). */
-    function ventanasPorKeys(fechaInicio, keys, duraciones) {
+    // Tiempo estimado estructurado (cantidad + unidad) → días para la cascada.
+    const UNIDADES = [
+      { v: "horas", label: "horas", singular: "hora", dias: 1 / 8 },
+      { v: "dias", label: "días", singular: "día", dias: 1 },
+      { v: "semanas", label: "semanas", singular: "semana", dias: 7 },
+      { v: "meses", label: "meses", singular: "mes", dias: 30 },
+    ];
+    const UNIDAD = Object.fromEntries(UNIDADES.map((u) => [u.v, u]));
+    function diasDeEstimado(est) {
+      if (!est || typeof est !== "object") return 0;
+      const n = Number(est.cantidad) || 0; const u = UNIDAD[est.unidad];
+      if (n <= 0 || !u) return 0;
+      return Math.max(1, Math.ceil(n * u.dias));
+    }
+    function formatDuracion(est) {
+      if (!est) return ""; const n = Number(est.cantidad) || 0; const u = UNIDAD[est.unidad];
+      if (n <= 0 || !u) return "";
+      return n + " " + (n === 1 ? u.singular : u.label);
+    }
+    /** Best-effort para cotizaciones viejas: extrae cantidad+unidad de un texto libre
+     *  ("Semanas 1 a 2 (2 semanas)" → {2, semanas}). Toma el último número + unidad. */
+    function parseDedicacion(texto) {
+      const t = String(texto || "").toLowerCase();
+      const re = /(\d+(?:[.,]\d+)?)\s*(hora|d[ií]a|semana|mes|mese)/g;
+      let m, last = null;
+      while ((m = re.exec(t))) last = m;
+      if (!last) return null;
+      const n = Number(last[1].replace(",", "."));
+      const raiz = last[2];
+      const unidad = raiz.startsWith("hora") ? "horas" : raiz.startsWith("d") ? "dias" : raiz.startsWith("semana") ? "semanas" : "meses";
+      return n > 0 ? { cantidad: n, unidad } : null;
+    }
+
+    /** Ventanas estimadas por fase, en cascada desde fechaInicio. `fases` son objetos
+     *  con `.key` y `.estimado`; los días salen de `estimado` (o de `duraciones` como
+     *  fallback). Fases sin duración se omiten (no cortan la cadena). */
+    function ventanasFasesPanel(fechaInicio, fases, duraciones) {
       const inicio = fechaLocalJS(fechaInicio); const dur = duraciones || {}; const out = {};
       if (!inicio) return out;
       let cursor = inicio.getTime();
-      keys.forEach((k) => {
-        const dias = Math.round(Number(dur[k]) || 0); if (dias <= 0) return;
+      (fases || []).forEach((f) => {
+        const dias = diasDeEstimado(f.estimado) || Math.round(Number(dur[f.key]) || 0);
+        if (dias <= 0) return;
         const fin = cursor + (dias - 1) * DIA_MS;
-        out[k] = { inicio: new Date(cursor), fin: new Date(fin) };
+        out[f.key] = { inicio: new Date(cursor), fin: new Date(fin) };
         cursor = fin + DIA_MS;
       });
       return out;
@@ -887,6 +923,17 @@
       if (!rp.total) return '<span class="pago-mini">Sin pagos</span>';
       const ok = rp.pendiente <= 0;
       return `<span class="pago-mini ${ok ? "pago-mini--ok" : "pago-mini--pend"}">${ok ? "Pagado" : clp(rp.pagado) + " / " + clp(rp.total)}</span>`;
+    }
+    const AVANCES = ["pendiente", "proceso", "completado"];
+    const etiquetaAvance = (a) => ({ pendiente: "Pendiente", proceso: "En proceso", completado: "Completado" }[a] || a);
+
+    /** Guarda un parche de planificación (fechaInicio/pagos) sin subir versión.
+     *  Genérico por id (lo usan el drawer y la página de Pagos). Devuelve la
+     *  `ejecucion` actualizada o null. */
+    async function guardarEjecucion(cotId, patch) {
+      const res = await api("/api/cotizaciones/" + cotId + "/ejecucion", { method: "POST", body: JSON.stringify(patch) });
+      if (!res.ok) { alert((res.body && res.body.error) || "No se pudo guardar."); return null; }
+      return res.body.ejecucion || {};
     }
 
     // ================= TABLERO KANBAN (interno) =================
@@ -922,8 +969,7 @@
         const est = normEstado(c.estado);
         if (est === "aprobada") {
           const ej = c.ejecucion || {};
-          const keys = (c.fases || []).map((f) => f.key);
-          const vent = ventanasPorKeys(ej.fechaInicio, keys, ej.duraciones);
+          const vent = ventanasFasesPanel(ej.fechaInicio, c.fases || [], ej.duraciones);
           (c.fases || []).forEach((f) => {
             const av = (c.avance && c.avance[f.key]) || "pendiente";
             const col = AVANCE_COL[av] || "todo";
@@ -1029,13 +1075,14 @@
     });
 
     // ---- Drawer lateral de detalle ----
+    let drawerCotId = null;
     function abrirDrawer(cotId) {
       const c = tableroCache.find((x) => x.id === cotId); if (!c) return;
+      drawerCotId = cotId;
       const ej = c.ejecucion || {};
       const est = normEstado(c.estado);
       const aprob = est === "aprobada";
-      const keys = (c.fases || []).map((f) => f.key);
-      const vent = ventanasPorKeys(ej.fechaInicio, keys, ej.duraciones);
+      const vent = ventanasFasesPanel(ej.fechaInicio, c.fases || [], ej.duraciones);
       const total = (c.fases || []).length;
       const comp = (c.fases || []).filter((f) => (c.avance && c.avance[f.key]) === "completado").length;
       const pct = total ? Math.round((comp / total) * 100) : 0;
@@ -1057,7 +1104,7 @@
             <span class="t">${esc(p.concepto || "Pago")}${p.fecha ? ` · ${esc(p.fecha)}` : ""}</span>
             <span class="m">${clp(p.monto)}</span>
           </div>`).join("") + `<div class="pagos-total"><span>Pagado <strong>${clp(rp.pagado)}</strong> / ${clp(rp.total)}</span></div>`
-        : '<p class="ayuda" style="margin:0">Sin estructura de pagos. Agrégala en Seguimiento.</p>';
+        : '<p class="ayuda" style="margin:0">Sin estructura de pagos todavía.</p>';
 
       const dw = $("#drawer");
       dw.innerHTML = `<div class="drawer-back" data-cerrar></div>
@@ -1071,145 +1118,162 @@
             <button class="btn btn--ghost btn--sm drawer__x" data-cerrar>✕</button>
           </div>
           <div class="drawer__body">
+            ${aprob ? `<h3>Fecha de inicio del proyecto</h3>
+            <input type="date" id="drawer-fecha-inicio" value="${esc(ej.fechaInicio || "")}" style="max-width:12rem">
+            <p class="ayuda" style="margin:.4rem 0 0">Con la fecha de inicio + el tiempo estimado de cada fase se calculan los plazos. No tiene que coincidir con la fecha del pago inicial.</p>` : ""}
             <h3>Completitud</h3>
             ${aprob ? `<div class="progbar"><span style="width:${pct}%"></span></div><div class="prog-num">${comp}/${total} fases · ${pct}%</div>` : '<p class="ayuda" style="margin:0">Las fases se activan al aprobar el presupuesto.</p>'}
             <h3>Fases</h3>
             ${fasesHTML}
             <h3>Pagos</h3>
             ${pagosHTML}
+            ${aprob ? `<div style="margin-top:.6rem"><button class="btn btn--ghost btn--sm" data-pagos="${c.id}">Gestionar pagos →</button></div>` : ""}
+            <details style="margin-top:1.4rem"><summary style="cursor:pointer;font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--ak-color-ink-400,#6b6b6b);font-weight:700">Historial de versiones</summary>
+              <div id="drawer-historial" style="margin-top:.6rem"><p class="ayuda" style="margin:0">Cargando…</p></div>
+            </details>
             <h3>Acciones</h3>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <a class="btn btn--ghost btn--sm" href="/c/${c.id}" target="_blank" rel="noopener">Ver portal ↗</a>
-              <button class="btn btn--ghost btn--sm" data-seg="${c.id}">Seguimiento / planificar</button>
+              <button class="btn btn--ghost btn--sm" data-editar="${c.id}">Editar cotización</button>
             </div>
           </div>
         </aside>`;
       dw.classList.remove("oculto");
+      cargarHistorialDrawer(cotId);
     }
-    function cerrarDrawer() { const dw = $("#drawer"); dw.classList.add("oculto"); dw.innerHTML = ""; }
+
+    async function cargarHistorialDrawer(cotId) {
+      const cont = $("#drawer-historial"); if (!cont) return;
+      const { ok, body } = await api("/api/cotizaciones/" + cotId);
+      if (!ok || drawerCotId !== cotId) return;
+      const c = body.cotizacion, revs = body.revisiones || [];
+      const activa = `<div class="seg-rev seg-rev--activa"><strong>v${c.version}</strong> · activa · ${clp(c.total)}</div>`;
+      const pasadas = revs.map((r) => `<div class="seg-rev">v${r.version} · sustituida · ${clp(r.total)} · ${new Date(r.created_at).toLocaleDateString("es-CL")}</div>`).join("");
+      cont.innerHTML = activa + pasadas;
+    }
+
+    async function guardarFechaInicioDrawer(valor) {
+      const ej = await guardarEjecucion(drawerCotId, { fechaInicio: valor || "" });
+      if (!ej) return;
+      const c = tableroCache.find((x) => x.id === drawerCotId);
+      if (c) c.ejecucion = ej;
+      pintarTablero();
+      abrirDrawer(drawerCotId); // re-render con las ventanas recalculadas
+    }
+
+    function cerrarDrawer() { const dw = $("#drawer"); dw.classList.add("oculto"); dw.innerHTML = ""; drawerCotId = null; }
     $("#drawer").addEventListener("click", (e) => {
       if (e.target.closest("[data-cerrar]")) { cerrarDrawer(); return; }
-      const seg = e.target.closest("[data-seg]");
-      if (seg) { cerrarDrawer(); abrirSeguimiento(seg.dataset.seg); }
+      const pg = e.target.closest("[data-pagos]");
+      if (pg) { cerrarDrawer(); irAPagos(pg.dataset.pagos); return; }
+      const ed = e.target.closest("[data-editar]");
+      if (ed) { cerrarDrawer(); abrirEditor(ed.dataset.editar); }
+    });
+    $("#drawer").addEventListener("change", (e) => {
+      if (e.target.id === "drawer-fecha-inicio") guardarFechaInicioDrawer(e.target.value);
     });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#drawer").classList.contains("oculto")) cerrarDrawer(); });
 
-    // ================= SEGUIMIENTO (por proyecto) =================
-    let segId = null;
-    let segCot = null;          // { id, titulo, cliente, estado, version, total, data, avance, ejecucion }
-    let segPagos = [];          // copia editable de ejecucion.pagos
-    let segVista = "lista";     // "lista" | "tablero"
-    const AVANCES = ["pendiente", "proceso", "completado"];
-    const etiquetaAvance = (a) => ({ pendiente: "Pendiente", proceso: "En proceso", completado: "Completado" }[a] || a);
-    const faseKey = (f, i) => f.id || ("idx:" + i);
-    function avanceSelect(key, valor) {
-      const v = AVANCES.includes(valor) ? valor : "pendiente";
-      const opts = AVANCES.map((a) => `<option value="${a}"${a === v ? " selected" : ""}>${etiquetaAvance(a)}</option>`).join("");
-      return `<select class="avance-select avance--${v}" data-fase-key="${esc(key)}">${opts}</select>`;
-    }
+    // ================= PAGOS (interno) =================
+    let pagosCache = [];      // cotizaciones aprobadas (de ?tablero=1)
+    let pagosSelId = null;    // cotización seleccionada
+    let pagosEdit = [];       // hitos editables del proyecto seleccionado
+    const mesLabel = (ym) => { const [y, m] = ym.split("-"); return (MESES[(+m) - 1] || "") + " " + y; };
 
-    /** Guarda un parche de planificación (fechaInicio/duraciones/pagos) sin subir
-     *  versión. Actualiza segCot.ejecucion con lo devuelto por el servidor. */
-    async function guardarEjecucion(patch, msgEl) {
-      if (msgEl) { msgEl.className = "msg"; msgEl.textContent = "Guardando…"; }
-      const res = await api("/api/cotizaciones/" + segId + "/ejecucion", { method: "POST", body: JSON.stringify(patch) });
-      if (!res.ok) { if (msgEl) { msgEl.className = "msg msg--err"; msgEl.textContent = (res.body && res.body.error) || "No se pudo guardar."; } return null; }
-      if (segCot) segCot.ejecucion = res.body.ejecucion || segCot.ejecucion;
-      if (msgEl) { msgEl.className = "msg msg--ok"; msgEl.textContent = "Guardado ✓"; }
-      return res.body.ejecucion;
+    async function irAPagos(preId) {
+      if (!puedeSalirDelEditor()) return;
+      mostrar("pagos");
+      $("#pagos-calc").innerHTML = "";
+      $("#pagos-lista").innerHTML = '<p class="ayuda" style="margin:0">Cargando…</p>';
+      $("#pagos-detalle").innerHTML = "";
+      const { ok, body } = await api("/api/cotizaciones?tablero=1");
+      if (!ok) { $("#pagos-lista").innerHTML = '<div class="vacio">Error al cargar.</div>'; return; }
+      pagosCache = (body.cotizaciones || []).filter((c) => normEstado(c.estado) === "aprobada");
+      pintarPagosCalc();
+      pintarPagosLista();
+      const target = (preId && pagosCache.some((c) => c.id === preId)) ? preId : (pagosCache[0] && pagosCache[0].id) || null;
+      if (target) abrirPagoDetalle(target);
+      else $("#pagos-detalle").innerHTML = '<p class="ayuda" style="margin:0">No hay cotizaciones aprobadas todavía.</p>';
     }
+    $("#btn-pagos-refrescar").addEventListener("click", () => irAPagos(pagosSelId));
 
-    async function abrirSeguimiento(id) {
-      const { ok, body } = await api("/api/cotizaciones/" + id);
-      if (!ok) { alert("No se pudo abrir el seguimiento."); return; }
-      segId = id;
-      const c = body.cotizacion;
-      segCot = {
-        id, titulo: (c.data && c.data.titulo) || c.titulo || "", cliente: c.cliente || "",
-        estado: c.estado, version: c.version, total: c.total,
-        data: c.data || {}, avance: c.avance || {}, ejecucion: c.ejecucion || {},
-      };
-      segVista = "lista";
-      segPagos = Array.isArray(segCot.ejecucion.pagos) ? segCot.ejecucion.pagos.map((p) => ({ ...p })) : [];
-      $("#seg-titulo").textContent = segCot.titulo || "(sin título)";
-      $("#seg-ver").href = "/c/" + id;
-      $("#seg-estado").innerHTML = estadoChip(c.estado) + ' <span class="ayuda" style="margin-left:.5rem">El estado se cambia desde el editor.</span>';
-      $("#seg-fecha-inicio").value = segCot.ejecucion.fechaInicio || "";
-      $$("#seg-toggle button").forEach((x) => x.classList.toggle("activo", x.dataset.vistaSeg === "lista"));
-      $("#seg-fases").classList.remove("oculto");
-      $("#seg-tablero").classList.add("oculto");
-      pintarSegFases();
-      pintarPagos();
-      $("#seg-msg").textContent = ""; $("#seg-pagos-msg").textContent = "";
-      const revs = body.revisiones || [];
-      const activa = `<div class="seg-rev seg-rev--activa"><strong>v${c.version}</strong> · activa · ${clp(c.total)}</div>`;
-      const pasadas = revs.map((r) => `<div class="seg-rev">v${r.version} · sustituida · ${clp(r.total)} · ${new Date(r.created_at).toLocaleString("es-CL")}</div>`).join("");
-      $("#seg-historial").innerHTML = activa + pasadas;
-      mostrar("seguimiento");
-    }
-
-    function pintarSegFases() {
-      const fases = segCot.data.fases || [];
-      const avance = segCot.avance || {};
-      const dur = (segCot.ejecucion && segCot.ejecucion.duraciones) || {};
-      $("#seg-fases").innerHTML = fases.length ? fases.map((f, i) => {
-        const k = faseKey(f, i);
-        return `<div class="seg-fase">
-          <div class="seg-fase__info">
-            <strong>${esc(f.titulo || ("Fase " + (i + 1)))}</strong>
-            ${f.dedicacion ? `<span>${esc(f.dedicacion)}</span>` : ""}
-          </div>
-          <label class="seg-fase__dias">días <input type="number" min="0" class="dias-input" data-fase-key="${esc(k)}" value="${dur[k] || ""}"></label>
-          ${avanceSelect(k, avance[k])}
-        </div>`;
-      }).join("") : '<div class="vacio">Esta cotización no tiene fases todavía.</div>';
-    }
-
-    function segFasesCompact() {
-      return (segCot.data.fases || []).map((f, i) => ({ key: faseKey(f, i), titulo: f.titulo || ("Fase " + (i + 1)) }));
-    }
-    function pintarSegTablero() {
-      const fases = segFasesCompact();
-      const ej = segCot.ejecucion || {};
-      const cShape = { id: segId, titulo: segCot.titulo, cliente: segCot.cliente, estado: segCot.estado, version: segCot.version, total: segCot.total, fases, avance: segCot.avance || {}, ejecucion: ej };
-      const vent = ventanasPorKeys(ej.fechaInicio, fases.map((f) => f.key), ej.duraciones);
-      const hoy = hoyMid().getTime();
-      const cols = { todo: [], doing: [], done: [] };
-      fases.forEach((f) => {
-        const av = cShape.avance[f.key] || "pendiente";
-        const col = AVANCE_COL[av] || "todo";
-        const v = vent[f.key];
-        const vencida = !!(v && av !== "completado" && hoy > v.fin.getTime());
-        cols[col].push({ tipo: "fase", cot: cShape, fase: f, avance: av, ventana: v, vencida });
+    function pintarPagosCalc() {
+      let gp = 0, gt = 0; const meses = {};
+      pagosCache.forEach((c) => {
+        (((c.ejecucion || {}).pagos) || []).forEach((p) => {
+          const m = Math.round(Number(p.monto) || 0); gt += m; if (p.estado === "pagado") gp += m;
+          const key = /^\d{4}-\d{2}/.test(p.fecha || "") ? p.fecha.slice(0, 7) : "sin";
+          const o = meses[key] || (meses[key] = { pagado: 0, pendiente: 0 });
+          if (p.estado === "pagado") o.pagado += m; else o.pendiente += m;
+        });
       });
-      const COLS3 = [{ key: "todo", label: "Por hacer" }, { key: "doing", label: "En progreso" }, { key: "done", label: "Hecho" }];
-      $("#seg-tablero").innerHTML = COLS3.map((col) => {
-        const items = cols[col.key];
-        const cards = items.length ? items.map(cardTableroHTML).join("") : '<div class="kcol__vacio">—</div>';
-        return `<div class="kcol" data-col="${col.key}"><div class="kcol__head">${esc(col.label)} <span class="n">${items.length}</span></div>${cards}</div>`;
+      const keys = Object.keys(meses).sort((a, b) => (a === "sin" ? 1 : b === "sin" ? -1 : a.localeCompare(b)));
+      const filas = keys.map((k) => {
+        const o = meses[k]; const label = k === "sin" ? "Sin fecha" : mesLabel(k);
+        return `<tr><td>${esc(label)}</td><td class="num">${clp(o.pagado)}</td><td class="num">${clp(o.pendiente)}</td><td class="num">${clp(o.pagado + o.pendiente)}</td></tr>`;
+      }).join("") || '<tr><td colspan="4" class="ayuda">Sin pagos registrados.</td></tr>';
+      $("#pagos-calc").innerHTML = `<div class="panel-sec">
+        <div class="pagos-kpis">
+          <div class="kpi"><span>Pagado a la fecha</span><strong style="color:var(--ak-color-state-success,#0f7b4f)">${clp(gp)}</strong></div>
+          <div class="kpi"><span>Pendiente</span><strong>${clp(gt - gp)}</strong></div>
+          <div class="kpi"><span>Total aprobado</span><strong>${clp(gt)}</strong></div>
+        </div>
+        <table class="pagos-mes"><thead><tr><th>Mes</th><th class="num">Pagado</th><th class="num">Pendiente / estimado</th><th class="num">Total</th></tr></thead><tbody>${filas}</tbody></table>
+      </div>`;
+    }
+
+    function pintarPagosLista() {
+      if (!pagosCache.length) { $("#pagos-lista").innerHTML = '<p class="ayuda" style="margin:0">No hay cotizaciones aprobadas.</p>'; return; }
+      $("#pagos-lista").innerHTML = '<h2>Proyectos aprobados</h2>' + pagosCache.map((c) => {
+        const rp = pagosResumen((c.ejecucion || {}).pagos);
+        const pct = rp.total ? Math.round(rp.pagado / rp.total * 100) : 0;
+        return `<button class="pago-item${c.id === pagosSelId ? " activo" : ""}" data-pago-sel="${c.id}">
+          <div class="pago-item__tit">${esc(c.titulo || "(sin título)")}</div>
+          <div class="pago-item__meta">${esc(c.cliente || "—")} · ${clp(c.total)}</div>
+          <div class="pago-item__bar"><span style="width:${pct}%"></span></div>
+          <div class="pago-item__meta">${pagoMiniHTML(rp)}</div>
+        </button>`;
       }).join("");
     }
+    $("#pagos-lista").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-pago-sel]"); if (!b) return;
+      abrirPagoDetalle(b.dataset.pagoSel);
+    });
 
-    function sincronizarSelectsLista() {
-      $$("#seg-fases .avance-select").forEach((sel) => {
-        const k = sel.dataset.faseKey; const v = (segCot.avance && segCot.avance[k]) || "pendiente";
-        sel.value = v; sel.className = "avance-select avance--" + v;
-      });
-    }
-    async function moverFaseSeg(key, nuevo) {
-      segCot.avance = segCot.avance || {};
-      const actual = segCot.avance[key] || "pendiente";
-      if (actual === nuevo) { pintarSegTablero(); return; }
-      segCot.avance[key] = nuevo;
-      pintarSegTablero(); sincronizarSelectsLista();
-      const msg = $("#seg-msg"); msg.className = "msg"; msg.textContent = "Guardando…";
-      const res = await api("/api/cotizaciones/" + segId + "/avance", { method: "POST", body: JSON.stringify({ faseKey: key, estado: nuevo }) });
-      if (!res.ok) { segCot.avance[key] = actual; pintarSegTablero(); sincronizarSelectsLista(); msg.className = "msg msg--err"; msg.textContent = (res.body && res.body.error) || "No se pudo mover."; return; }
-      msg.className = "msg msg--ok"; msg.textContent = "Avance guardado ✓";
+    function abrirPagoDetalle(id) {
+      pagosSelId = id;
+      const c = pagosCache.find((x) => x.id === id); if (!c) return;
+      pagosEdit = Array.isArray((c.ejecucion || {}).pagos) ? c.ejecucion.pagos.map((p) => ({ ...p })) : [];
+      pintarPagosLista();
+      const fases = c.fases || [];
+      const sumaFases = fases.reduce((a, f) => a + Math.round(Number(f.valor) || 0), 0);
+      const chips = fases.map((f) => `<span class="fase-chip">${esc(f.titulo || "Fase")} · ${f.valor ? clp(f.valor) : '<span style="opacity:.55">sin valor</span>'}</span>`).join("");
+      const aviso = sumaFases > 0 && sumaFases !== c.total
+        ? `<p class="ayuda" style="color:#8a5a00;margin:.5rem 0 0">⚠ La suma de los valores por fase (${clp(sumaFases)}) no coincide con el total de la cotización (${clp(c.total)}).</p>` : "";
+      $("#pagos-detalle").innerHTML = `
+        <div class="sec-head" style="margin-bottom:.5rem"><h2 style="margin:0">${esc(c.titulo || "(sin título)")}</h2><span class="sep"></span><a class="btn btn--ghost btn--sm" href="/c/${c.id}" target="_blank" rel="noopener">Ver portal ↗</a></div>
+        <div class="kcard__meta" style="margin-bottom:1rem">${esc(c.cliente || "—")} · Total ${clp(c.total)}</div>
+        <h3 class="pagos-h3">Fases y valores <span class="ayuda" style="font-weight:400;text-transform:none;letter-spacing:0">(el valor por fase se edita en el editor de la cotización)</span></h3>
+        <div class="fase-chips">${chips || '<span class="ayuda">Sin fases.</span>'}</div>
+        ${aviso}
+        <h3 class="pagos-h3">Hitos de pago</h3>
+        <div id="pagos-hitos"></div>
+        <div class="pagos-total" id="pagos-hitos-total"></div>
+        <div class="pagos-gen">
+          <span class="ayuda" style="align-self:center">Generar:</span>
+          <button class="btn btn--ghost btn--sm" data-gen="5050">50 / 50</button>
+          <button class="btn btn--ghost btn--sm" data-gen="fase">Una por fase</button>
+          <button class="btn btn--ghost btn--sm" data-gen="agrupar">Agrupar fases…</button>
+          <button class="btn btn--ghost btn--sm" data-gen="pct">Por %…</button>
+          <span class="sep" style="flex:1"></span>
+          <button class="btn btn--ghost btn--sm" data-gen="add">+ Hito</button>
+        </div>
+        <div id="pagos-gen-panel"></div>
+        <span class="msg" id="pagos-msg"></span>`;
+      pintarHitos();
     }
 
-    // ---- Pagos (editor) ----
-    function pagoRowHTML(p, i) {
+    function hitoRowHTML(p, i) {
       return `<div class="pago-row" data-idx="${i}">
         <input data-pago="concepto" placeholder="Concepto (ej. Inicio 50%)" value="${esc(p.concepto || "")}">
         <input data-pago="monto" type="number" min="0" placeholder="Monto" value="${p.monto || ""}">
@@ -1218,130 +1282,91 @@
           <option value="pagado"${p.estado === "pagado" ? " selected" : ""}>Pagado</option>
         </select>
         <input data-pago="fecha" type="date" value="${esc(p.fecha || "")}">
-        <button class="x" data-pago-del title="Quitar pago">✕</button>
+        <button class="x" data-pago-del title="Quitar">✕</button>
       </div>`;
     }
-    function pintarPagos() {
-      const rp = pagosResumen(segPagos);
-      $("#seg-pagos").innerHTML = segPagos.length
-        ? segPagos.map(pagoRowHTML).join("") + `<div class="pagos-total"><span>Pagado <strong>${clp(rp.pagado)}</strong></span><span>Pendiente <strong>${clp(rp.pendiente)}</strong></span><span>Total <strong>${clp(rp.total)}</strong></span></div>`
-        : '<p class="ayuda" style="margin:0">Aún no hay pagos. Agrega el primero o genera 50/50 desde el total.</p>';
+    function pintarHitos() {
+      const cont = $("#pagos-hitos"); if (!cont) return;
+      cont.innerHTML = pagosEdit.length ? pagosEdit.map(hitoRowHTML).join("") : '<p class="ayuda" style="margin:0">Aún no hay hitos. Usa un generador o “+ Hito”.</p>';
+      const rp = pagosResumen(pagosEdit);
+      $("#pagos-hitos-total").innerHTML = `<span>Pagado <strong>${clp(rp.pagado)}</strong></span><span>Pendiente <strong>${clp(rp.pendiente)}</strong></span><span>Total <strong>${clp(rp.total)}</strong></span>`;
     }
-    function leerPagosDOM() {
-      return $$("#seg-pagos .pago-row").map((row) => {
-        const prev = segPagos[+row.dataset.idx] || {};
-        return {
-          id: prev.id,
-          concepto: row.querySelector('[data-pago="concepto"]').value,
-          monto: Math.round(Number(row.querySelector('[data-pago="monto"]').value) || 0),
-          estado: row.querySelector('[data-pago="estado"]').value === "pagado" ? "pagado" : "pendiente",
-          fecha: row.querySelector('[data-pago="fecha"]').value,
-        };
+    function leerHitosDOM() {
+      return $$("#pagos-hitos .pago-row").map((row) => {
+        const prev = pagosEdit[+row.dataset.idx] || {};
+        return { id: prev.id, concepto: row.querySelector('[data-pago="concepto"]').value, monto: Math.round(Number(row.querySelector('[data-pago="monto"]').value) || 0), estado: row.querySelector('[data-pago="estado"]').value === "pagado" ? "pagado" : "pendiente", fecha: row.querySelector('[data-pago="fecha"]').value };
       });
     }
-    async function guardarPagos() {
-      segPagos = leerPagosDOM();
-      pintarPagos();
-      await guardarEjecucion({ pagos: segPagos }, $("#seg-pagos-msg"));
+    async function guardarHitos() {
+      pintarHitos();
+      const msg = $("#pagos-msg"); if (msg) { msg.className = "msg"; msg.textContent = "Guardando…"; }
+      const ej = await guardarEjecucion(pagosSelId, { pagos: pagosEdit });
+      const c = pagosCache.find((x) => x.id === pagosSelId);
+      if (ej && c) c.ejecucion = ej;
+      if (msg) { msg.className = "msg msg--ok"; msg.textContent = "Guardado ✓"; }
+      pintarPagosCalc(); pintarPagosLista();
     }
 
-    // ---- Listeners de Seguimiento ----
-    $("#btn-volver-seg").addEventListener("click", irALista);
+    function renderGenPct() {
+      $("#pagos-gen-panel").innerHTML = `<div class="gen-panel">
+        <strong>Agregar hito por porcentaje del total</strong>
+        <div class="gen-row">
+          <input type="number" min="0" max="100" id="gen-pct" placeholder="%" style="width:6rem">
+          <input type="text" id="gen-pct-con" placeholder="Concepto (opcional)">
+          <button class="btn btn--sm" data-gen-do="pct">Agregar</button>
+          <button class="btn btn--ghost btn--sm" data-gen-cancel>Cancelar</button>
+        </div></div>`;
+    }
+    function renderGenAgrupar(c) {
+      const chks = (c.fases || []).map((f, i) => `<label class="gen-chk"><input type="checkbox" data-gen-fase="${i}"> ${esc(f.titulo || ("Fase " + (i + 1)))} ${f.valor ? "· " + clp(f.valor) : '<span style="opacity:.55">sin valor</span>'}</label>`).join("");
+      $("#pagos-gen-panel").innerHTML = `<div class="gen-panel">
+        <strong>Agrupar fases en un hito</strong>
+        <div class="gen-fases">${chks || '<span class="ayuda">Sin fases.</span>'}</div>
+        <div class="gen-row">
+          <input type="text" id="gen-agr-con" placeholder="Concepto (ej. Etapa 1)">
+          <button class="btn btn--sm" data-gen-do="agrupar">Crear hito</button>
+          <button class="btn btn--ghost btn--sm" data-gen-cancel>Cancelar</button>
+        </div></div>`;
+    }
 
-    $("#seg-toggle").addEventListener("click", (e) => {
-      const b = e.target.closest("[data-vista-seg]"); if (!b) return;
-      segVista = b.dataset.vistaSeg;
-      $$("#seg-toggle button").forEach((x) => x.classList.toggle("activo", x.dataset.vistaSeg === segVista));
-      $("#seg-fases").classList.toggle("oculto", segVista !== "lista");
-      $("#seg-tablero").classList.toggle("oculto", segVista !== "tablero");
-      if (segVista === "tablero") pintarSegTablero();
-    });
-
-    $("#seg-fecha-inicio").addEventListener("change", async (e) => {
-      await guardarEjecucion({ fechaInicio: e.target.value || "" }, $("#seg-msg"));
-      if (segVista === "tablero") pintarSegTablero();
-    });
-
-    $("#seg-fases").addEventListener("change", async (e) => {
-      const dias = e.target.closest(".dias-input");
-      if (dias) {
-        const dur = { ...((segCot.ejecucion && segCot.ejecucion.duraciones) || {}) };
-        const k = dias.dataset.faseKey;
-        const val = Math.max(0, Math.round(Number(dias.value) || 0));
-        if (val > 0) dur[k] = val; else delete dur[k];
-        await guardarEjecucion({ duraciones: dur }, $("#seg-msg"));
-        if (segVista === "tablero") pintarSegTablero();
-        return;
+    $("#pagos-detalle").addEventListener("change", () => { if ($("#pagos-hitos")) { pagosEdit = leerHitosDOM(); guardarHitos(); } });
+    $("#pagos-detalle").addEventListener("click", (e) => {
+      const c = pagosCache.find((x) => x.id === pagosSelId); if (!c) return;
+      const del = e.target.closest("[data-pago-del]");
+      if (del) { pagosEdit = leerHitosDOM(); pagosEdit.splice(+del.closest(".pago-row").dataset.idx, 1); guardarHitos(); return; }
+      const cancel = e.target.closest("[data-gen-cancel]");
+      if (cancel) { $("#pagos-gen-panel").innerHTML = ""; return; }
+      const genDo = e.target.closest("[data-gen-do]");
+      if (genDo) {
+        pagosEdit = leerHitosDOM();
+        if (genDo.dataset.genDo === "pct") {
+          const pct = Number($("#gen-pct").value) || 0; if (pct <= 0) return;
+          const con = ($("#gen-pct-con").value || "").trim() || (pct + "% del proyecto");
+          pagosEdit.push({ concepto: con, monto: Math.round(c.total * pct / 100), estado: "pendiente", fecha: "" });
+        } else {
+          const idxs = $$('#pagos-gen-panel [data-gen-fase]:checked').map((x) => +x.dataset.genFase);
+          if (!idxs.length) return;
+          const monto = idxs.reduce((a, i) => a + Math.round(Number((c.fases[i] || {}).valor) || 0), 0);
+          const con = ($("#gen-agr-con").value || "").trim() || "Grupo de fases";
+          pagosEdit.push({ concepto: con, monto, estado: "pendiente", fecha: "" });
+        }
+        $("#pagos-gen-panel").innerHTML = "";
+        guardarHitos(); return;
       }
-      const sel = e.target.closest(".avance-select"); if (!sel) return;
-      const k = sel.dataset.faseKey;
-      segCot.avance = segCot.avance || {}; segCot.avance[k] = sel.value;
-      const msg = $("#seg-msg"); msg.className = "msg"; msg.textContent = "Guardando…";
-      const res = await api("/api/cotizaciones/" + segId + "/avance", { method: "POST", body: JSON.stringify({ faseKey: k, estado: sel.value }) });
-      if (!res.ok) { msg.className = "msg msg--err"; msg.textContent = res.body.error || "No se pudo guardar."; return; }
-      sel.className = "avance-select avance--" + sel.value;
-      msg.className = "msg msg--ok"; msg.textContent = "Avance guardado ✓";
-    });
-
-    $("#seg-pagos").addEventListener("change", () => guardarPagos());
-    $("#seg-pagos").addEventListener("click", (e) => {
-      const del = e.target.closest("[data-pago-del]"); if (!del) return;
-      segPagos = leerPagosDOM();
-      segPagos.splice(+del.closest(".pago-row").dataset.idx, 1);
-      pintarPagos();
-      guardarEjecucion({ pagos: segPagos }, $("#seg-pagos-msg"));
-    });
-    $("#seg-pago-add").addEventListener("click", () => {
-      segPagos = leerPagosDOM();
-      segPagos.push({ concepto: "", monto: 0, estado: "pendiente", fecha: "" });
-      pintarPagos();
-    });
-    $("#seg-pago-5050").addEventListener("click", () => {
-      const total = (segCot && segCot.total) || 0;
-      const mitad = Math.round(total / 2);
-      segPagos = [
-        { concepto: "Inicio 50%", monto: mitad, estado: "pendiente", fecha: "" },
-        { concepto: "Contra entrega 50%", monto: total - mitad, estado: "pendiente", fecha: "" },
-      ];
-      pintarPagos();
-      guardarEjecucion({ pagos: segPagos }, $("#seg-pagos-msg"));
-    });
-
-    // Drag & drop del tablero por proyecto (dentro de Seguimiento).
-    const contSegTab = $("#seg-tablero");
-    let arrastrandoSeg = null;
-    contSegTab.addEventListener("dragstart", (e) => {
-      const card = e.target.closest(".kcard--fase"); if (!card) return;
-      arrastrandoSeg = { faseKey: card.dataset.fase }; card.classList.add("dragging");
-      e.dataTransfer.effectAllowed = "move";
-      try { e.dataTransfer.setData("text/plain", card.dataset.fase); } catch (_) {}
-    });
-    contSegTab.addEventListener("dragend", () => {
-      contSegTab.querySelectorAll(".dragging").forEach((k) => k.classList.remove("dragging"));
-      contSegTab.querySelectorAll(".kcol.dragover").forEach((k) => k.classList.remove("dragover"));
-      arrastrandoSeg = null;
-    });
-    contSegTab.addEventListener("dragover", (e) => {
-      const col = e.target.closest(".kcol"); if (!col || !arrastrandoSeg) return;
-      e.preventDefault();
-      contSegTab.querySelectorAll(".kcol.dragover").forEach((k) => { if (k !== col) k.classList.remove("dragover"); });
-      col.classList.add("dragover");
-    });
-    contSegTab.addEventListener("dragleave", (e) => {
-      const col = e.target.closest(".kcol"); if (col && !col.contains(e.relatedTarget)) col.classList.remove("dragover");
-    });
-    contSegTab.addEventListener("drop", (e) => {
-      const col = e.target.closest(".kcol"); if (!col || !arrastrandoSeg) return;
-      e.preventDefault(); const key = arrastrandoSeg.faseKey; arrastrandoSeg = null;
-      moverFaseSeg(key, COL_AVANCE[col.dataset.col]);
-    });
-    contSegTab.addEventListener("click", (e) => {
-      const mv = e.target.closest("[data-mv]"); if (!mv) return;
-      const card = mv.closest(".kcard--fase"); if (!card) return;
-      const i = ORDEN_AVANCE.indexOf(card.dataset.avance);
-      const j = mv.dataset.mv === "next" ? i + 1 : i - 1;
-      if (j < 0 || j > 2) return;
-      moverFaseSeg(card.dataset.fase, ORDEN_AVANCE[j]);
+      const gen = e.target.closest("[data-gen]"); if (!gen) return;
+      pagosEdit = leerHitosDOM();
+      const tipo = gen.dataset.gen;
+      if (tipo === "add") { pagosEdit.push({ concepto: "", monto: 0, estado: "pendiente", fecha: "" }); pintarHitos(); return; }
+      if (tipo === "pct") { renderGenPct(); return; }
+      if (tipo === "agrupar") { renderGenAgrupar(c); return; }
+      if (tipo === "5050") {
+        const mitad = Math.round(c.total / 2);
+        pagosEdit = [{ concepto: "Inicio 50%", monto: mitad, estado: "pendiente", fecha: "" }, { concepto: "Contra entrega 50%", monto: c.total - mitad, estado: "pendiente", fecha: "" }];
+      } else if (tipo === "fase") {
+        const fases = c.fases || []; const conValor = fases.some((f) => Math.round(Number(f.valor) || 0) > 0);
+        pagosEdit = fases.map((f, i) => ({ concepto: f.titulo || ("Fase " + (i + 1)), monto: conValor ? Math.round(Number(f.valor) || 0) : Math.round(c.total / (fases.length || 1)), estado: "pendiente", fecha: "" }));
+      }
+      guardarHitos();
     });
 
     function poblarSelectClientes(seleccionado) {
@@ -1459,8 +1484,15 @@
           </div></div>
         <div class="campo"><label>Título de la fase</label>
           <input data-fase="titulo" placeholder="FASE 1: Diseño de interfaz…"></div>
-        <div class="campo"><label>Tiempo estimado</label>
-          <input data-fase="dedicacion" placeholder="Semanas 1 a 3 (3 semanas)"></div>
+        <div class="fila">
+          <div class="campo"><label>Tiempo estimado</label>
+            <div class="estimado-row">
+              <input type="number" min="0" step="1" data-fase="estimado-cant" placeholder="2" class="estimado-cant">
+              <select data-fase="estimado-unidad" class="estimado-unidad"></select>
+            </div></div>
+          <div class="campo"><label>Valor de la fase (opcional)</label>
+            <input type="number" min="0" step="1000" data-fase="valor" placeholder="$ solo para la página de Pagos"></div>
+        </div>
         <div class="campo"><label>Descripción de la fase (opcional)</label>
           <div class="rt rt--sm">
             <div class="rt__bar">
@@ -1478,7 +1510,14 @@
         <div class="campo"><label>Notas de la fase (opcional)</label>
           <textarea data-fase="notas" rows="2" placeholder="Aclaraciones o notas de esta fase."></textarea></div>`;
       div.querySelector('[data-fase="titulo"]').value = fase.titulo ?? "";
-      div.querySelector('[data-fase="dedicacion"]').value = fase.dedicacion ?? "";
+      // Tiempo estimado estructurado (con fallback a texto libre viejo).
+      const selU = div.querySelector('[data-fase="estimado-unidad"]');
+      selU.innerHTML = UNIDADES.map((u) => `<option value="${u.v}">${u.label}</option>`).join("");
+      const est = (fase.estimado && typeof fase.estimado === "object") ? fase.estimado : parseDedicacion(fase.dedicacion);
+      div.querySelector('[data-fase="estimado-cant"]').value = est && est.cantidad > 0 ? est.cantidad : "";
+      selU.value = (est && UNIDAD[est.unidad]) ? est.unidad : "semanas";
+      div.dataset.dedicacionOrig = fase.dedicacion ?? ""; // preserva el texto viejo si no se re-edita
+      div.querySelector('[data-fase="valor"]').value = fase.valor ? fase.valor : "";
       setRich(div.querySelector('[data-fase="descripcion"]'), fase.descripcion);
       div.querySelector('[data-fase="entregable"]').value = fase.entregable ?? "";
       div.querySelector('[data-fase="notas"]').value = fase.notas ?? "";
@@ -1583,10 +1622,19 @@
           titulo: r.querySelector('[data-punto="titulo"]').value.trim(),
           detalle: r.querySelector('[data-punto="detalle"]').value.trim(),
         })).filter((p) => p.titulo || p.detalle);
-        return { id: div.dataset.faseId, titulo: g('[data-fase="titulo"]'), dedicacion: g('[data-fase="dedicacion"]'),
+        const cant = Number(div.querySelector('[data-fase="estimado-cant"]').value) || 0;
+        const unidad = div.querySelector('[data-fase="estimado-unidad"]').value;
+        const estimado = cant > 0 && UNIDAD[unidad] ? { cantidad: cant, unidad } : null;
+        // Si hay estimado, dedicacion = texto legible derivado; si no, conserva el viejo.
+        const dedicacion = estimado ? formatDuracion(estimado) : (div.dataset.dedicacionOrig || "");
+        const valor = Math.round(Number(div.querySelector('[data-fase="valor"]').value) || 0);
+        const f = { id: div.dataset.faseId, titulo: g('[data-fase="titulo"]'), dedicacion,
           descripcion: getRich(div.querySelector('[data-fase="descripcion"]')), puntos,
           entregable: g('[data-fase="entregable"]'), notas: g('[data-fase="notas"]') };
-      }).filter((f) => f.titulo || f.descripcion || f.puntos.length || f.entregable || f.notas);
+        if (estimado) f.estimado = estimado;
+        if (valor > 0) f.valor = valor;
+        return f;
+      }).filter((f) => f.titulo || f.descripcion || f.puntos.length || f.entregable || f.notas || f.estimado || f.valor);
       data.items = $$(".item-row").map((r) => ({
         concepto: r.querySelector('[data-item="concepto"]').value.trim(),
         detalle: r.querySelector('[data-item="detalle"]').value.trim(),
