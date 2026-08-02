@@ -15,17 +15,23 @@
 import { json } from "../../_lib/http.js";
 
 const ESTADOS_PAGO = new Set(["pendiente", "pagado"]);
+const MODELOS_PAGO = new Set(["5050", "fase", "porcentaje", "libre"]);
 
 /** Normaliza la lista de pagos a una forma segura y consistente. */
 function sanearPagos(lista) {
   if (!Array.isArray(lista)) return [];
-  return lista.map((p, i) => ({
-    id: (p?.id ?? "").toString() || "p" + (i + 1),
-    concepto: (p?.concepto ?? "").toString().slice(0, 200),
-    monto: Math.round(Number(p?.monto) || 0),
-    estado: ESTADOS_PAGO.has(p?.estado) ? p.estado : "pendiente",
-    fecha: (p?.fecha ?? "").toString(),
-  }));
+  return lista.map((p, i) => {
+    const out = {
+      id: (p?.id ?? "").toString() || "p" + (i + 1),
+      concepto: (p?.concepto ?? "").toString().slice(0, 200),
+      monto: Math.round(Number(p?.monto) || 0),
+      estado: ESTADOS_PAGO.has(p?.estado) ? p.estado : "pendiente",
+      fecha: (p?.fecha ?? "").toString(),
+    };
+    // % de la cuota (solo modelo "porcentaje"); se conserva si viene.
+    if (p?.pct != null && !Number.isNaN(Number(p.pct))) out.pct = Math.max(0, Math.min(100, Math.round(Number(p.pct))));
+    return out;
+  });
 }
 
 /** Normaliza el mapa de duraciones: faseKey -> entero de días (>= 0). */
@@ -60,6 +66,9 @@ export async function onRequestPost({ params, request, env }) {
   }
   if (Object.prototype.hasOwnProperty.call(body, "pagos")) {
     ej.pagos = sanearPagos(body.pagos);
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "pagosModelo")) {
+    ej.pagosModelo = MODELOS_PAGO.has(body.pagosModelo) ? body.pagosModelo : "libre";
   }
 
   await env.DB.prepare(`UPDATE cotizaciones SET ejecucion = ?, updated_at = ? WHERE id = ?`)

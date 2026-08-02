@@ -315,14 +315,20 @@
     .pago-item__bar span { display: block; height: 100%; background: var(--ak-color-state-success,#0f7b4f); }
     .fase-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
     .fase-chip { font-size: 12px; background: var(--ak-color-cream-100,#f7f5f1); border: 1px solid var(--ak-color-cream-300,#e4e0d7); border-radius: 999px; padding: .18rem .6rem; }
-    .pagos-gen { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
-    .gen-panel { background: var(--ak-color-cream-50,#fbf9f6); border: 1px solid var(--ak-color-cream-300,#e4e0d7); border-radius: 8px; padding: 1rem; margin-top: .75rem; }
-    .gen-panel strong { font-size: 13px; display: block; margin-bottom: .6rem; }
-    .gen-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: .6rem; }
-    .gen-row input[type="text"] { flex: 1; min-width: 8rem; margin: 0; }
-    .gen-fases { display: flex; flex-direction: column; gap: .35rem; }
-    .gen-chk { display: flex; align-items: center; gap: .5rem; font-size: 14px; }
-    .gen-chk input { width: auto; margin: 0; }
+    .pagos-acciones { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+    /* Selector de método de pago (exclusivo) */
+    .pagos-metodos { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .5rem; }
+    .metodo-btn { font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: .4rem .85rem;
+      border-radius: 999px; border: 1px solid var(--ak-color-cream-400,#cfc8ba); background: #fff; color: var(--ak-color-ink-500,#454545); }
+    .metodo-btn:hover { background: var(--ak-color-cream-100,#f7f5f1); }
+    .metodo-btn.activo { background: var(--ak-color-ink-900,#0a0a0a); color: #fff; border-color: var(--ak-color-ink-900,#0a0a0a); }
+    /* Celdas de hito no editables (concepto/monto fijos según método) */
+    .hito-fijo { display: flex; align-items: center; padding: .55rem .7rem; font-size: 14px; min-height: 2.4rem;
+      border: 1px solid transparent; color: var(--ak-semantic-fg-default,#0a0a0a); overflow: hidden; }
+    .hito-monto { font-weight: 600; }
+    .hito-pct { display: flex; align-items: center; gap: .4rem; }
+    .hito-pct .pct-in { width: 4rem; margin: 0; text-align: center; }
+    .hito-pct .hito-monto { margin-left: auto; font-size: 13px; color: var(--ak-color-ink-500,#454545); }
   </style>
 </head>
 <body>
@@ -1240,10 +1246,23 @@
       abrirPagoDetalle(b.dataset.pagoSel);
     });
 
+    // Métodos de pago EXCLUSIVOS. Elegir uno define la estructura; cambiar de
+    // método limpia y regenera (pide confirmación solo si hay pagos "pagado").
+    const METODOS = [
+      { v: "5050", label: "50 / 50" },
+      { v: "fase", label: "Por fase" },
+      { v: "porcentaje", label: "Por porcentaje" },
+      { v: "libre", label: "Personalizado" },
+    ];
+    const esMetodo = (m) => METODOS.some((x) => x.v === m);
+    let pagosModelo = "libre";
+
     function abrirPagoDetalle(id) {
       pagosSelId = id;
       const c = pagosCache.find((x) => x.id === id); if (!c) return;
-      pagosEdit = Array.isArray((c.ejecucion || {}).pagos) ? c.ejecucion.pagos.map((p) => ({ ...p })) : [];
+      const ej = c.ejecucion || {};
+      pagosEdit = Array.isArray(ej.pagos) ? ej.pagos.map((p) => ({ ...p })) : [];
+      pagosModelo = esMetodo(ej.pagosModelo) ? ej.pagosModelo : "libre"; // legado → personalizado (conserva)
       pintarPagosLista();
       const fases = c.fases || [];
       const sumaFases = fases.reduce((a, f) => a + Math.round(Number(f.valor) || 0), 0);
@@ -1256,117 +1275,107 @@
         <h3 class="pagos-h3">Fases y valores <span class="ayuda" style="font-weight:400;text-transform:none;letter-spacing:0">(el valor por fase se edita en el editor de la cotización)</span></h3>
         <div class="fase-chips">${chips || '<span class="ayuda">Sin fases.</span>'}</div>
         ${aviso}
-        <h3 class="pagos-h3">Hitos de pago</h3>
+        <h3 class="pagos-h3">Forma de pago</h3>
+        <div class="pagos-metodos" id="pagos-metodos">${METODOS.map((m) => `<button class="metodo-btn" data-metodo="${m.v}">${m.label}</button>`).join("")}</div>
+        <p class="ayuda" id="pagos-metodo-ayuda" style="margin:0 0 .75rem"></p>
         <div id="pagos-hitos"></div>
         <div class="pagos-total" id="pagos-hitos-total"></div>
-        <div class="pagos-gen">
-          <span class="ayuda" style="align-self:center">Generar:</span>
-          <button class="btn btn--ghost btn--sm" data-gen="5050">50 / 50</button>
-          <button class="btn btn--ghost btn--sm" data-gen="fase">Una por fase</button>
-          <button class="btn btn--ghost btn--sm" data-gen="agrupar">Agrupar fases…</button>
-          <button class="btn btn--ghost btn--sm" data-gen="pct">Por %…</button>
-          <span class="sep" style="flex:1"></span>
-          <button class="btn btn--ghost btn--sm" data-gen="add">+ Hito</button>
-        </div>
-        <div id="pagos-gen-panel"></div>
+        <div class="pagos-acciones" id="pagos-acciones"></div>
         <span class="msg" id="pagos-msg"></span>`;
-      pintarHitos();
+      pintarHitosMetodo();
     }
 
-    function hitoRowHTML(p, i) {
-      return `<div class="pago-row" data-idx="${i}">
-        <input data-pago="concepto" placeholder="Concepto (ej. Inicio 50%)" value="${esc(p.concepto || "")}">
-        <input data-pago="monto" type="number" min="0" placeholder="Monto" value="${p.monto || ""}">
-        <select data-pago="estado" class="avance-select ${p.estado === "pagado" ? "avance--completado" : "avance--pendiente"}" style="background-image:none;padding-right:.7rem">
-          <option value="pendiente"${p.estado !== "pagado" ? " selected" : ""}>Pendiente</option>
-          <option value="pagado"${p.estado === "pagado" ? " selected" : ""}>Pagado</option>
-        </select>
-        <input data-pago="fecha" type="date" value="${esc(p.fecha || "")}">
-        <button class="x" data-pago-del title="Quitar">✕</button>
-      </div>`;
+    const AYUDA_METODO = {
+      "5050": "Dos pagos iguales: inicio y contra entrega. Solo defines cuándo se paga cada uno.",
+      "fase": "Un pago por cada fase, con el valor de la fase (se edita en el editor de la cotización).",
+      "porcentaje": "Cuotas por porcentaje del total (deberían sumar 100%). Ajusta el % y las fechas.",
+      "libre": "Hitos a medida: defines concepto, monto y fecha de cada pago (puedes agrupar fases manualmente).",
+    };
+
+    /** Fila de hito según el método. concepto/monto son editables solo donde aplica. */
+    function hitoRowHTML(p, i, modo) {
+      const conc = (modo === "5050" || modo === "fase")
+        ? `<div class="hito-fijo">${esc(p.concepto || "")}</div>`
+        : `<input data-pago="concepto" data-idx="${i}" placeholder="Concepto" value="${esc(p.concepto || "")}">`;
+      let montoCell;
+      if (modo === "porcentaje") {
+        montoCell = `<div class="hito-pct"><input type="number" min="0" max="100" step="1" data-pago="pct" data-idx="${i}" value="${p.pct != null ? p.pct : ""}" class="pct-in"><span>%</span><span class="hito-monto">${clp(p.monto)}</span></div>`;
+      } else if (modo === "libre") {
+        montoCell = `<input type="number" min="0" data-pago="monto" data-idx="${i}" placeholder="Monto" value="${p.monto || ""}">`;
+      } else {
+        montoCell = `<div class="hito-fijo hito-monto">${clp(p.monto)}</div>`;
+      }
+      const estado = `<select data-pago="estado" data-idx="${i}" class="avance-select ${p.estado === "pagado" ? "avance--completado" : "avance--pendiente"}" style="background-image:none;padding-right:.7rem"><option value="pendiente"${p.estado !== "pagado" ? " selected" : ""}>Pendiente</option><option value="pagado"${p.estado === "pagado" ? " selected" : ""}>Pagado</option></select>`;
+      const fecha = `<input type="date" data-pago="fecha" data-idx="${i}" value="${esc(p.fecha || "")}">`;
+      const del = (modo === "porcentaje" || modo === "libre") ? `<button class="x" data-pago-del data-idx="${i}" title="Quitar">✕</button>` : `<span></span>`;
+      return `<div class="pago-row" data-idx="${i}">${conc}${montoCell}${estado}${fecha}${del}</div>`;
     }
-    function pintarHitos() {
+    function pintarHitosMetodo() {
+      const c = pagosCache.find((x) => x.id === pagosSelId); if (!c) return;
+      if (pagosModelo === "porcentaje") pagosEdit.forEach((p) => { p.monto = Math.round(c.total * (Number(p.pct) || 0) / 100); });
+      $$("#pagos-metodos [data-metodo]").forEach((b) => b.classList.toggle("activo", b.dataset.metodo === pagosModelo));
+      const ay = $("#pagos-metodo-ayuda"); if (ay) ay.textContent = AYUDA_METODO[pagosModelo] || "";
       const cont = $("#pagos-hitos"); if (!cont) return;
-      cont.innerHTML = pagosEdit.length ? pagosEdit.map(hitoRowHTML).join("") : '<p class="ayuda" style="margin:0">Aún no hay hitos. Usa un generador o “+ Hito”.</p>';
+      cont.innerHTML = pagosEdit.length
+        ? pagosEdit.map((p, i) => hitoRowHTML(p, i, pagosModelo)).join("")
+        : '<p class="ayuda" style="margin:0">Aún no hay pagos en este método.</p>';
       const rp = pagosResumen(pagosEdit);
-      $("#pagos-hitos-total").innerHTML = `<span>Pagado <strong>${clp(rp.pagado)}</strong></span><span>Pendiente <strong>${clp(rp.pendiente)}</strong></span><span>Total <strong>${clp(rp.total)}</strong></span>`;
-    }
-    function leerHitosDOM() {
-      return $$("#pagos-hitos .pago-row").map((row) => {
-        const prev = pagosEdit[+row.dataset.idx] || {};
-        return { id: prev.id, concepto: row.querySelector('[data-pago="concepto"]').value, monto: Math.round(Number(row.querySelector('[data-pago="monto"]').value) || 0), estado: row.querySelector('[data-pago="estado"]').value === "pagado" ? "pagado" : "pendiente", fecha: row.querySelector('[data-pago="fecha"]').value };
-      });
+      let extra = "";
+      if (pagosModelo === "porcentaje") {
+        const sp = pagosEdit.reduce((a, p) => a + (Number(p.pct) || 0), 0);
+        extra = `<span style="${sp !== 100 ? "color:#8a5a00;font-weight:600" : ""}">Suma ${sp}%${sp !== 100 ? " ⚠" : " ✓"}</span>`;
+      }
+      $("#pagos-hitos-total").innerHTML = extra + `<span>Pagado <strong>${clp(rp.pagado)}</strong></span><span>Pendiente <strong>${clp(rp.pendiente)}</strong></span><span>Total <strong>${clp(rp.total)}</strong></span>`;
+      const acc = $("#pagos-acciones");
+      acc.innerHTML = pagosModelo === "porcentaje" ? '<button class="btn btn--ghost btn--sm" data-add-cuota>+ Cuota</button>'
+        : pagosModelo === "libre" ? '<button class="btn btn--ghost btn--sm" data-add-hito>+ Hito</button>' : "";
     }
     async function guardarHitos() {
-      pintarHitos();
-      const msg = $("#pagos-msg"); if (msg) { msg.className = "msg"; msg.textContent = "Guardando…"; }
-      const ej = await guardarEjecucion(pagosSelId, { pagos: pagosEdit });
       const c = pagosCache.find((x) => x.id === pagosSelId);
+      if (pagosModelo === "porcentaje" && c) pagosEdit.forEach((p) => { p.monto = Math.round(c.total * (Number(p.pct) || 0) / 100); });
+      pintarHitosMetodo();
+      const msg = $("#pagos-msg"); if (msg) { msg.className = "msg"; msg.textContent = "Guardando…"; }
+      const ej = await guardarEjecucion(pagosSelId, { pagos: pagosEdit, pagosModelo });
       if (ej && c) c.ejecucion = ej;
       if (msg) { msg.className = "msg msg--ok"; msg.textContent = "Guardado ✓"; }
       pintarPagosCalc(); pintarPagosLista();
     }
 
-    function renderGenPct() {
-      $("#pagos-gen-panel").innerHTML = `<div class="gen-panel">
-        <strong>Agregar hito por porcentaje del total</strong>
-        <div class="gen-row">
-          <input type="number" min="0" max="100" id="gen-pct" placeholder="%" style="width:6rem">
-          <input type="text" id="gen-pct-con" placeholder="Concepto (opcional)">
-          <button class="btn btn--sm" data-gen-do="pct">Agregar</button>
-          <button class="btn btn--ghost btn--sm" data-gen-cancel>Cancelar</button>
-        </div></div>`;
+    /** Estructura por defecto de cada método (al elegirlo o cambiarlo). */
+    function generarPorMetodo(modo, c) {
+      if (modo === "5050") { const mit = Math.round(c.total / 2); return [{ concepto: "Inicio 50%", monto: mit, estado: "pendiente", fecha: "" }, { concepto: "Contra entrega 50%", monto: c.total - mit, estado: "pendiente", fecha: "" }]; }
+      if (modo === "fase") { const fs = c.fases || []; const cv = fs.some((f) => Math.round(Number(f.valor) || 0) > 0); return fs.map((f, i) => ({ concepto: f.titulo || ("Fase " + (i + 1)), monto: cv ? Math.round(Number(f.valor) || 0) : Math.round(c.total / (fs.length || 1)), estado: "pendiente", fecha: "" })); }
+      if (modo === "porcentaje") { const mit = Math.round(c.total / 2); return [{ concepto: "Anticipo", pct: 50, monto: mit, estado: "pendiente", fecha: "" }, { concepto: "Saldo", pct: 50, monto: c.total - mit, estado: "pendiente", fecha: "" }]; }
+      return []; // libre: empieza vacío, se agrega con "+ Hito"
     }
-    function renderGenAgrupar(c) {
-      const chks = (c.fases || []).map((f, i) => `<label class="gen-chk"><input type="checkbox" data-gen-fase="${i}"> ${esc(f.titulo || ("Fase " + (i + 1)))} ${f.valor ? "· " + clp(f.valor) : '<span style="opacity:.55">sin valor</span>'}</label>`).join("");
-      $("#pagos-gen-panel").innerHTML = `<div class="gen-panel">
-        <strong>Agrupar fases en un hito</strong>
-        <div class="gen-fases">${chks || '<span class="ayuda">Sin fases.</span>'}</div>
-        <div class="gen-row">
-          <input type="text" id="gen-agr-con" placeholder="Concepto (ej. Etapa 1)">
-          <button class="btn btn--sm" data-gen-do="agrupar">Crear hito</button>
-          <button class="btn btn--ghost btn--sm" data-gen-cancel>Cancelar</button>
-        </div></div>`;
+    function cambiarMetodo(nuevo, c) {
+      if (nuevo === pagosModelo) return;
+      const hayPagados = pagosEdit.some((p) => p.estado === "pagado");
+      if (hayPagados && !confirm("Hay pagos marcados como pagados. Cambiar de método descartará la estructura actual. ¿Continuar?")) return;
+      pagosModelo = nuevo;
+      pagosEdit = generarPorMetodo(nuevo, c);
+      guardarHitos();
     }
 
-    $("#pagos-detalle").addEventListener("change", () => { if ($("#pagos-hitos")) { pagosEdit = leerHitosDOM(); guardarHitos(); } });
+    $("#pagos-detalle").addEventListener("change", (e) => {
+      const el = e.target.closest("[data-pago]"); if (!el) return;
+      const i = +el.dataset.idx, campo = el.dataset.pago;
+      if (!pagosEdit[i]) return;
+      if (campo === "pct") pagosEdit[i].pct = Math.max(0, Math.min(100, Math.round(Number(el.value) || 0)));
+      else if (campo === "monto") pagosEdit[i].monto = Math.round(Number(el.value) || 0);
+      else if (campo === "estado") pagosEdit[i].estado = el.value === "pagado" ? "pagado" : "pendiente";
+      else if (campo === "fecha") pagosEdit[i].fecha = el.value;
+      else if (campo === "concepto") pagosEdit[i].concepto = el.value;
+      guardarHitos();
+    });
     $("#pagos-detalle").addEventListener("click", (e) => {
       const c = pagosCache.find((x) => x.id === pagosSelId); if (!c) return;
+      const met = e.target.closest("[data-metodo]");
+      if (met) { cambiarMetodo(met.dataset.metodo, c); return; }
       const del = e.target.closest("[data-pago-del]");
-      if (del) { pagosEdit = leerHitosDOM(); pagosEdit.splice(+del.closest(".pago-row").dataset.idx, 1); guardarHitos(); return; }
-      const cancel = e.target.closest("[data-gen-cancel]");
-      if (cancel) { $("#pagos-gen-panel").innerHTML = ""; return; }
-      const genDo = e.target.closest("[data-gen-do]");
-      if (genDo) {
-        pagosEdit = leerHitosDOM();
-        if (genDo.dataset.genDo === "pct") {
-          const pct = Number($("#gen-pct").value) || 0; if (pct <= 0) return;
-          const con = ($("#gen-pct-con").value || "").trim() || (pct + "% del proyecto");
-          pagosEdit.push({ concepto: con, monto: Math.round(c.total * pct / 100), estado: "pendiente", fecha: "" });
-        } else {
-          const idxs = $$('#pagos-gen-panel [data-gen-fase]:checked').map((x) => +x.dataset.genFase);
-          if (!idxs.length) return;
-          const monto = idxs.reduce((a, i) => a + Math.round(Number((c.fases[i] || {}).valor) || 0), 0);
-          const con = ($("#gen-agr-con").value || "").trim() || "Grupo de fases";
-          pagosEdit.push({ concepto: con, monto, estado: "pendiente", fecha: "" });
-        }
-        $("#pagos-gen-panel").innerHTML = "";
-        guardarHitos(); return;
-      }
-      const gen = e.target.closest("[data-gen]"); if (!gen) return;
-      pagosEdit = leerHitosDOM();
-      const tipo = gen.dataset.gen;
-      if (tipo === "add") { pagosEdit.push({ concepto: "", monto: 0, estado: "pendiente", fecha: "" }); pintarHitos(); return; }
-      if (tipo === "pct") { renderGenPct(); return; }
-      if (tipo === "agrupar") { renderGenAgrupar(c); return; }
-      if (tipo === "5050") {
-        const mitad = Math.round(c.total / 2);
-        pagosEdit = [{ concepto: "Inicio 50%", monto: mitad, estado: "pendiente", fecha: "" }, { concepto: "Contra entrega 50%", monto: c.total - mitad, estado: "pendiente", fecha: "" }];
-      } else if (tipo === "fase") {
-        const fases = c.fases || []; const conValor = fases.some((f) => Math.round(Number(f.valor) || 0) > 0);
-        pagosEdit = fases.map((f, i) => ({ concepto: f.titulo || ("Fase " + (i + 1)), monto: conValor ? Math.round(Number(f.valor) || 0) : Math.round(c.total / (fases.length || 1)), estado: "pendiente", fecha: "" }));
-      }
-      guardarHitos();
+      if (del) { pagosEdit.splice(+del.dataset.idx, 1); guardarHitos(); return; }
+      if (e.target.closest("[data-add-cuota]")) { pagosEdit.push({ concepto: "Cuota " + (pagosEdit.length + 1), pct: 0, monto: 0, estado: "pendiente", fecha: "" }); guardarHitos(); return; }
+      if (e.target.closest("[data-add-hito]")) { pagosEdit.push({ concepto: "", monto: 0, estado: "pendiente", fecha: "" }); guardarHitos(); return; }
     });
 
     function poblarSelectClientes(seleccionado) {
