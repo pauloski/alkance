@@ -45,10 +45,12 @@ export async function onRequestGet({ params, env, request }) {
 
   let avance = {};
   try { avance = JSON.parse(c.avance || "{}"); } catch { avance = {}; }
+  let ejecucion = {};
+  try { ejecucion = JSON.parse(c.ejecucion || "{}"); } catch { ejecucion = {}; }
 
   return json({
     ok: true,
-    cotizacion: { ...c, data: JSON.parse(c.data), avance },
+    cotizacion: { ...c, data: JSON.parse(c.data), avance, ejecucion },
     revisiones: revisiones ?? [],
   });
 }

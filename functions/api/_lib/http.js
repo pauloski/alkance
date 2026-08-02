@@ -27,6 +27,16 @@ export function escapar(s) {
   );
 }
 
+/** Firma del estado de ejecución que ve el cliente. Debe construirse IDÉNTICA en
+ *  /c/:id (data-firma del body) y en /c/:id/estado (poll), o el portal recargaría
+ *  en bucle. Incluye estado, versión, avance y la planificación visible
+ *  (fechaInicio + duraciones). Los pagos son internos y NO entran en la firma. */
+export function firmaEstado({ estado, version, avance, ejecucion }) {
+  const ej = ejecucion && typeof ejecucion === "object" ? ejecucion : {};
+  const plan = { fechaInicio: ej.fechaInicio || "", duraciones: ej.duraciones || {} };
+  return `${estado}|${version}|${JSON.stringify(avance || {})}|${JSON.stringify(plan)}`;
+}
+
 /** Suma los montos de los ítems de una cotización (números, sin decimales). */
 export function totalDeItems(data) {
   const items = Array.isArray(data?.items) ? data.items : [];

@@ -8,7 +8,7 @@
  * Hereda el design system del sitio (src/styles/tokens.css) y añade encima un
  * estilo propio de documento pensado para pantalla y para papel A4.
  */
-import { clp, escapar, totalDeItems } from "../../api/_lib/http.js";
+import { clp, escapar, firmaEstado, totalDeItems } from "../../api/_lib/http.js";
 
 /** Saneador para el HTML del texto enriquecido guardado desde el panel.
  *  Deja solo una lista blanca de etiquetas, SIN atributos (mata on*, style,
@@ -150,6 +150,47 @@ function renderFooter(footer) {
 const ETIQUETA_AVANCE = { pendiente: "Pendiente", proceso: "En proceso", completado: "Completado" };
 const faseKey = (f, i) => (f && f.id) || "idx:" + i;
 
+const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+const DIA_MS = 86400000;
+
+/** Parsea "YYYY-MM-DD" como fecha local a medianoche (evita corrimiento por zona). */
+function fechaLocal(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ""));
+  if (!m) return null;
+  return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+}
+
+/** Ventanas estimadas por fase, en cascada desde fechaInicio usando duraciones
+ *  (días por faseKey). Las fases sin duración se omiten y no cortan la cadena.
+ *  Devuelve { faseKey: { inicio: Date, fin: Date } }. */
+function ventanasFases(fechaInicio, fases, duraciones) {
+  const inicio = fechaLocal(fechaInicio);
+  const dur = duraciones && typeof duraciones === "object" ? duraciones : {};
+  const out = {};
+  if (!inicio) return out;
+  let cursor = inicio.getTime();
+  fases.forEach((f, i) => {
+    const k = faseKey(f, i);
+    const dias = Math.round(Number(dur[k]) || 0);
+    if (dias <= 0) return;
+    const ini = cursor;
+    const fin = cursor + (dias - 1) * DIA_MS;
+    out[k] = { inicio: new Date(ini), fin: new Date(fin) };
+    cursor = fin + DIA_MS;
+  });
+  return out;
+}
+
+/** "15 al 22 de ago 2026" (o un solo día si inicio == fin). */
+function formatVentana(v) {
+  if (!v) return "";
+  const a = v.inicio, b = v.fin;
+  const mismoMes = a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear();
+  if (a.getTime() === b.getTime()) return `${a.getDate()} de ${MESES[a.getMonth()]} ${a.getFullYear()}`;
+  if (mismoMes) return `${a.getDate()} al ${b.getDate()} de ${MESES[a.getMonth()]} ${a.getFullYear()}`;
+  return `${a.getDate()} ${MESES[a.getMonth()]} al ${b.getDate()} ${MESES[b.getMonth()]} ${b.getFullYear()}`;
+}
+
 /** Datos de contacto con valores por defecto (editables en el panel > Emisor). */
 function contactoConDefaults(contacto) {
   return {
@@ -173,8 +214,9 @@ function renderContacto(cont) {
 
 /** Línea de tiempo vertical (Gantt). Fase 0 = evaluación del presupuesto (con los
  *  hitos de versión); luego las fases del proyecto, bloqueadas hasta aprobar. */
-function renderTimeline({ estado, version, revisiones, fases, avance }) {
+function renderTimeline({ estado, version, revisiones, fases, avance, ejecucion }) {
   const aprobado = estado === "aprobada";
+  const ventanas = ventanasFases(ejecucion?.fechaInicio, fases, ejecucion?.duraciones);
   const F0 = {
     borrador: { c: "borrador", l: "En preparación" },
     enviada: { c: "proceso", l: "En evaluación" },
@@ -209,6 +251,7 @@ function renderTimeline({ estado, version, revisiones, fases, avance }) {
             <span class="paso__chip chip--${av}">${escapar(etiqueta)}</span>
           </div>
           ${f.dedicacion ? `<span class="paso__meta">${escapar(f.dedicacion)}</span>` : ""}
+          ${ventanas[k] ? `<span class="paso__meta">Fecha estimada: ${escapar(formatVentana(ventanas[k]))}</span>` : ""}
           ${f.entregable ? `<span class="paso__meta">Entregable: ${escapar(f.entregable)}</span>` : ""}
         </div>
       </li>`;
@@ -251,7 +294,7 @@ function paginaNoEncontrada() {
 export async function onRequestGet({ params, env }) {
   if (!env.DB) return paginaNoEncontrada();
   const c = await env.DB.prepare(
-    `SELECT id, version, estado, updated_at, data, avance FROM cotizaciones WHERE id = ?`
+    `SELECT id, version, estado, updated_at, data, avance, ejecucion FROM cotizaciones WHERE id = ?`
   )
     .bind(params.id)
     .first();
@@ -265,6 +308,8 @@ export async function onRequestGet({ params, env }) {
   }
   let avance = {};
   try { avance = JSON.parse(c.avance || "{}"); } catch { avance = {}; }
+  let ejecucion = {};
+  try { ejecucion = JSON.parse(c.ejecucion || "{}"); } catch { ejecucion = {}; }
 
   // Historial de versiones (para los hitos de la línea de tiempo) y datos de
   // contacto de la empresa (config 'contacto').
@@ -478,7 +523,7 @@ export async function onRequestGet({ params, env }) {
     }
   </style>
 </head>
-<body data-firma="${escapar(`${c.estado}|${c.version}|${JSON.stringify(avance)}`)}">
+<body data-firma="${escapar(firmaEstado({ estado: c.estado, version: c.version, avance, ejecucion }))}">
   <div class="barra">
     <nav class="tabs">
       <a class="tab" href="#presupuesto" data-tab="presupuesto">Presupuesto</a>
@@ -529,7 +574,7 @@ export async function onRequestGet({ params, env }) {
       </header>
       <h1>Seguimiento del proyecto</h1>
       <p class="tl__sub">${escapar(titulo)}</p>
-      ${renderTimeline({ estado: c.estado, version: c.version, revisiones, fases, avance })}
+      ${renderTimeline({ estado: c.estado, version: c.version, revisiones, fases, avance, ejecucion })}
       <div class="doc-contacto">${renderContacto(cont)}</div>
     </article>
   </section>
