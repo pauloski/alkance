@@ -293,8 +293,6 @@
     .estimado-row input, .estimado-row select { margin: 0; }
 
     /* Página de Pagos */
-    .pagos-cols { display: grid; grid-template-columns: 300px 1fr; gap: 1.25rem; align-items: start; }
-    @media (max-width: 860px) { .pagos-cols { grid-template-columns: 1fr; } }
     .pagos-kpis { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem; }
     .pagos-kpis .kpi { display: flex; flex-direction: column; }
     .pagos-kpis .kpi span { font-size: 12px; color: var(--ak-color-ink-400,#6b6b6b); text-transform: uppercase; letter-spacing: .03em; }
@@ -303,16 +301,26 @@
     .pagos-mes th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--ak-color-ink-400,#6b6b6b); padding: .4rem .6rem; border-bottom: 1px solid var(--ak-color-cream-300,#e4e0d7); }
     .pagos-mes td { padding: .45rem .6rem; border-bottom: 1px solid var(--ak-color-cream-200,#efede8); }
     .pagos-mes .num { text-align: right; white-space: nowrap; }
-    .pagos-lista h2, .pagos-h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .03em; color: var(--ak-color-ink-400,#6b6b6b); margin: 0 0 .75rem; }
-    .pagos-h3 { margin: 1.4rem 0 .6rem; }
-    .pago-item { display: block; width: 100%; text-align: left; cursor: pointer; font: inherit;
-      background: #fff; border: 1px solid var(--ak-color-cream-300,#e4e0d7); border-radius: 10px; padding: .7rem .8rem; margin-bottom: .6rem; }
-    .pago-item:hover { border-color: var(--ak-color-cream-400,#cfc8ba); }
-    .pago-item.activo { border-color: var(--ak-color-ink-900,#0a0a0a); box-shadow: 0 0 0 1px var(--ak-color-ink-900,#0a0a0a); }
-    .pago-item__tit { font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: .25rem; }
-    .pago-item__meta { font-size: 12px; color: var(--ak-color-ink-400,#6b6b6b); }
-    .pago-item__bar { height: 6px; border-radius: 999px; background: var(--ak-color-cream-300,#e4e0d7); overflow: hidden; margin: .4rem 0; }
-    .pago-item__bar span { display: block; height: 100%; background: var(--ak-color-state-success,#0f7b4f); }
+    .pagos-h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .03em; color: var(--ak-color-ink-400,#6b6b6b); margin: 1.4rem 0 .6rem; }
+    /* Acordeón de proyectos */
+    .pago-acc { background: #fff; border: 1px solid var(--ak-color-cream-300,#e4e0d7); border-radius: 12px; margin-bottom: .7rem; }
+    .pago-acc.abierto { border-color: var(--ak-color-cream-400,#cfc8ba); box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .pago-acc__head { display: flex; align-items: center; gap: 1rem; width: 100%; text-align: left; font: inherit;
+      cursor: pointer; background: transparent; border: none; padding: 1rem 1.2rem; color: inherit; border-radius: 12px; }
+    .pago-acc__head:hover { background: var(--ak-color-cream-50,#fbf9f6); }
+    .pago-acc__main { flex: 1; min-width: 0; }
+    .pago-acc__tit { font-size: 15px; font-weight: 600; line-height: 1.3; }
+    .pago-acc__meta { font-size: 13px; color: var(--ak-color-ink-400,#6b6b6b); margin-top: .15rem; }
+    .pago-acc__right { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
+    .pago-acc__bar { width: 110px; height: 6px; border-radius: 999px; background: var(--ak-color-cream-300,#e4e0d7); overflow: hidden; }
+    .pago-acc__bar span { display: block; height: 100%; background: var(--ak-color-state-success,#0f7b4f); }
+    .pago-acc__chev { color: var(--ak-color-ink-350,#8a8a8a); font-size: 18px; line-height: 1; transition: transform .15s; }
+    .pago-acc.abierto .pago-acc__chev { transform: rotate(180deg); }
+    .pago-acc__body { padding: 0 1.2rem 1.2rem; }
+    @media (max-width: 620px) {
+      .pago-acc__head { flex-wrap: wrap; }
+      .pago-acc__bar { width: 80px; }
+    }
     .fase-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
     .fase-chip { font-size: 12px; background: var(--ak-color-cream-100,#f7f5f1); border: 1px solid var(--ak-color-cream-300,#e4e0d7); border-radius: 999px; padding: .18rem .6rem; }
     .pagos-acciones { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
@@ -558,12 +566,9 @@
       <h1>Pagos</h1><span class="sep"></span>
       <button class="btn btn--ghost btn--sm" id="btn-pagos-refrescar">↻ Actualizar</button>
     </div>
-    <p class="ayuda">Acomoda el modelo de pago de cada cliente en los proyectos <strong>aprobados</strong>. El costo total sale de los ítems de la cotización; los valores por fase se editan en el editor. No lo ve el cliente.</p>
+    <p class="ayuda">Acomoda el modelo de pago de cada cliente en los proyectos <strong>aprobados</strong>. Toca un proyecto para expandirlo y registrar sus pagos. El costo total sale de los ítems de la cotización; los valores por fase se editan en el editor. No lo ve el cliente.</p>
     <div id="pagos-calc"></div>
-    <div class="pagos-cols">
-      <div class="panel-sec pagos-lista" id="pagos-lista"></div>
-      <div class="panel-sec pagos-detalle" id="pagos-detalle"></div>
-    </div>
+    <div id="pagos-acordeon"></div>
   </div>
 
   <!-- DRAWER lateral de detalle -->
@@ -1190,16 +1195,15 @@
       if (!puedeSalirDelEditor()) return;
       mostrar("pagos");
       $("#pagos-calc").innerHTML = "";
-      $("#pagos-lista").innerHTML = '<p class="ayuda" style="margin:0">Cargando…</p>';
-      $("#pagos-detalle").innerHTML = "";
+      $("#pagos-acordeon").innerHTML = '<p class="ayuda" style="margin:0">Cargando…</p>';
       const { ok, body } = await api("/api/cotizaciones?tablero=1");
-      if (!ok) { $("#pagos-lista").innerHTML = '<div class="vacio">Error al cargar.</div>'; return; }
+      if (!ok) { $("#pagos-acordeon").innerHTML = '<div class="vacio">Error al cargar.</div>'; return; }
       pagosCache = (body.cotizaciones || []).filter((c) => normEstado(c.estado) === "aprobada");
+      // Todos colapsados, salvo que se venga con un proyecto preseleccionado (desde el drawer).
+      if (preId && pagosCache.some((c) => c.id === preId)) cargarPagoEnMemoria(preId);
+      else pagosSelId = null;
       pintarPagosCalc();
-      pintarPagosLista();
-      const target = (preId && pagosCache.some((c) => c.id === preId)) ? preId : (pagosCache[0] && pagosCache[0].id) || null;
-      if (target) abrirPagoDetalle(target);
-      else $("#pagos-detalle").innerHTML = '<p class="ayuda" style="margin:0">No hay cotizaciones aprobadas todavía.</p>';
+      pintarPagosAcordeon();
     }
     $("#btn-pagos-refrescar").addEventListener("click", () => irAPagos(pagosSelId));
 
@@ -1228,24 +1232,6 @@
       </div>`;
     }
 
-    function pintarPagosLista() {
-      if (!pagosCache.length) { $("#pagos-lista").innerHTML = '<p class="ayuda" style="margin:0">No hay cotizaciones aprobadas.</p>'; return; }
-      $("#pagos-lista").innerHTML = '<h2>Proyectos aprobados</h2>' + pagosCache.map((c) => {
-        const rp = pagosResumen((c.ejecucion || {}).pagos);
-        const pct = rp.total ? Math.round(rp.pagado / rp.total * 100) : 0;
-        return `<button class="pago-item${c.id === pagosSelId ? " activo" : ""}" data-pago-sel="${c.id}">
-          <div class="pago-item__tit">${esc(c.titulo || "(sin título)")}</div>
-          <div class="pago-item__meta">${esc(c.cliente || "—")} · ${clp(c.total)}</div>
-          <div class="pago-item__bar"><span style="width:${pct}%"></span></div>
-          <div class="pago-item__meta">${pagoMiniHTML(rp)}</div>
-        </button>`;
-      }).join("");
-    }
-    $("#pagos-lista").addEventListener("click", (e) => {
-      const b = e.target.closest("[data-pago-sel]"); if (!b) return;
-      abrirPagoDetalle(b.dataset.pagoSel);
-    });
-
     // Métodos de pago EXCLUSIVOS. Elegir uno define la estructura; cambiar de
     // método limpia y regenera (pide confirmación solo si hay pagos "pagado").
     const METODOS = [
@@ -1257,21 +1243,60 @@
     const esMetodo = (m) => METODOS.some((x) => x.v === m);
     let pagosModelo = "libre";
 
-    function abrirPagoDetalle(id) {
+    /** Carga en memoria los pagos/método del proyecto para editarlo. */
+    function cargarPagoEnMemoria(id) {
       pagosSelId = id;
-      const c = pagosCache.find((x) => x.id === id); if (!c) return;
-      const ej = c.ejecucion || {};
+      const c = pagosCache.find((x) => x.id === id); const ej = (c && c.ejecucion) || {};
       pagosEdit = Array.isArray(ej.pagos) ? ej.pagos.map((p) => ({ ...p })) : [];
       pagosModelo = esMetodo(ej.pagosModelo) ? ej.pagosModelo : "libre"; // legado → personalizado (conserva)
-      pintarPagosLista();
+    }
+
+    // Acordeón: todos los proyectos colapsados; el abierto muestra su editor.
+    function pintarPagosAcordeon() {
+      const cont = $("#pagos-acordeon");
+      if (!pagosCache.length) { cont.innerHTML = '<div class="vacio">No hay cotizaciones aprobadas todavía.</div>'; return; }
+      cont.innerHTML = pagosCache.map((c) => {
+        const abierto = c.id === pagosSelId;
+        return `<div class="pago-acc${abierto ? " abierto" : ""}" data-acc-item="${c.id}">
+          <button class="pago-acc__head" data-acc="${c.id}" aria-expanded="${abierto}">
+            <div class="pago-acc__main">
+              <div class="pago-acc__tit">${esc(c.titulo || "(sin título)")}</div>
+              <div class="pago-acc__meta">${esc(c.cliente || "—")} · ${clp(c.total)}</div>
+            </div>
+            <div class="pago-acc__right">${resumenHeaderHTML(c)}</div>
+          </button>
+          ${abierto ? `<div class="pago-acc__body">${cuerpoPagoHTML(c)}</div>` : ""}
+        </div>`;
+      }).join("");
+      if (pagosSelId) pintarHitosMetodo();
+    }
+    function resumenHeaderHTML(c) {
+      const rp = pagosResumen((c.ejecucion || {}).pagos);
+      const pct = rp.total ? Math.round(rp.pagado / rp.total * 100) : 0;
+      return `${pagoMiniHTML(rp)}<div class="pago-acc__bar"><span style="width:${pct}%"></span></div><span class="pago-acc__chev">⌄</span>`;
+    }
+    function actualizarHeaderAcordeon(id) {
+      const c = pagosCache.find((x) => x.id === id); if (!c) return;
+      const right = document.querySelector('.pago-acc[data-acc-item="' + id + '"] .pago-acc__right');
+      if (right) right.innerHTML = resumenHeaderHTML(c);
+    }
+    function togglePago(id) {
+      if (pagosSelId === id) { pagosSelId = null; pintarPagosAcordeon(); return; }
+      cargarPagoEnMemoria(id);
+      pintarPagosAcordeon();
+      const item = document.querySelector('.pago-acc[data-acc-item="' + id + '"]');
+      if (item) item.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+
+    /** Cuerpo editable de un proyecto (fases + forma de pago + hitos). */
+    function cuerpoPagoHTML(c) {
       const fases = c.fases || [];
       const sumaFases = fases.reduce((a, f) => a + Math.round(Number(f.valor) || 0), 0);
       const chips = fases.map((f) => `<span class="fase-chip">${esc(f.titulo || "Fase")} · ${f.valor ? clp(f.valor) : '<span style="opacity:.55">sin valor</span>'}</span>`).join("");
       const aviso = sumaFases > 0 && sumaFases !== c.total
         ? `<p class="ayuda" style="color:#8a5a00;margin:.5rem 0 0">⚠ La suma de los valores por fase (${clp(sumaFases)}) no coincide con el total de la cotización (${clp(c.total)}).</p>` : "";
-      $("#pagos-detalle").innerHTML = `
-        <div class="sec-head" style="margin-bottom:.5rem"><h2 style="margin:0">${esc(c.titulo || "(sin título)")}</h2><span class="sep"></span><a class="btn btn--ghost btn--sm" href="/c/${c.id}" target="_blank" rel="noopener">Ver portal ↗</a></div>
-        <div class="kcard__meta" style="margin-bottom:1rem">${esc(c.cliente || "—")} · Total ${clp(c.total)}</div>
+      return `
+        <div style="display:flex;justify-content:flex-end;margin:.6rem 0"><a class="btn btn--ghost btn--sm" href="/c/${c.id}" target="_blank" rel="noopener">Ver portal ↗</a></div>
         <h3 class="pagos-h3">Fases y valores <span class="ayuda" style="font-weight:400;text-transform:none;letter-spacing:0">(el valor por fase se edita en el editor de la cotización)</span></h3>
         <div class="fase-chips">${chips || '<span class="ayuda">Sin fases.</span>'}</div>
         ${aviso}
@@ -1282,7 +1307,6 @@
         <div class="pagos-total" id="pagos-hitos-total"></div>
         <div class="pagos-acciones" id="pagos-acciones"></div>
         <span class="msg" id="pagos-msg"></span>`;
-      pintarHitosMetodo();
     }
 
     const AYUDA_METODO = {
@@ -1338,7 +1362,7 @@
       const ej = await guardarEjecucion(pagosSelId, { pagos: pagosEdit, pagosModelo });
       if (ej && c) c.ejecucion = ej;
       if (msg) { msg.className = "msg msg--ok"; msg.textContent = "Guardado ✓"; }
-      pintarPagosCalc(); pintarPagosLista();
+      pintarPagosCalc(); actualizarHeaderAcordeon(pagosSelId);
     }
 
     /** Estructura por defecto de cada método (al elegirlo o cambiarlo). */
@@ -1357,7 +1381,7 @@
       guardarHitos();
     }
 
-    $("#pagos-detalle").addEventListener("change", (e) => {
+    $("#pagos-acordeon").addEventListener("change", (e) => {
       const el = e.target.closest("[data-pago]"); if (!el) return;
       const i = +el.dataset.idx, campo = el.dataset.pago;
       if (!pagosEdit[i]) return;
@@ -1368,7 +1392,9 @@
       else if (campo === "concepto") pagosEdit[i].concepto = el.value;
       guardarHitos();
     });
-    $("#pagos-detalle").addEventListener("click", (e) => {
+    $("#pagos-acordeon").addEventListener("click", (e) => {
+      const head = e.target.closest("[data-acc]");
+      if (head) { togglePago(head.dataset.acc); return; }
       const c = pagosCache.find((x) => x.id === pagosSelId); if (!c) return;
       const met = e.target.closest("[data-metodo]");
       if (met) { cambiarMetodo(met.dataset.metodo, c); return; }
@@ -1427,11 +1453,11 @@
         ayuda = "Al enviar por correo, el presupuesto queda en manos del cliente y pasa a “Enviada a cliente”. Si ya la enviaste por fuera, usa “Marcar enviada (sin correo)”.";
       } else if (e === "enviada" || e === "ajustes") {
         A.push(btn("Reenviar por correo", "enviar"));
-        A.push(btn("✓ Aprobada (pagó 1ª parte)", "aprobada"));
+        A.push(btn("✓ Aprobada por cliente", "aprobada"));
         A.push(btn("Ajustes solicitados", "ajustes"));
         A.push(btn("Rechazada", "rechazada", true));
         A.push(btn("Sin respuesta", "cancelada", true));
-        ayuda = "“Aprobada por cliente” = confirmó y pagó la primera parte. Editar y guardar genera una versión nueva.";
+        ayuda = "“Aprobada por cliente” = el cliente confirmó el proyecto. Los pagos se registran aparte en la página de Pagos. Editar y guardar genera una versión nueva.";
       } else if (e === "aprobada") {
         A.push(btn("Reabrir a evaluación", "enviada"));
         ayuda = "Proyecto aprobado: el Seguimiento (Gantt) queda activo para el cliente.";
